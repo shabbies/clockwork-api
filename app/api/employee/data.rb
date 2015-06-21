@@ -58,11 +58,11 @@ module Employee
 		    desc "create a new employee"
 			## This takes care of parameter validation
 			params do
-			  requires :header, 		type: String
-			  requires :company, 		type: String
-			  requires :salary, 		type: Integer
-			  requires :description, 	type: Text
-			  requires :location, 		type: String
+			  requires :header, 		type: :string
+			  requires :company, 		type: :string
+			  requires :salary, 		type: :integer
+			  requires :description, 	type: :text
+			  requires :location, 		type: :string
 			end
 			## This takes care of creating post
 			post do
@@ -72,7 +72,7 @@ module Employee
 			    salary: params[:salary],
 			    description: params[:description],
 			    location: params[:location],
-			    posting_date: Date.now
+			    posting_date: Date.now,
 			    job_date: Date.now
 			  })
 			end
