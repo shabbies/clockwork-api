@@ -48,33 +48,76 @@ module Employee
 	    end	 
 
 	    resource :posts do
+
+	    	# GET: /api/v1/posts/all.json
 	    	desc "List all Posts"
-		 
-		    get do
+		    get :all do
 		      	Post.all
 		    end
 
-		    # POST: /api/v1/posts.json -d ""
+		    # POST: /api/v1/posts/new
 		    desc "create a new employee"
 			## This takes care of parameter validation
 			params do
-			  requires :header, 		type: :string
-			  requires :company, 		type: :string
-			  requires :salary, 		type: :integer
-			  requires :description, 	type: :text
-			  requires :location, 		type: :string
+			    requires :header, 		type: String
+			    requires :company, 		type: String
+			    requires :salary, 		type: Integer
+			    requires :description, 	type: String
+			    requires :location,	 	type: String
 			end
 			## This takes care of creating post
-			post do
-			  Post.create!({
-			    header: params[:header],
-			    company: params[:company],
-			    salary: params[:salary],
-			    description: params[:description],
-			    location: params[:location],
-			    posting_date: Date.now,
-			    job_date: Date.now
-			  })
+			post :new do
+			    post = Post.create!({
+				    header: params[:header],
+				    company: params[:company],
+				    salary: params[:salary],
+				    description: params[:description],
+				    location: params[:location],
+				    posting_date: Date.today,
+				    job_date: Date.today
+			    })
+			    { 
+			    	message: "post is successfully created",
+			    	status: 201,
+			    	post_id: post.id
+			    }
+			end
+
+			# POST: /api/v1/posts/delete
+			desc "deletes a post"
+			params do
+				requires :id, type: String
+			end
+			post :delete do
+			    Post.find(params[:id]).destroy!
+			    { 
+			    	message: "post is successfully deleted",
+			    	status: 200
+			    }
+			end
+
+			desc "updates a post"
+			params do
+				requires :header, 		type: :string
+			    requires :company, 		type: :string
+			    requires :salary, 		type: :integer
+			    requires :description, 	type: :text
+			    requires :location,	 	type: :string
+			    requires :id,			type: :string
+			end
+			post :update do
+			    post = Post.find(params[:id]).update({
+			    	header: params[:header],
+				    company: params[:company],
+				    salary: params[:salary],
+				    description: params[:description],
+				    location: params[:location]
+			    })
+			    { 
+			    	message: "post is successfully updated",
+			    	status: 200,
+			    	post_id: post.id
+			    }
 			end
 	    end
     end
