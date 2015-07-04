@@ -75,7 +75,7 @@ module Employee
 				    description: params[:description],
 				    location: params[:location],
 				    posting_date: Date.today,
-				    job_date: Date.parse params[:job_date]
+				    job_date: Date.parse(params[:job_date])
 			    })
 			    { 
 			    	message: "post is successfully created",
