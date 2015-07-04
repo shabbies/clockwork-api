@@ -64,6 +64,7 @@ module Employee
 			    requires :salary, 		type: Integer
 			    requires :description, 	type: String
 			    requires :location,	 	type: String
+			    requires :job_date,		type: String
 			end
 			## This takes care of creating post
 			post :new do
@@ -74,7 +75,7 @@ module Employee
 				    description: params[:description],
 				    location: params[:location],
 				    posting_date: Date.today,
-				    job_date: Date.today
+				    job_date: Date.parse params[:job_date]
 			    })
 			    { 
 			    	message: "post is successfully created",
