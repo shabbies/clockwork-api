@@ -56,7 +56,7 @@ module Employee
 		    end
 
 		    # POST: /api/v1/posts/new
-		    desc "create a new employee"
+		    desc "create a new post"
 			## This takes care of parameter validation
 			params do
 			    requires :header, 		type: String
