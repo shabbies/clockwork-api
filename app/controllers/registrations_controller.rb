@@ -38,6 +38,13 @@ class RegistrationsController < Devise::RegistrationsController
 	end
 
 	def update
+		token = request.headers["Authentication-Token"]
+    	user = User.find_by_email_and_authentication_token(params[:email],token)
+    	unless user
+    		render json: "Token is unauthorised", status: 401
+    		return
+    	end
+
 	    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
 	    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
 
