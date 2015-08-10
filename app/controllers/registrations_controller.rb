@@ -38,6 +38,9 @@ class RegistrationsController < Devise::RegistrationsController
 	end
 
 	def update
+		p "BYE"
+		p request.env
+
 		token = request.headers["Authentication-Token"]
     	user = User.find_by_email_and_authentication_token(account_update_params[:email],token)
     	unless user
