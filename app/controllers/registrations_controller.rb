@@ -40,15 +40,7 @@ class RegistrationsController < Devise::RegistrationsController
 	def update
 		token = request.headers["Authentication-Token"]
     	user = User.find_by_email_and_authentication_token(account_update_params[:email],token)
-    	p "BYE"
-    	p token
-    	p user
-    	p account_update_params[:email]
     	unless user
-    		p "BYE"
-    	p token
-    	p user
-    	p account_update_params[:email]
     		render json: "Token is unauthorised", status: 401
     		return
     	end
