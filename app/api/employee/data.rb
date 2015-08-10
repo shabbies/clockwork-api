@@ -1,5 +1,6 @@
 module Employee
   	class Data < Grape::API 
+
 	    resource :employee_data do
 		    desc "List all Employee"
 		 
@@ -47,8 +48,7 @@ module Employee
 			end
 	    end	 
 
-	    resource :posts do
-
+	    resource :posts do	
 	    	# GET: /api/v1/posts/all.json
 	    	desc "List all Posts"
 		    get :all do
@@ -59,6 +59,7 @@ module Employee
 		    desc "create a new post"
 			## This takes care of parameter validation
 			params do
+				requires :email, 		type: String
 			    requires :header, 		type: String
 			    requires :company, 		type: String
 			    requires :salary, 		type: Integer
@@ -66,8 +67,13 @@ module Employee
 			    requires :location,	 	type: String
 			    requires :job_date,		type: String
 			end
+
 			## This takes care of creating post
 			post :new do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
 			    post = Post.create!({
 				    header: params[:header],
 				    company: params[:company],
@@ -120,6 +126,6 @@ module Employee
 			    	post_id: post.id
 			    }
 			end
-	    end
+	    end 
     end
 end
