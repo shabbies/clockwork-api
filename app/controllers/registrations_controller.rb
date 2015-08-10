@@ -45,6 +45,10 @@ class RegistrationsController < Devise::RegistrationsController
     	p user
     	p account_update_params[:email]
     	unless user
+    		p "BYE"
+    	p token
+    	p user
+    	p account_update_params[:email]
     		render json: "Token is unauthorised", status: 401
     		return
     	end
