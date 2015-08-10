@@ -1,11 +1,8 @@
 class RegistrationsController < Devise::RegistrationsController  
+	#before_filter :configure_permitted_parameters, :only => :update
     skip_before_action :verify_authenticity_token
     clear_respond_to  
     respond_to :json
-
-    def sign_up_params
-    	params.require(:user).permit(:email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id)
-  	end
 
   	def create
   		build_resource(sign_up_params)
@@ -39,4 +36,37 @@ class RegistrationsController < Devise::RegistrationsController
 	      respond_with resource
 	    end
 	end
+
+	def update
+	    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+	    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+	    if update_resource(resource, account_update_params)
+	      	yield resource if block_given?
+	      	if is_flashing_format?
+	        	flash_key = update_needs_confirmation?(resource, prev_unconfirmed_email) ?
+		          :update_needs_confirmation : :updated
+		        set_flash_message :notice, flash_key
+	      	end
+	      	sign_in resource_name, resource, bypass: true
+	      	render json: resource, status: 200 
+	    else
+      		clean_up_passwords resource
+      		render json: resource.errors, status: :unprocessable_entity 
+	    end
+  	end
+
+	def update_resource(resource, account_update_params)
+    	resource.update_without_password(account_update_params)
+  	end
+
+  	private
+    def sign_up_params
+    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth)
+  	end
+
+  	def account_update_params
+		params.require(:user).permit(:username, :address, :email, :password, :password_confirmation, :current_password, :address, :contact_number, :date_of_birth)
+	end
+
 end  
