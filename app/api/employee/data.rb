@@ -171,6 +171,22 @@ module Employee
 		    	jobs = user.published_jobs
 			    jobs.to_json
 			end
+
+			desc "apply for job"
+			params do
+			    requires :email,	type: String
+			    requires :job_id,	type: Integer
+			end
+
+			post :apply do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	job = Post.find(params[:job_id])
+		    	user.applied_jobs << job
+		    	job.applicants << user
+			end
 	    end
     end
 end

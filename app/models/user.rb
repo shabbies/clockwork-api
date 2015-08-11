@@ -8,8 +8,7 @@ class User < ActiveRecord::Base
   	before_save :ensure_authentication_token
 
   	has_many 	:published_jobs, 	:class_name => "Post", 	:foreign_key => "owner_id"
-  	has_many 	:past_jobs,			:class_name => "Post", 	:foreign_key => "owner_id" 
-  	belongs_to	:applied_job,		:class_name => "Post", 	:foreign_key => "applicant_id"
+  	has_and_belongs_to_many :applied_jobs,	:class_name => "Post"
 
 	def ensure_authentication_token
 	  	if authentication_token.blank?
