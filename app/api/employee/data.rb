@@ -105,12 +105,12 @@ module Employee
 
 			desc "updates a post"
 			params do
-				requires :header, 		type: :string
-			    requires :company, 		type: :string
-			    requires :salary, 		type: :integer
-			    requires :description, 	type: :text
-			    requires :location,	 	type: :string
-			    requires :id,			type: :string
+				requires :header, 		type: String
+			    requires :company, 		type: String
+			    requires :salary, 		type: Integer
+			    requires :description, 	type: String
+			    requires :location,	 	type: String
+			    requires :id,			type: String
 			end
 			post :update do
 			    post = Post.find(params[:id]).update({
@@ -127,5 +127,32 @@ module Employee
 			    }
 			end
 	    end 
+
+	    resource :users do
+	    	desc "updates a user"
+			params do
+				requires :email, 			type: String
+			    requires :address, 			type: String
+			    requires :date_of_birth, 	type: String
+			    requires :username, 		type: String
+			    requires :contact_number,	type: Integer
+			end
+
+			post :update do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+			    user = User.find_by_email(params[:email])
+			    p "BYE"
+			    p user
+			    user.address = params[:address]
+			    user.date_of_birth = params[:date_of_birth]
+			    user.username = params[:username]
+			    user.contact_number = params[:contact_number]
+			    user.save
+			    { :status => 'success', :data => user }
+			end
+	    end
     end
 end
