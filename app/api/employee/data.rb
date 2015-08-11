@@ -160,7 +160,6 @@ module Employee
 
 			desc "get all published jobs from user"
 			params do
-			    requires :owner_id,	type: Integer
 			    requires :email,	type: String
 			end
 
