@@ -188,6 +188,23 @@ module Employee
 
 		    	job.to_json
 			end
+
+			desc "apply for job"
+			params do
+			    requires :email,	type: String
+			    requires :job_id,	type: Integer
+			end
+
+			post :withdraw do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	job = Post.find(params[:job_id])
+		    	user.applied_jobs.delete(job)
+
+		    	job.to_json
+			end
 	    end
     end
 end
