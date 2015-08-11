@@ -144,14 +144,15 @@ module Employee
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
 			    user = User.find_by_email(params[:email])
-			    p "BYE"
-			    p user
 			    user.address = params[:address]
 			    user.date_of_birth = params[:date_of_birth]
 			    user.username = params[:username]
 			    user.contact_number = params[:contact_number]
-			    user.save
-			    { :status => 'success', :data => user }
+			    if user.save
+			    	{ :status => 'success', :data => user }
+				else
+					error!('saved failed', 422)
+				end
 			end
 	    end
     end
