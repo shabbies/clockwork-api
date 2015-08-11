@@ -186,6 +186,8 @@ module Employee
 		    	job = Post.find(params[:job_id])
 		    	user.applied_jobs << job
 		    	job.applicants << user
+
+		    	job.to_json
 			end
 	    end
     end
