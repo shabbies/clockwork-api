@@ -169,7 +169,7 @@ module Employee
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
 		    	jobs = user.published_jobs
-			    { :status => "success", :jobs => jobs }.to_json
+			    jobs.to_json
 			end
 	    end
     end
