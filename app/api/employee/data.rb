@@ -83,6 +83,9 @@ module Employee
 				    posting_date: Date.today,
 				    job_date: Date.parse(params[:job_date])
 			    })
+			    user.published_jobs << post
+			    user.save
+
 			    { 
 			    	message: "post is successfully created",
 			    	status: 201,
@@ -153,6 +156,21 @@ module Employee
 				else
 					error!('saved failed', 422)
 				end
+			end
+
+			desc "get all published jobs from user"
+			params do
+			    requires :owner_id,	type: Integer
+			    requires :email,	type: String
+			end
+
+			post :get_jobs do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	jobs = user.published_jobs
+			    { :status => "success", :jobs => jobs }.to_json
 			end
 	    end
     end
