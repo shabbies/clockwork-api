@@ -122,7 +122,10 @@ module Employee
 		    	user = User.find_by_email_and_authentication_token(params[:email],token)
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
-			    post = Post.find(params[:id]).update({
+		    	post = Post.find(params[:id])
+		    	error!('Unauthorized - Only owner allowed to edit post', 401) unless post.owner == user
+
+			    post.update({
 			    	header: params[:header],
 				    salary: params[:salary],
 				    description: params[:description],
