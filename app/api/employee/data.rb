@@ -109,26 +109,27 @@ module Employee
 
 			desc "updates a post"
 			params do
+				requires :email,		type: String
 				requires :header, 		type: String
-			    requires :company, 		type: String
 			    requires :salary, 		type: Integer
 			    requires :description, 	type: String
 			    requires :location,	 	type: String
 			    requires :id,			type: String
+			    requires :job_date,		type: String
 			end
 			post :update do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
 			    post = Post.find(params[:id]).update({
 			    	header: params[:header],
-				    company: params[:company],
 				    salary: params[:salary],
 				    description: params[:description],
-				    location: params[:location]
+				    location: params[:location],
+				    job_date: Date.parse(params[:job_date])
 			    })
-			    { 
-			    	message: "post is successfully updated",
-			    	status: 200,
-			    	post_id: post.id
-			    }
+			    post.to_json
 			end
 	    end 
 
