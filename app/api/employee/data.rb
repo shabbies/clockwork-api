@@ -147,6 +147,7 @@ module Employee
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
 		    	job = Post.find(params[:job_id])
+		    	error!("Post not found", 422) unless job
 		    	error!("Unauthorized - Only owner can view applicants", 400) unless job.owner == user
 		    	
 		    	job.applicants.to_json
