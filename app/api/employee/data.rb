@@ -81,7 +81,8 @@ module Employee
 				    description: params[:description],
 				    location: params[:location],
 				    posting_date: Date.today,
-				    job_date: Date.parse(params[:job_date])
+				    job_date: Date.parse(params[:job_date]),
+				    status: "listed"
 			    })
 			    user.published_jobs << post
 			    user.save
@@ -185,6 +186,8 @@ module Employee
 
 		    	job = Post.find(params[:job_id])
 		    	user.applied_jobs << job
+		    	job.status = "applied"
+		    	job.save
 
 		    	job.to_json
 			end
@@ -202,7 +205,28 @@ module Employee
 
 		    	job = Post.find(params[:job_id])
 		    	user.applied_jobs.delete(job)
+		    	job.status = "listed" unless job.applicants
 
+		    	job.to_json
+			end
+
+			desc "hire applicant"
+			params do
+				requires :email,		type: String
+				requires :applicant_id,	type: Integer
+				requires :job_id,		type: Integer
+			end
+
+			post :hire do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	applicant = User.find(params[:applicant_id])
+		    	job = Post.find(params[:job_id])
+		    	error!("Invalid job applicant", 400) unless job.applicants.find(applicant)
+		    	
+		    	job.hired << applicant
 		    	job.to_json
 			end
 	    end

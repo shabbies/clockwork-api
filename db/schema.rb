@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150811185618) do
+ActiveRecord::Schema.define(version: 20150812030717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,9 +44,10 @@ ActiveRecord::Schema.define(version: 20150811185618) do
     t.string   "location"
     t.string   "posting_date"
     t.string   "job_date"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "owner_id"
+    t.string   "status",       default: "listed"
   end
 
   create_table "posts_users", id: false, force: :cascade do |t|
@@ -55,6 +56,13 @@ ActiveRecord::Schema.define(version: 20150811185618) do
   end
 
   add_index "posts_users", ["post_id", "user_id"], name: "by_user_and_post", unique: true, using: :btree
+
+  create_table "posts_users_hired", id: false, force: :cascade do |t|
+    t.integer "post_id"
+    t.integer "user_id"
+  end
+
+  add_index "posts_users_hired", ["post_id", "user_id"], name: "by_user_and_post_hired", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
