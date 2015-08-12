@@ -134,6 +134,23 @@ module Employee
 			    })
 			    post.to_json
 			end
+
+			desc "get applicants"
+			params do
+				requires :email,		type: String
+				requires :job_id,		type: Integer
+			end
+
+			post :get_applicants do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	job = Post.find(params[:job_id])
+		    	error!("Unauthorized - Only owner can view applicants", 400) unless job.owner == user
+		    	
+		    	job.applicants.to_json
+			end
 	    end 
 
 	    resource :users do
@@ -174,7 +191,23 @@ module Employee
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
 		    	jobs = user.published_jobs
-			    jobs.to_json
+		    	job_array = Array.new
+		    	jobs.each do |job|
+		    		job_hash = Hash.new
+		    		job_hash[:owner_id] = job.owner_id
+		    		job_hash[:id] = job.id
+		    		job_hash[:header] = job.header
+		    		job_hash[:company] = job.company
+		    		job_hash[:salary] = job.salary
+		    		job_hash[:description] = job.description
+		    		job_hash[:location] = job.location
+		    		job_hash[:posting_date] = job.posting_date
+		    		job_hash[:job_date] = job.job_date
+		    		job_hash[:status] = job.status
+		    		job_hash[:applicant_count] = job.applicants.count
+		    		job_array << job_hash
+		    	end
+			    job_array.to_json
 			end
 
 			desc "apply for job"
@@ -196,7 +229,7 @@ module Employee
 		    	job.to_json
 			end
 
-			desc "apply for job"
+			desc "withdraw job application"
 			params do
 			    requires :email,	type: String
 			    requires :job_id,	type: Integer
