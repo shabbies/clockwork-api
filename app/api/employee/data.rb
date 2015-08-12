@@ -52,7 +52,24 @@ module Employee
 	    	# GET: /api/v1/posts/all.json
 	    	desc "List all Posts"
 		    get :all do
-		      	Post.all
+		      	jobs = Post.all
+		    	job_array = Array.new
+		    	jobs.each do |job|
+		    		job_hash = Hash.new
+		    		job_hash[:owner_id] = job.owner_id
+		    		job_hash[:id] = job.id
+		    		job_hash[:header] = job.header
+		    		job_hash[:company] = job.company
+		    		job_hash[:salary] = job.salary
+		    		job_hash[:description] = job.description
+		    		job_hash[:location] = job.location
+		    		job_hash[:posting_date] = job.posting_date
+		    		job_hash[:job_date] = job.job_date
+		    		job_hash[:status] = job.status
+		    		job_hash[:applicant_count] = job.applicants.count
+		    		job_array << job_hash
+		    	end
+			    job_array.to_json
 		    end
 
 		    # POST: /api/v1/posts/new
