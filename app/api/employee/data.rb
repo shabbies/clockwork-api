@@ -264,8 +264,10 @@ module Employee
 		    	job = Post.find(params[:job_id])
 		    	error!("Invalid job applicant", 400) unless job.applicants.find(applicant)
 		    	
+		    	applicant = job.applicants.find(params[:applicant_id])
+		    	job.applicants.delete(applicant)
 		    	job.hired << applicant
-		    	job.to_json
+		    	job.hired.to_json
 			end
 	    end
     end
