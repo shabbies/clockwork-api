@@ -152,6 +152,25 @@ module Employee
 		    	
 		    	job.applicants.to_json
 			end
+
+
+			desc "get hired list"
+			params do
+				requires :email,		type: String
+				requires :job_id,		type: Integer
+			end
+
+			post :get_hired do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	job = Post.find(params[:job_id])
+		    	error!("Post not found", 422) unless job
+		    	error!("Unauthorized - Only owner can view applicants", 400) unless job.owner == user
+		    	
+		    	job.hired.to_json
+			end
 	    end 
 
 	    resource :users do
