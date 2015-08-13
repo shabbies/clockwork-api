@@ -195,6 +195,10 @@ module Employee
 		    	error!('Unauthorized - Invalid authentication token', 401) unless user
 
 		    	job = Post.find(params[:job_id])
+		    	if job.applicants.where(:id => user.id).count == 1 || job.hired.where(:id => user.id).count == 1
+		    		error!('Invalid application, you have already applied', 422)
+		    	end
+
 		    	user.applied_jobs << job
 		    	job.status = "applied"
 		    	job.save
