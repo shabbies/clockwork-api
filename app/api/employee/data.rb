@@ -218,7 +218,7 @@ module Employee
 
 		    	job = Post.find(params[:job_id])
 		    	user.applied_jobs.delete(job)
-		    	job.status = "listed" unless job.applicants
+		    	job.status = "listed" unless job.applicants.count != 0
 
 		    	job.save
 		    	job.to_json
@@ -238,7 +238,7 @@ module Employee
 
 		    	applicant = User.find(params[:applicant_id])
 		    	job = Post.find(params[:job_id])
-		    	error!("Invalid job applicant", 400) unless job.applicants.find(applicant)
+		    	error!("Invalid job applicant", 400) unless job.applicants.where(:id => applicant.id).count != 0
 		    	
 		    	applicant = job.applicants.find(params[:applicant_id])
 		    	job.applicants.delete(applicant)
