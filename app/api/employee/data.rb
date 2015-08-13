@@ -265,7 +265,7 @@ module Employee
 		    		job_hash[:location] = job.location
 		    		job_hash[:posting_date] = job.posting_date
 		    		job_hash[:job_date] = job.job_date
-		    		if job.status == "applied" && job.hired.find(user)
+		    		if job.status == "applied" && job.hired.where(:id => user.id).count != 0
 		    			job_hash[:status] = "accepted"
 		    		else
 		    			job_hash[:status] = "pending"
