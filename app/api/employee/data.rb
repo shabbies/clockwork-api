@@ -285,10 +285,6 @@ module Employee
 			end
 
 			post :get_calendar_formatted_dates do
-				token = request.headers["Authentication-Token"]
-		    	user = User.find_by_email_and_authentication_token(params[:email],token)
-		    	error!('Unauthorized - Invalid authentication token', 401) unless user
-
 		    	job_array = Array.new
 		    	applied_jobs = user.applied_jobs
 
