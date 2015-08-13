@@ -220,6 +220,7 @@ module Employee
 		    	user.applied_jobs.delete(job)
 		    	job.status = "listed" unless job.applicants
 
+		    	job.save
 		    	job.to_json
 			end
 
