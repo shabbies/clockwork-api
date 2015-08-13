@@ -106,7 +106,6 @@ module Employee
 		    	job.applicants.to_json
 			end
 
-
 			desc "get hired list"
 			params do
 				requires :email,		type: String
@@ -277,6 +276,40 @@ module Employee
 		    		job_array << job_hash
 		    	end
 			    job_array.to_json
+			end
+
+
+			desc "get jobs for calendar"
+			params do
+				requires :email,		type: String
+			end
+
+			post :get_calendar_formatted_dates do
+				token = request.headers["Authentication-Token"]
+		    	user = User.find_by_email_and_authentication_token(params[:email],token)
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
+		    	job_array = Array.new
+		    	applied_jobs = user.applied_jobs
+
+		    	applied_jobs.each do |job|
+		    		job_hash = Hash.new
+		    		job_hash[:title] = job.header
+		    		job_hash[:start_date] = job.job_date
+		    		job_hash[:color] = "#4c4c4c"
+		    		job_array << job_hash
+		    	end
+
+		    	hired_jobs = user.hired_jobs
+		    	hired_jobs.each do |job|
+					job_hash = Hash.new
+		    		job_hash[:title] = job.header
+		    		job_hash[:start_date] = job.job_date
+		    		job_hash[:color] = "#777777"
+		    		job_array << job_hash
+		    	end
+
+		    	job_array.to_json
 			end
 	    end
     end
