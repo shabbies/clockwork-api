@@ -281,10 +281,13 @@ module Employee
 
 			desc "get jobs for calendar"
 			params do
-				requires :email,		type: String
+				requires :id,		type: Integer
 			end
 
-			post :get_calendar_formatted_dates do
+			get :get_calendar_formatted_dates do
+		    	user = User.find(params[:id])
+		    	error!('Unauthorized - Invalid authentication token', 401) unless user
+
 		    	job_array = Array.new
 		    	applied_jobs = user.applied_jobs
 
