@@ -8,6 +8,21 @@ module Employee
 		      	Post.all
 		    end
 
+		    desc "List all Posts sorted by salary"
+		    get :all_salary do
+		      	Post.order(:salary).reverse_order
+		    end
+
+		    desc "List all Posts sorted by latest first"
+		    get :all_latest do
+		      	Post.order(:created_at).reverse_order
+		    end
+
+		    desc "List all Posts sorted by oldest first"
+		    get :all_oldest do
+		      	Post.order(:created_at)
+		    end
+
 		    # POST: /api/v1/posts/new
 		    desc "create a new post"
 			## This takes care of parameter validation
