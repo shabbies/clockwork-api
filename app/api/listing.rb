@@ -22,7 +22,7 @@ class Listing < Grape::API
 		post :new do
 			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
 
-			job_date = Date.parse[params[:job_date]]
+			job_date = Date.parse(params[:job_date])
 			posting_date = Date.today
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
