@@ -1,6 +1,6 @@
 class Listing < Grape::API
 	before do
-		@token = request.headers["Authentication-Token"]
+		token = request.headers["Authentication-Token"]
     	@user = User.find_by_email_and_authentication_token(params[:email],token)
     	error!('Unauthorized - Invalid authentication token', 401) unless @user
 	end
