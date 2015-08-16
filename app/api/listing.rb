@@ -47,14 +47,18 @@ class Listing < Grape::API
 		# POST: /api/v1/posts/delete
 		desc "deletes a post"
 		params do
-			requires :id, type: String
+			requires :post_id, type: String
 		end
+
 		post :delete do
-		    Post.find(params[:id]).destroy!
-		    { 
-		    	message: "post is successfully deleted",
-		    	status: 200
-		    }
+			post = Post.where(:id => params[:post_id]).first
+			error!("Bad Request - The post cannot be found", 400) unless post
+			error!("Unauthorised - Only the post owner can delete his post", 403) unless post.owner_id == @user.id
+		   
+		   	post.destroy!
+
+		   	status 200
+		   	"Post has been successfully deleted".to_json
 		end
 
 		desc "updates a post"
