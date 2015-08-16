@@ -2,7 +2,7 @@ class Listing < Grape::API
 	before do
 		token = request.headers["Authentication-Token"]
     	@user = User.find_by_email_and_authentication_token(params[:email],token)
-    	error!('Unauthorized - Invalid authentication token', 401) unless @user
+    	error!('Unauthorised - Invalid authentication token', 401) unless @user
 	end
 
 	resource :posts do	
@@ -12,7 +12,6 @@ class Listing < Grape::API
 		params do
 			requires :email, 		type: String
 		    requires :header, 		type: String
-		    requires :company, 		type: String
 		    requires :salary, 		type: Integer
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
@@ -21,25 +20,28 @@ class Listing < Grape::API
 
 		## This takes care of creating post
 		post :new do
-			
+			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
+
+			job_date = Date.parse[params[:job_date]]
+			posting_date = Date.today
+
+			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
+
 		    post = Post.create!({
 			    header: params[:header],
-			    company: params[:company],
+			    company: @user.username,
 			    salary: params[:salary],
 			    description: params[:description],
 			    location: params[:location],
-			    posting_date: Date.today,
-			    job_date: Date.parse(params[:job_date]),
+			    posting_date: posting_date,
+			    job_date: job_date,
 			    status: "listed"
 		    })
 		    @user.published_jobs << post
 		    @user.save
 
-		    { 
-		    	message: "post is successfully created",
-		    	status: 201,
-		    	post_id: post.id
-		    }
+		    status 201
+		    post.to_json
 		end
 
 		# POST: /api/v1/posts/delete

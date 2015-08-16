@@ -61,11 +61,13 @@ class Account < Grape::API
 
 		post :apply do
 	    	job = Post.find(params[:job_id])
-	    	if job.applicants.where(:id => user.id).count == 1 || job.hired.where(:id => user.id).count == 1
+	    	if job.applicants.where(:id => user.id).count == 1
 	    		error!('Invalid application, you have already applied', 422)
 	    	end
 
-	    	@user.applied_jobs << job
+	    	@user.matched_jobs << job
+	    	matched_job = @user.matched_jobs.find(job)
+	    	matched_job.status = "applied"
 	    	job.status = "applied"
 	    	job.save
 
@@ -80,7 +82,7 @@ class Account < Grape::API
 
 		post :withdraw do
 	    	job = Post.find(params[:job_id])
-	    	@user.applied_jobs.delete(job)
+	    	@user.matched_jobs.delete(job)
 	    	job.status = "listed" unless job.applicants.count != 0
 
 	    	job.save
@@ -97,12 +99,13 @@ class Account < Grape::API
 		post :hire do
 	    	applicant = User.find(params[:applicant_id])
 	    	job = Post.find(params[:job_id])
-	    	error!("Invalid job applicant", 400) unless job.applicants.where(:id => applicant.id).count != 0
+	    	error!("Invalid job applicant", 422) unless job.applicants.where(:id => applicant.id).count != 0
 	    	
-	    	applicant = job.applicants.find(params[:applicant_id])
-	    	job.applicants.delete(applicant)
-	    	job.hired << applicant
-	    	job.hired.to_json
+	    	matched_job = job.applicants.find(params[:applicant_id])
+	    	matched_job.status = "hired"
+	    	matched_job.save
+
+	    	matched_job.to_json
 		end
 
 		desc "get all applied jobs from user"
@@ -111,7 +114,7 @@ class Account < Grape::API
 		end
 
 		post :get_applied_jobs do
-	    	jobs = @user.applied_jobs
+	    	jobs = @user.matched_jobs.where(:status => ["applied", "hired"], :user_id => @user.id)
 	    	job_array = Array.new
 	    	jobs.each do |job|
 	    		job_hash = Hash.new
