@@ -9,7 +9,8 @@ class API < Grape::API
       headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     end
 
-  	mount Employee::Data
-  	mount Auth
+    mount Listing
+    mount Account
+    mount Display
 end
 
