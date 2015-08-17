@@ -24,13 +24,15 @@ class Listing < Grape::API
 
 			job_date = Date.parse(params[:job_date])
 			posting_date = Date.today
+			salary = params[:salary]
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
+			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 
 		    post = Post.create!({
 			    header: params[:header],
 			    company: @user.username,
-			    salary: params[:salary],
+			    salary: salary,
 			    description: params[:description],
 			    location: params[:location],
 			    posting_date: posting_date,
@@ -72,16 +74,24 @@ class Listing < Grape::API
 		    requires :job_date,		type: String
 		end
 		post :update do
-	    	post = Post.find(params[:id])
-	    	error!('Unauthorized - Only owner allowed to edit post', 401) unless post.owner == @user
+	    	post = Post.where(:id => params[:post_id]).first
+	    	job_date = Date.parse(params[:job_date])
+	    	salary = params[:salary]
+
+			error!("Bad Request - The post cannot be found", 400) unless post
+			error!("Bad Request - The job date should be after today", 400) if job_date < Date.today
+	    	error!('Unauthorised - Only the post owner is allowed to edit post', 401) unless post.owner_id == @user.id
+	    	error!("Bad Request - The salary should not be negative", 400) if salary < 0
 
 		    post.update({
 		    	header: params[:header],
-			    salary: params[:salary],
+			    salary: salary,
 			    description: params[:description],
 			    location: params[:location],
-			    job_date: Date.parse(params[:job_date])
+			    job_date: job_date
 		    })
+
+		    status 200
 		    post.to_json
 		end
 
