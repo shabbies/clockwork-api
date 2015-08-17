@@ -64,7 +64,7 @@ class Account < Grape::API
 	    	matching = Matching.where(:post_id => post, :applicant_id => @user.id).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
-	    	error!("Bad Request - User has already applied", 400) if matching
+	    	error!("Bad Request - User has already applied", 403) if matching
 	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
 
 	    	post.applicants << @user
