@@ -2,7 +2,7 @@ class Account < Grape::API
 	before do
 		token = request.headers["Authentication-Token"]
     	@user = User.find_by_email_and_authentication_token(params[:email],token)
-    	error!('Unauthorized - Invalid authentication token', 401) unless @user
+    	error!('Unauthorised - Invalid authentication token', 401) unless @user
 	end
 
 	resource :users do
@@ -56,22 +56,23 @@ class Account < Grape::API
 		desc "apply for job"
 		params do
 		    requires :email,	type: String
-		    requires :job_id,	type: Integer
+		    requires :post_id,	type: Integer
 		end
 
 		post :apply do
-	    	job = Post.find(params[:job_id])
-	    	if job.applicants.where(:id => user.id).count == 1
-	    		error!('Invalid application, you have already applied', 422)
-	    	end
+	    	post = Post.where(:id => params[:post_id]).first
+	    	matching = Matching.where(:post_id => post, :applicant_id => @user.id).first
 
-	    	@user.matched_jobs << job
-	    	matched_job = @user.matched_jobs.find(job)
-	    	matched_job.status = "applied"
-	    	job.status = "applied"
-	    	job.save
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Bad Request - User has already applied", 400) if matching
+	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
 
-	    	job.to_json
+	    	post.applicants << @user
+	    	post.status = "applied"
+	    	post.save
+
+	    	status 200
+	    	post.to_json
 		end
 
 		desc "withdraw job application"

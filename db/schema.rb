@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 20150816103633) do
   create_table "matchings", force: :cascade do |t|
     t.integer  "applicant_id"
     t.integer  "post_id"
-    t.string   "status",       default: "applied"
-    t.float    "user_rating"
+    t.string   "status",       default: "pending"
+    t.float    "user_rating",  default: 0.0
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
   end
