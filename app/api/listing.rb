@@ -80,7 +80,7 @@ class Listing < Grape::API
 
 			error!("Bad Request - The post cannot be found", 400) unless post
 			error!("Bad Request - The job date should be after today", 400) if job_date < Date.today
-	    	error!('Unauthorised - Only the post owner is allowed to edit post', 401) unless post.owner_id == @user.id
+	    	error!('Unauthorised - Only the post owner is allowed to edit post', 403) unless post.owner_id == @user.id
 	    	error!("Bad Request - The salary should not be negative", 400) if salary < 0
 
 		    post.update({
