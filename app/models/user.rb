@@ -8,8 +8,8 @@ class User < ActiveRecord::Base
   	before_save :ensure_authentication_token
 
   	has_many :published_jobs, 	:class_name => "Post", 	:foreign_key => "owner_id"
-  	has_many :matchings,		:dependent => :destroy
-  	has_many :jobs,				:class_name => "Post", 	through: :matchings
+  	has_many :matchings,		:dependent => :destroy, :foreign_key => "applicant_id"
+  	has_many :jobs,				:class_name => "Post", 	through: :matchings,	:source => "applicant"
 
 	def ensure_authentication_token
 	  	if authentication_token.blank?
@@ -24,6 +24,10 @@ class User < ActiveRecord::Base
 	      	token = Devise.friendly_token
 	      	break token unless User.find_by(authentication_token: token)
     	end
+  	end
+
+  	def self.check_contact_number string
+  		true if Float(string) rescue false
   	end
 
 	# def self.authenticate(user_id)

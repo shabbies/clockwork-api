@@ -103,6 +103,7 @@ class Listing < Grape::API
 
 		post :get_applicants do
 	    	post = Post.where(:id => params[:post_id]).first
+
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
@@ -115,15 +116,25 @@ class Listing < Grape::API
 		desc "get hired list"
 		params do
 			requires :email,		type: String
-			requires :job_id,		type: Integer
+			requires :post_id,		type: Integer
 		end
 
 		post :get_hired do
-	    	job = Post.find(params[:job_id])
-	    	error!("Post not found", 422) unless job
-	    	error!("Unauthorized - Only owner can view applicants", 400) unless job.owner == @user
+	    	post = Post.where(:id => params[:post_id]).first
+
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
-	    	job.hired.to_json
+	    	applicant_array = Array.new
+	    	matchings = Matching.where(:post_id => post.id, :status => "hired")
+
+	    	matchings.each do |match|
+	    		user = user.find(match.applicant_id)
+	    		applicant_array << user
+	    	end
+
+	    	status 201
+	    	applicant_array.to_json
 		end
 	end 
 end
