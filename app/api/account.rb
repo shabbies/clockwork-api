@@ -16,8 +16,10 @@ class Account < Grape::API
 		end
 
 		post :update do
-			date_of_birth = Date.parse(params[:date_of_birth])
-			error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			if params[:date_of_birth]
+				date_of_birth = Date.parse(params[:date_of_birth])
+				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
 
 		    @user.address = params[:address]
 		    @user.date_of_birth = date_of_birth
