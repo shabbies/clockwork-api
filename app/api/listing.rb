@@ -70,7 +70,7 @@ class Listing < Grape::API
 		    requires :salary, 		type: Integer
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
-		    requires :id,			type: String
+		    requires :post_id,		type: String
 		    requires :job_date,		type: String
 		end
 		post :update do
