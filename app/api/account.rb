@@ -139,7 +139,7 @@ class Account < Grape::API
 		end
 
 		post :get_applied_jobs do
-			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if account_type == "employer"
+			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
 	    	matchings = Matching.where(:applicant_id => @user.id)
 	    	job_array = Array.new
