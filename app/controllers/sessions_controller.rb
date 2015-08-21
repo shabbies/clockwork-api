@@ -1,5 +1,5 @@
 class SessionsController < Devise::SessionsController 
-	skip_before_action :verify_authenticity_token
+	skip_before_action :verify_authenticity_token, :verify_signed_out_user
 	clear_respond_to
     respond_to :json
 
