@@ -129,7 +129,7 @@ class Listing < Grape::API
 	    	matchings = Matching.where(:post_id => post.id, :status => "hired")
 
 	    	matchings.each do |match|
-	    		user = user.find(match.applicant_id)
+	    		user = User.find(match.applicant_id)
 	    		applicant_array << user
 	    	end
 
