@@ -116,7 +116,7 @@ class Listing < Grape::API
 	    	end
 
 	    	status 201
-	    	applicants.to_json
+	    	applicant_array.to_json
 		end
 
 		desc "get hired list"
