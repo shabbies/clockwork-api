@@ -108,7 +108,7 @@ class Listing < Grape::API
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
 	    	applicant_array = Array.new
-	    	matchings = Matching.where(:post_id => post_id, :status => "pending").all
+	    	matchings = Matching.where(:post_id => post.id, :status => "pending").all
 
 	    	matchings.each do |match|
 	    		user = User.find(match.applicant_id)
