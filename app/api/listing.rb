@@ -107,7 +107,13 @@ class Listing < Grape::API
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
-	    	applicants = post.applicants
+	    	applicant_array = Array.new
+	    	matchings = Matching.where(:post_id => post_id, :status => "pending").all
+
+	    	matchings.each do |match|
+	    		user = User.find(match.applicant_id)
+	    		applicant_array << user
+	    	end
 
 	    	status 201
 	    	applicants.to_json
@@ -126,7 +132,7 @@ class Listing < Grape::API
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
 	    	applicant_array = Array.new
-	    	matchings = Matching.where(:post_id => post.id, :status => "hired")
+	    	matchings = Matching.where(:post_id => post.id, :status => "hired").all
 
 	    	matchings.each do |match|
 	    		user = User.find(match.applicant_id)
