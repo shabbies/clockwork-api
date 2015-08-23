@@ -9,10 +9,6 @@ class Account < Grape::API
 		desc "updates a user"
 		params do
 			requires :email, 			type: String
-		    requires :address, 			type: String
-		    requires :date_of_birth, 	type: String
-		    requires :username, 		type: String
-		    requires :contact_number,	type: Integer
 		end
 
 		post :update do
@@ -21,10 +17,20 @@ class Account < Grape::API
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
 			end
 
+			avatar = params[:avatar]
+			attachment = {
+	            :filename => avatar[:filename],
+	            :type => avatar[:type],
+	            :headers => avatar[:head],
+	            :tempfile => avatar[:tempfile]
+	        }
+
 		    @user.address = params[:address]
 		    @user.date_of_birth = date_of_birth
 		    @user.username = params[:username]
 		    @user.contact_number = params[:contact_number]
+		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment)
+		    @user.avatar_path = attachment[:filename]
 		    if @user.save
 		    	status 200
 		    	@user.to_json

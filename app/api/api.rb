@@ -12,5 +12,6 @@ class API < Grape::API
     mount Listing
     mount Account
     mount Display
+    mount Test
 end
 
