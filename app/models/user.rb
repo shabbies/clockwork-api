@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 	    thumb: '100x100>',
 	    square: '200x200#',
 	    medium: '300x300>'
-	}
+	}, :bucket  => ENV['media.clockworksmu.herokuapp.com']
   	validates_attachment_content_type :avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
 	def ensure_authentication_token
