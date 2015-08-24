@@ -18,12 +18,15 @@ class Account < Grape::API
 			end
 
 			avatar = params[:avatar]
-			attachment = {
-	            :filename => avatar[:filename],
-	            :type => avatar[:type],
-	            :headers => avatar[:head],
-	            :tempfile => avatar[:tempfile]
-	        }
+			attachment = nil
+			if avatar
+				attachment = {
+		            :filename => avatar[:filename],
+		            :type => avatar[:type],
+		            :headers => avatar[:head],
+		            :tempfile => avatar[:tempfile]
+		        }
+		    end
 
 		    @user.address = params[:address]
 		    @user.date_of_birth = date_of_birth
