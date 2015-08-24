@@ -40,4 +40,13 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  config.paperclip_defaults = {
+    :storage => :s3,
+    :s3_credentials => {
+      :bucket => ENV['media.clockworksmu.herokuapp.com'],
+      :access_key_id => ENV['AKIAILC5OM52OYCUCY7Q'],
+      :secret_access_key => ENV['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']
+    }
+  }   
 end

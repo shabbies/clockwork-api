@@ -50,4 +50,5 @@ gem 'rails_12factor', group: :production
 gem "nilify_blanks"
 gem 'rack-cors', :require => 'rack/cors'
 gem 'paperclip'
+gem 'aws-sdk'
 

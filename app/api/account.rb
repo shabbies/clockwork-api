@@ -30,7 +30,7 @@ class Account < Grape::API
 		    @user.username = params[:username]
 		    @user.contact_number = params[:contact_number]
 		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment)
-		    @user.avatar_path = attachment[:filename]
+		    @user.avatar_path = root_path + "/avatars/" + attachment[:filename]
 		    if @user.save
 		    	status 200
 		    	@user.to_json

@@ -10,7 +10,11 @@ class User < ActiveRecord::Base
   	has_many :published_jobs, 	:class_name => "Post", 	:foreign_key => "owner_id"
   	has_many :matchings,		:dependent => :destroy, :foreign_key => "applicant_id"
   	has_many :jobs,				:class_name => "Post", 	through: :matchings,	:source => "applicant"
-  	has_attached_file :avatar, 	:path => ":rails_root/public/avatars/:filename"
+  	has_attached_file :avatar, 	:path => ":rails_root/public/avatars/:filename", styles: {
+	    thumb: '100x100>',
+	    square: '200x200#',
+	    medium: '300x300>'
+	}
   	validates_attachment_content_type :avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
 	def ensure_authentication_token
