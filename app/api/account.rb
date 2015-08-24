@@ -32,7 +32,7 @@ class Account < Grape::API
 		    @user.date_of_birth = date_of_birth
 		    @user.username = params[:username]
 		    @user.contact_number = params[:contact_number]
-		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment)
+		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
 		    @user.avatar_path = @user.avatar.url
 		    if @user.save
 		    	status 200
