@@ -10,7 +10,7 @@ class RegistrationsController < Devise::RegistrationsController
   			existing_user = User.find_by("email" => sign_up_params[:email])
   			if existing_user
   				existing_user.facebook_id = sign_up_params[:facebook_id]
-  				existing_user.avatar_path = sign_up_params[:avatar_path]
+  				existing_user.avatar_path = sign_up_params[:avatar_path] unless existing_user.avatar
   				existing_user.save
   				session[:user_id] = existing_user.id
   				respond_with existing_user, location: after_sign_up_path_for(existing_user)

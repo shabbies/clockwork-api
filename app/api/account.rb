@@ -28,12 +28,21 @@ class Account < Grape::API
 		        }
 		    end
 
-		    @user.address = params[:address]
-		    @user.date_of_birth = date_of_birth
-		    @user.username = params[:username]
-		    @user.contact_number = params[:contact_number]
-		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
-		    @user.avatar_path = @user.avatar.url
+		    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
+		    	error("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
+		    	error("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
+
+		    	@user.password = params[:password]
+		    end
+
+		    @user.address = params[:address] unless params[:address].blank?
+		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
+		    @user.username = params[:username] unless params[:username].blank?
+		    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
+		    if avatar
+		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
+		    	@user.avatar_path = @user.avatar.url
+		    end
 		    if @user.save
 		    	status 200
 		    	@user.to_json
