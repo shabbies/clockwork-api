@@ -10,7 +10,7 @@ class RegistrationsController < Devise::RegistrationsController
   			existing_user = User.find_by("email" => sign_up_params[:email])
   			if existing_user
   				existing_user.facebook_id = sign_up_params[:facebook_id]
-  				existing_user.avatar_path = sign_up_params[:profile_picture]
+  				existing_user.avatar_path = sign_up_params[:avatar_path]
   				existing_user.save
   				session[:user_id] = existing_user.id
   				respond_with existing_user, location: after_sign_up_path_for(existing_user)
@@ -19,7 +19,7 @@ class RegistrationsController < Devise::RegistrationsController
 	  			password = Devise.friendly_token.first(8)
 	  			resource.password = password
 	  			resource.password_confirmation = password
-	  			resource.avatar_path = "http://graph.facebook.com/" + sign_up_params[:profile_picture] + "/picture"
+	  			resource.avatar_path = sign_up_params[:avatar_path]
 	  		end
   		end
 
@@ -72,7 +72,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   	private
     def sign_up_params
-    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :profile_picture)
+    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path)
   	end
 
   	def account_update_params
