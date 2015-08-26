@@ -29,8 +29,8 @@ class Account < Grape::API
 		    end
 
 		    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
-		    	error("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
-		    	error("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
+		    	error!("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
+		    	error!("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
 
 		    	@user.password = params[:password]
 		    end
