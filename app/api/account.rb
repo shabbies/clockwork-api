@@ -18,6 +18,7 @@ class Account < Grape::API
 			end
 
 			avatar = params[:avatar]
+			p avatar
 			attachment = nil
 			if avatar
 				attachment = {
