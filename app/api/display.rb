@@ -6,8 +6,8 @@ class Display < Grape::API
 	      	all_post = Post.where.not(:status => "expired").all
 	      	return_array = Array.new
 	      	all_post.each do |post|
-	      		expiry_date = Date.parse(post.expiry_date)
-	      		if expiry_date >= Date.today - 1
+	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
+	      		if expiry_date <= Date.today - 1
 	      			post.status = "expired"
 	      			post.save
 	      		else
