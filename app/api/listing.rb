@@ -16,6 +16,7 @@ class Listing < Grape::API
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
 		    requires :job_date,		type: String
+		    requires :expiry_date,	type: String
 		end
 
 		## This takes care of creating post
@@ -24,9 +25,11 @@ class Listing < Grape::API
 
 			job_date = Date.parse(params[:job_date])
 			posting_date = Date.today
+			expiry_date = Date.parse(params[:expiry_date])
 			salary = params[:salary]
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
+			error!("Bad Request - The expiry date should be before the job date", 400) if job_date > expiry_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 
 		    post = Post.create!({
@@ -37,6 +40,7 @@ class Listing < Grape::API
 			    location: params[:location],
 			    posting_date: posting_date,
 			    job_date: job_date,
+			    expiry_date: expiry_date,
 			    status: "listed"
 		    })
 		    @user.published_jobs << post
@@ -88,7 +92,8 @@ class Listing < Grape::API
 			    salary: salary,
 			    description: params[:description],
 			    location: params[:location],
-			    job_date: job_date
+			    job_date: job_date,
+			    expiry_date: job_date - 1
 		    })
 
 		    status 200

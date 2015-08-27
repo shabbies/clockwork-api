@@ -18,7 +18,6 @@ class Account < Grape::API
 			end
 
 			avatar = params[:avatar]
-			p avatar
 			attachment = nil
 			if avatar
 				attachment = {
@@ -180,6 +179,26 @@ class Account < Grape::API
 
 	    	status 200
 		    job_array.to_json
+		end
+
+		desc "mark applicant as complete"
+		params do
+			requires :email,		type: String
+			requires :applicant_id,	type: Integer
+			requires :post_id,		type: Integer
+		end
+
+		post :complete do
+	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
+	    	
+	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "pending"
+	    	
+	    	matching.status = "hired"
+	    	matching.save
+
+	    	status 200
+	    	matching.to_json
 		end
 	end
 end
