@@ -3,7 +3,18 @@ class Display < Grape::API
 		# GET: /api/v1/posts/all.json
 		desc "List all Posts"
 	    get :all do
-	      	Post.all
+	      	all_post = Post.where.not(:status => "expired").all
+	      	return_array = Array.new
+	      	all_post.each do |post|
+	      		expiry_date = Date.parse(post.expiry_date)
+	      		if expiry_date >= Date.today - 1
+	      			post.status = "expired"
+	      			post.save
+	      		else
+	      			return_array << post
+	      		end
+	      	end
+	      	return_array.to_json
 	    end
 
 	    desc "List all Posts sorted by salary"
