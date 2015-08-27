@@ -19,17 +19,17 @@ class Display < Grape::API
 
 	    desc "List all Posts sorted by salary"
 	    get :all_salary do
-	      	Post.order(:salary).reverse_order
+	      	Post.where.not(:status => "expired").order(:salary).reverse_order
 	    end
 
 	    desc "List all Posts sorted by latest first"
 	    get :all_latest do
-	      	Post.order(:created_at).reverse_order
+	      	Post.where.not(:status => "expired").order(:created_at).reverse_order
 	    end
 
 	    desc "List all Posts sorted by oldest first"
 	    get :all_oldest do
-	      	Post.order(:created_at)
+	      	Post.where.not(:status => "expired").order(:created_at)
 	    end
 	end
 
