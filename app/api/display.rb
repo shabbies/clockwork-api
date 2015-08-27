@@ -12,6 +12,7 @@ class Display < Grape::API
 	      				post.status = "completed"
 	      			else
 	      				post.status = "expired"
+	      			end
 	      			post.save
 	      		else
 	      			return_array << post
