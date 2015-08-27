@@ -72,6 +72,7 @@ class Account < Grape::API
 	    		job_hash[:location] = job.location
 	    		job_hash[:posting_date] = job.posting_date
 	    		job_hash[:job_date] = job.job_date
+	    		job_hash[:expiry_date] = job.expiry_date
 	    		job_hash[:status] = job.status
 	    		job_hash[:applicant_count] = Matching.where(:post_id => job.id).count
 	    		job_array << job_hash
