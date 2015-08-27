@@ -8,7 +8,10 @@ class Display < Grape::API
 	      	all_post.each do |post|
 	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
 	      		if expiry_date <= Date.today - 1
-	      			post.status = "expired"
+	      			if Matching.where(:post_id => post.id, :status => "hired").count != 0
+	      				post.status = "completed"
+	      			else
+	      				post.status = "expired"
 	      			post.save
 	      		else
 	      			return_array << post
@@ -19,17 +22,17 @@ class Display < Grape::API
 
 	    desc "List all Posts sorted by salary"
 	    get :all_salary do
-	      	Post.where.not(:status => "expired").order(:salary).reverse_order
+	      	Post.where.not(:status => ["expired", "completed"]).order(:salary).reverse_order
 	    end
 
 	    desc "List all Posts sorted by latest first"
 	    get :all_latest do
-	      	Post.where.not(:status => "expired").order(:created_at).reverse_order
+	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at).reverse_order
 	    end
 
 	    desc "List all Posts sorted by oldest first"
 	    get :all_oldest do
-	      	Post.where.not(:status => "expired").order(:created_at)
+	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
 	    end
 	end
 
