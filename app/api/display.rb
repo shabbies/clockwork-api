@@ -14,7 +14,7 @@ class Display < Grape::API
 	      			return_array << post
 	      		end
 	      	end
-	      	return_array.to_json
+	      	return_array
 	    end
 
 	    desc "List all Posts sorted by salary"
