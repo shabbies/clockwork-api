@@ -29,6 +29,7 @@ class Listing < Grape::API
 			posting_date = Date.today
 			expiry_date = Date.parse(params[:expiry_date])
 			salary = params[:salary]
+			p expiry_date
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
 			error!("Bad Request - The expiry date should be before the job date", 400) if job_date > expiry_date
