@@ -257,7 +257,7 @@ class Account < Grape::API
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	
-	    	matching.status = "accepted"
+	    	matching.status = "hired"
 	    	matching.save
 
 	    	status 200
