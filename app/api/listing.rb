@@ -29,15 +29,13 @@ class Listing < Grape::API
 			posting_date = Date.today
 			expiry_date = Date.parse(params[:expiry_date])
 			salary = params[:salary]
-			puts "BYE"
-			puts params[:expiry_date]
-			puts params[:job_date]
-			puts Date.parse(params[:expiry_date])
-			puts job_date > expiry_date
+			duration = params[:duration]
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
 			error!("Bad Request - The expiry date should be before the job date", 400) if job_date < expiry_date
+			error!("Bad Request - The expiry date should be after today", 400) if job_date < posting_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
+			error!("Bad Request - The duration should not be negative", 400) if duration < 0
 
 		    post = Post.create!({
 			    header: params[:header],
@@ -50,7 +48,7 @@ class Listing < Grape::API
 			    expiry_date: expiry_date,
 			    status: "listed",
 			    start_time: params[:start_time],
-			    duration: params[:duration]
+			    duration: duration
 		    })
 		    @user.published_jobs << post
 		    @user.save
@@ -87,16 +85,22 @@ class Listing < Grape::API
 		    requires :job_date,		type: String
 		    requires :start_time,	type: String
 		    requires :duration, 	type: Integer
+		    requires :expiry_date,	type: String
 		end
 		post :update do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	job_date = Date.parse(params[:job_date])
+	    	expiry_date = Date.parse(params[:expiry_date])
 	    	salary = params[:salary]
+	    	duration = params[:duration]
 
 			error!("Bad Request - The post cannot be found", 400) unless post
 			error!("Bad Request - The job date should be after today", 400) if job_date < Date.today
+			error!("Bad Request - The expiry date should be before the job date", 400) if job_date < expiry_date
+			error!("Bad Request - The expiry date should be after today", 400) if job_date < Date.today
 	    	error!('Unauthorised - Only the post owner is allowed to edit post', 403) unless post.owner_id == @user.id
 	    	error!("Bad Request - The salary should not be negative", 400) if salary < 0
+			error!("Bad Request - The duration should not be negative", 400) if duration < 0
 
 		    post.update({
 		    	header: params[:header],
@@ -104,9 +108,9 @@ class Listing < Grape::API
 			    description: params[:description],
 			    location: params[:location],
 			    job_date: job_date,
-			    expiry_date: job_date - 1,
+			    expiry_date: expiry_date,
 			    start_time: params[:start_time],
-			    duration: params[:duration]
+			    duration: duration
 		    })
 
 		    status 200
