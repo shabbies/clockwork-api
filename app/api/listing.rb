@@ -12,11 +12,13 @@ class Listing < Grape::API
 		params do
 			requires :email, 		type: String
 		    requires :header, 		type: String
-		    requires :salary, 		type: Integer
+		    requires :salary, 		type: Float
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
 		    requires :job_date,		type: String
 		    requires :expiry_date,	type: String
+		    requires :start_time,	type: String
+		    requires :duration,		type: Integer
 		end
 
 		## This takes care of creating post
@@ -41,7 +43,9 @@ class Listing < Grape::API
 			    posting_date: posting_date,
 			    job_date: job_date,
 			    expiry_date: expiry_date,
-			    status: "listed"
+			    status: "listed",
+			    start_time: params[:start_time],
+			    duration: params[:duration]
 		    })
 		    @user.published_jobs << post
 		    @user.save
@@ -71,11 +75,13 @@ class Listing < Grape::API
 		params do
 			requires :email,		type: String
 			requires :header, 		type: String
-		    requires :salary, 		type: Integer
+		    requires :salary, 		type: Float
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
 		    requires :post_id,		type: String
 		    requires :job_date,		type: String
+		    requires :start_time,	type: String
+		    requires :duration, 	type: Integer
 		end
 		post :update do
 	    	post = Post.where(:id => params[:post_id]).first
@@ -93,7 +99,9 @@ class Listing < Grape::API
 			    description: params[:description],
 			    location: params[:location],
 			    job_date: job_date,
-			    expiry_date: job_date - 1
+			    expiry_date: job_date - 1,
+			    start_time: params[:start_time],
+			    duration: params[:duration]
 		    })
 
 		    status 200
