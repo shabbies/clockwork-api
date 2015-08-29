@@ -36,7 +36,7 @@ class Listing < Grape::API
 			puts job_date > expiry_date
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
-			error!("Bad Request - The expiry date should be before the job date", 400) if job_date > expiry_date
+			error!("Bad Request - The expiry date should be before the job date", 400) if job_date < expiry_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 
 		    post = Post.create!({
