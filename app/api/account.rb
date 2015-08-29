@@ -249,12 +249,11 @@ class Account < Grape::API
 		desc "accept job offer"
 		params do
 			requires :email,		type: String
-			requires :applicant_id,	type: Integer
 			requires :post_id,		type: Integer
 		end
 
 		post :accept do
-	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id], :status => "offered").first
+	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	
