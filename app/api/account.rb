@@ -206,5 +206,25 @@ class Account < Grape::API
 	    	status 200
 	    	matching.to_json
 		end
+
+		desc "offer job"
+		params do
+			requires :email,		type: String
+			requires :applicant_id,	type: Integer
+			requires :post_id,		type: Integer
+		end
+
+		post :offer do
+	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
+	    	
+	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	    	error!("Bad Request - You have already offered this person", 403) unless matching.status == "pending"
+	    	
+	    	matching.status = "offered"
+	    	matching.save
+
+	    	status 200
+	    	matching.to_json
+		end
 	end
 end
