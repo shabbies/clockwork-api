@@ -226,5 +226,24 @@ class Account < Grape::API
 	    	status 200
 	    	matching.to_json
 		end
+
+		desc "withdraw job offer"
+		params do
+			requires :email,		type: String
+			requires :applicant_id,	type: Integer
+			requires :post_id,		type: Integer
+		end
+
+		post :withdraw_offer do
+	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id] :status => "offered").first
+	    	
+	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	    	
+	    	matching.status = "pending"
+	    	matching.save
+
+	    	status 200
+	    	matching.to_json
+		end
 	end
 end
