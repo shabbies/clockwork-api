@@ -141,6 +141,47 @@ class Listing < Grape::API
 	    	applicant_array.to_json
 		end
 
+		desc "get all applicants"
+		params do
+			requires :email,		type: String
+			requires :post_id,		type: Integer
+		end
+
+		post :get_all_applicants do
+	    	post = Post.where(:id => params[:post_id]).first
+
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
+	    	
+	    	all_map = Hash.new
+	    	applicant_array = Array.new
+	    	hired_array = Array.new
+	    	offered_array = Array.new
+	    	completed_array = Array.new
+
+	    	matchings = Matching.where(:post_id => post.id).all
+	    	matchings.each do |match|
+	    		user = User.find(match.applicant_id)
+	    		if match.status == "pending"
+	    			applicant_array << user
+	    		elsif match.status == "offered"
+	    			offered_array << user
+	    		elsif match.status == "hired"
+	    			hired_array << user
+	    		else
+	    			completed_array << user
+	    		end
+	    	end
+
+	    	all_map[:pending] = applicant_array
+	    	all_map[:offered] = offered_array
+	    	all_map[:hired] = hired_array
+	    	all_map[:completed] = completed_array
+
+	    	status 201
+	    	all_map.to_json
+		end
+
 		desc "get hired list"
 		params do
 			requires :email,		type: String
