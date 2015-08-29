@@ -198,9 +198,9 @@ class Account < Grape::API
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
-	    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "pending"
+	    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "hired"
 	    	
-	    	matching.status = "hired"
+	    	matching.status = "completed"
 	    	matching.save
 
 	    	status 200
