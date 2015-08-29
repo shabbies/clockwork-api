@@ -235,7 +235,7 @@ class Account < Grape::API
 		end
 
 		post :withdraw_offer do
-	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id] :status => "offered").first
+	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	
