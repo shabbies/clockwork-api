@@ -217,6 +217,7 @@ class Listing < Grape::API
 			#user_ratings structure => [{user_id: int, rating: int, comment: string}]
 			user_feedback_array = JSON.parse params[:user_feedback]
 			user_feedback_array.each do |user_feedback_json|
+				puts user_feedback_json
 				user_feedback = JSON.parse user_feedback_json
 				user_id = user_feedback[:user_id]
 				rating = user_feedback[:rating]
