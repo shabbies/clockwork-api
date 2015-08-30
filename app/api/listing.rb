@@ -220,7 +220,7 @@ class Listing < Grape::API
 				user_id = user_feedback[:user_id]
 				rating = user_feedback[:rating]
 				comment = user_feedback[:comment]
-				matching = Matching.where(:post_id => params[:post_id], :applicant_id => user_id)
+				matching = Matching.where(:post_id => params[:post_id], :applicant_id => user_id).first
 				matching.user_rating = rating
 				matching.comments = comment
 				matching.save
