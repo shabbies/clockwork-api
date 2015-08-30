@@ -205,5 +205,28 @@ class Listing < Grape::API
 	    	status 201
 	    	applicant_array.to_json
 		end
+
+		desc "rate user"
+		params do
+			requires :email,				type: String
+			requires :user_feedback,		type: String
+			requires :post_id,				type: Integer
+		end
+
+		post :rate do
+			#user_ratings structure => [{user_id: int, rating: int, comment: string}]
+			user_feedback_array = JSON.parse params[:user_feedback]
+			user_feedback_array.each do |user_feedback|
+				user_id = user_feedback[:user_id]
+				rating = user_feedback[:rating]
+				comment = user_feedback[:comment]
+				matching = Matching.where(:post_id => params[:post_id], :applicant_id => user_id)
+				matching.user_rating = rating
+				matching.comments = comment
+				matching.save
+			end
+
+			status 201
+		end
 	end 
 end
