@@ -162,7 +162,40 @@ class Account < Grape::API
 		post :get_applied_jobs do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
-	    	matchings = Matching.where(:applicant_id => @user.id)
+	    	matchings = Matching.where(:applicant_id => @user.id).all
+	    	job_array = Array.new
+	    	matchings.each do |matching|
+	    		job = Post.find(matching.post_id)
+	    		job_hash = Hash.new
+	    		job_hash[:owner_id] = job.owner_id
+	    		job_hash[:id] = job.id
+	    		job_hash[:header] = job.header
+	    		job_hash[:company] = job.company
+	    		job_hash[:salary] = job.salary
+	    		job_hash[:description] = job.description
+	    		job_hash[:location] = job.location
+	    		job_hash[:posting_date] = job.posting_date
+	    		job_hash[:job_date] = job.job_date
+	    		job_hash[:status] = matching.status
+	    		job_hash[:expiry_date] = job.expiry_date
+	    		job_hash[:start_time] = job.start_time
+	    		job_hash[:duration] = job.duration
+	    		job_array << job_hash
+	    	end
+
+	    	status 200
+		    job_array.to_json
+		end
+
+		desc "get all applied jobs from user"
+		params do
+		    requires :email,	type: String
+		end
+
+		post :get_completed_jobs do
+			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
+
+	    	matchings = Matching.where(:applicant_id => @user.id, :status => "completed").all
 	    	job_array = Array.new
 	    	matchings.each do |matching|
 	    		job = Post.find(matching.post_id)
