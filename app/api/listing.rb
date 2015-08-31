@@ -77,7 +77,7 @@ class Listing < Grape::API
 			[400, "Bad Request - The post cannot be found"],
 			[200, "Post has been successfully deleted"],
 			[403, "Unauthorised - Only the post owner can delete his post"]
-			do
+			] do
 			post = Post.where(:id => params[:post_id]).first
 			error!("Bad Request - The post cannot be found", 400) unless post
 			error!("Unauthorised - Only the post owner can delete his post", 403) unless post.owner_id == @user.id
@@ -111,7 +111,7 @@ class Listing < Grape::API
 				(6)Bad Request - The duration should not be negative"],
 			[200, "Returns Post Object"],
 			[403, "Unauthorised - Only the post owner is allowed to edit post"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	job_date = Date.parse(params[:job_date])
 	    	expiry_date = Date.parse(params[:expiry_date])
@@ -153,7 +153,7 @@ class Listing < Grape::API
 			[200, "IGNORE NO SUCH CODE"],
 			[403, "Unauthorised - Only owner can view applicants"],
 			[401, "Returns list of applicants"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -183,7 +183,7 @@ class Listing < Grape::API
 			[200, "IGNORE NO SUCH CODE"],
 			[403, "Unauthorised - Only owner can view applicants"],
 			[201, "Returns a list of all applicants (regardless of status)"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -230,7 +230,7 @@ class Listing < Grape::API
 			[200, "IGNORE NO SUCH CODE"],
 			[403, "Unauthorised - Only owner can view applicants"],
 			[201, "Returns a list of all hired applicants"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -259,7 +259,7 @@ class Listing < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[200, "IGNORE NO SUCH CODE"],
 			[201, "Rate successfully"]
-			do
+			]do
 			#user_ratings structure => [{user_id: int, rating: int, comment: string}]
 			user_feedback_array = JSON.parse params[:user_feedback]
 			user_feedback_array.each do |user_feedback|

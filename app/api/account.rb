@@ -18,7 +18,7 @@ class Account < Grape::API
 			[200, "Save successful"],
 			[403, "Unauthorised - Old password is invalid"],
 			[500, "Internal Server Error - save failed"]
-			do
+			] do
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
@@ -67,7 +67,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only employers are allowed to view their published jobs"
 			[200, "Returns array of published jobs"]
-			do
+			] do
 			error!("Bad Request - Only employers are allowed to view their published jobs", 400) unless @user.account_type == "employer"
 
 		   	jobs = @user.published_jobs
@@ -107,7 +107,7 @@ class Account < Grape::API
 				(2)Bad Request - Only job seekers are allowed to apply for a job"],
 			[403, "Bad Request - User has already applied"],
 			[200, "Returns post object"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	matching = Matching.where(:post_id => post, :applicant_id => @user.id).first
 
@@ -135,7 +135,7 @@ class Account < Grape::API
 				(2)Bad Request - Post cannot be found | 
 				(3)Bad Request - You can only withdraw a pending application"],
 			[200, "Returns a list of remaining user applications"]
-			do
+			] do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	account_type = @user.account_type
 
@@ -169,7 +169,7 @@ class Account < Grape::API
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Returns the matching between user and job"], 
 			[403, "Bad Request - You have already hired this person"] 
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -191,7 +191,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only job seekers are allowed to view their applications"],
 			[200, "Returns array of applied jobs"]
-			do
+			] do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
 	    	matchings = Matching.where(:applicant_id => @user.id).all
@@ -228,7 +228,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only job seekers are allowed to view their applications"],
 			[200, "Returns array of completed jobs"] 
-			do
+			] do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
 	    	matchings = Matching.where(:applicant_id => @user.id, :status => "completed").all
@@ -268,7 +268,7 @@ class Account < Grape::API
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Mark as complete successfully"],  
 			[403, "Bad Request - You have already hired this person"]  
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -293,7 +293,7 @@ class Account < Grape::API
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Offer job successfully"],  
 			[403, "Bad Request - You have already offered this person"] 
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -317,7 +317,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Withdraw job offer successfully"]
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -339,7 +339,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Accept job offer successfully"] 
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -360,7 +360,7 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Hired successfully"]  
-			do
+			] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
