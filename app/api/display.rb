@@ -35,6 +35,14 @@ class Display < Grape::API
 	    get :all_oldest do
 	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
 	    end
+
+	    desc "search API"
+	    params do
+			requires :query, 		type: String
+		end
+	    get :search do
+	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
+	    end
 	end
 
 	resource :users do

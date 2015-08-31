@@ -22,7 +22,16 @@ class Listing < Grape::API
 		end
 
 		## This takes care of creating post
-		post :new do
+		post :new, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "(1)Bad Request - The job date should be after today | 
+				(2)Bad Request - The expiry date should be before the job date | 
+				(3)Bad Request - The expiry date should be before the job date |
+				(4)Bad Request - The duration should not be negative
+				"],
+			[200, "DOES NOTHING IGNORE IT"],
+			[201, "Post successfully created"]
+			] do
 			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
 
 			job_date = Date.parse(params[:job_date])

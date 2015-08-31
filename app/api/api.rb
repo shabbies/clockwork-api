@@ -1,6 +1,9 @@
+require 'grape-swagger'
+
 class API < Grape::API
   	prefix 'api'
   	version 'v1', using: :path
+    format :json
 
   	before do
       headers['Access-Control-Allow-Origin'] = '*'
@@ -13,5 +16,6 @@ class API < Grape::API
     mount Account
     mount Display
     mount Test
+    add_swagger_documentation api_version: 'v1'
 end
 
