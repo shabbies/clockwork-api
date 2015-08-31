@@ -8,7 +8,15 @@ class Account < Grape::API
 	resource :users do
 		desc "updates a user"
 		params do
-			requires :email, 			type: String
+			requires :email, 					type: String
+			optional :date_of_birth, 			type: String
+			optional :avatar, 					type: Rack::Multipart::UploadedFile
+			optional :password,					type: String,	desc: "Only required when updating password"
+			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
+			optional :old_password,				type: String, 	desc: "Only required when updating password"
+			optional :address,					type: String
+			optional :username,					type: String
+			optional :contact_number,			type: String
 		end
 
 		post :update, :http_codes => [
