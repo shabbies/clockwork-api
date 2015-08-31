@@ -65,7 +65,7 @@ class Account < Grape::API
 
 		post :get_jobs, :http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "Bad Request - Only employers are allowed to view their published jobs"
+			[400, "Bad Request - Only employers are allowed to view their published jobs"],
 			[200, "Returns array of published jobs"]
 			] do
 			error!("Bad Request - Only employers are allowed to view their published jobs", 400) unless @user.account_type == "employer"
