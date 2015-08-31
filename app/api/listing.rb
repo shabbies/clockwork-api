@@ -29,7 +29,7 @@ class Listing < Grape::API
 				(3)Bad Request - The expiry date should be before the job date |
 				(4)Bad Request - The duration should not be negative
 				"],
-			[200, "DOES NOTHING IGNORE IT"],
+			[200, "IGNORE NO SUCH CODE"],
 			[201, "Post successfully created"]
 			] do
 			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
@@ -72,7 +72,12 @@ class Listing < Grape::API
 			requires :post_id, type: String
 		end
 
-		post :delete do
+		post :delete, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - The post cannot be found"],
+			[200, "Post has been successfully deleted"],
+			[403, "Unauthorised - Only the post owner can delete his post"]
+			do
 			post = Post.where(:id => params[:post_id]).first
 			error!("Bad Request - The post cannot be found", 400) unless post
 			error!("Unauthorised - Only the post owner can delete his post", 403) unless post.owner_id == @user.id
@@ -96,7 +101,17 @@ class Listing < Grape::API
 		    requires :duration, 	type: Integer
 		    requires :expiry_date,	type: String
 		end
-		post :update do
+		post :update, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "(1)Bad Request - The post cannot be found | 
+				(2)Bad Request - The job date should be after today | 
+				(3)Bad Request - The expiry date should be before the job date | 
+				(4)Bad Request - The expiry date should be after today | 
+				(5)Bad Request - The salary should not be negative | 
+				(6)Bad Request - The duration should not be negative"],
+			[200, "Returns Post Object"],
+			[403, "Unauthorised - Only the post owner is allowed to edit post"]
+			do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	job_date = Date.parse(params[:job_date])
 	    	expiry_date = Date.parse(params[:expiry_date])
@@ -132,7 +147,13 @@ class Listing < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :get_applicants do
+		post :get_applicants, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - The post cannot be found"],
+			[200, "IGNORE NO SUCH CODE"],
+			[403, "Unauthorised - Only owner can view applicants"],
+			[401, "Returns list of applicants"]
+			do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -156,7 +177,13 @@ class Listing < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :get_all_applicants do
+		post :get_all_applicants, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - Post not found"],
+			[200, "IGNORE NO SUCH CODE"],
+			[403, "Unauthorised - Only owner can view applicants"],
+			[201, "Returns a list of all applicants (regardless of status)"]
+			do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -197,7 +224,13 @@ class Listing < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :get_hired do
+		post :get_hired, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - Post not found"],
+			[200, "IGNORE NO SUCH CODE"],
+			[403, "Unauthorised - Only owner can view applicants"],
+			[201, "Returns a list of all hired applicants"]
+			do
 	    	post = Post.where(:id => params[:post_id]).first
 
 	    	error!("Bad Request - Post not found", 400) unless post
@@ -222,7 +255,11 @@ class Listing < Grape::API
 			requires :post_id,				type: Integer
 		end
 
-		post :rate do
+		post :rate, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "IGNORE NO SUCH CODE"],
+			[201, "Rate successfully"]
+			do
 			#user_ratings structure => [{user_id: int, rating: int, comment: string}]
 			user_feedback_array = JSON.parse params[:user_feedback]
 			user_feedback_array.each do |user_feedback|

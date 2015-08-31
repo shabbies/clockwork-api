@@ -2,7 +2,7 @@ class Display < Grape::API
 	resource :posts do	
 		# GET: /api/v1/posts/all.json
 		desc "List all Posts"
-	    get :all do
+	    get :all, :http_codes => [200, "Get successful"]  do
 	      	all_post = Post.where.not(:status => "expired").all
 	      	return_array = Array.new
 	      	all_post.each do |post|
@@ -18,21 +18,22 @@ class Display < Grape::API
 	      			return_array << post
 	      		end
 	      	end
+	      	status 200
 	      	return_array
 	    end
 
 	    desc "List all Posts sorted by salary"
-	    get :all_salary do
+	    get :all_salary, :http_codes => [200, "Get successful"] do
 	      	Post.where.not(:status => ["expired", "completed"]).order(:salary).reverse_order
 	    end
 
 	    desc "List all Posts sorted by latest first"
-	    get :all_latest do
+	    get :all_latest, :http_codes => [200, "Get successful"] do
 	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at).reverse_order
 	    end
 
 	    desc "List all Posts sorted by oldest first"
-	    get :all_oldest do
+	    get :all_oldest, :http_codes => [200, "Get successful"] do
 	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
 	    end
 
@@ -40,16 +41,13 @@ class Display < Grape::API
 	    params do
 			requires :query, 		type: String
 		end
-	    get :search do
+	    get :search, :http_codes => [200, "Get successful"] do
 	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
 	    end
 	end
 
 	resource :users do
-	    get :get_calendar_formatted_dates do
-	    	user = User.find(params[:id])
-	    	error!('Unauthorized - Invalid authentication token', 401) unless user
-
+	    get :get_calendar_formatted_dates, :http_codes => [200, "Get successful"] do
 	    	job_array = Array.new
 	    	applied_jobs = user.applied_jobs
 
