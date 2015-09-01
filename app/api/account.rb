@@ -72,6 +72,9 @@ class Account < Grape::API
 			requires :email, 					type: String
 			optional :date_of_birth, 			type: String
 			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar"
+			optional :password,					type: String,	desc: "Only required when updating password"
+			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
+			optional :old_password,				type: String, 	desc: "Only required when updating password"
 			optional :address,					type: String
 			optional :username,					type: String
 			optional :contact_number,			type: String
@@ -82,7 +85,8 @@ class Account < Grape::API
 		post :complete_profile, :http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old || 
-				(2)Bad Request - Invalid Gender: only M and F allowed"],
+				(2)Bad Request - Invalid Gender: only M and F allowed ||
+				(3)Bad Request - Passwords do not match"],
 			[200, "Save successful"],
 			[500, "Internal Server Error - save failed"]
 			] do
@@ -106,6 +110,13 @@ class Account < Grape::API
 		            :headers => avatar[:head],
 		            :tempfile => avatar[:tempfile]
 		        }
+		    end
+		    
+		    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
+		    	error!("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
+		    	error!("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
+
+		    	@user.password = params[:password]
 		    end
 
 		    @user.address = params[:address] unless params[:address].blank?
