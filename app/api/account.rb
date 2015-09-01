@@ -111,7 +111,7 @@ class Account < Grape::API
 		            :tempfile => avatar[:tempfile]
 		        }
 		    end
-		    
+
 		    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
 		    	error!("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
 		    	error!("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
@@ -137,7 +137,7 @@ class Account < Grape::API
 			end
 		end
 
-		desc "get all published jobs from user"
+		desc "get all published jobs from employer"
 		params do
 		    requires :email,	type: String
 		end
@@ -273,7 +273,7 @@ class Account < Grape::API
 			] do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
-	    	matchings = Matching.where(:applicant_id => @user.id).all
+	    	matchings = Matching.where(:applicant_id => @user.id).order(:status).all
 	    	job_array = Array.new
 	    	matchings.each do |matching|
 	    		job = Post.find(matching.post_id)
@@ -298,7 +298,7 @@ class Account < Grape::API
 		    job_array.to_json
 		end
 
-		desc "get all applied jobs from user"
+		desc "get all completed jobs from user"
 		params do
 		    requires :email,	type: String
 		end
