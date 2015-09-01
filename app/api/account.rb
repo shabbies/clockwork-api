@@ -10,7 +10,7 @@ class Account < Grape::API
 		params do
 			requires :email, 					type: String
 			optional :date_of_birth, 			type: String
-			optional :avatar, 					type: Rack::Multipart::UploadedFile
+			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar"
 			optional :password,					type: String,	desc: "Only required when updating password"
 			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
 			optional :old_password,				type: String, 	desc: "Only required when updating password"
@@ -27,6 +27,7 @@ class Account < Grape::API
 			[403, "Unauthorised - Old password is invalid"],
 			[500, "Internal Server Error - save failed"]
 			] do
+
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
@@ -54,6 +55,65 @@ class Account < Grape::API
 		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
 		    @user.username = params[:username] unless params[:username].blank?
 		    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
+		    if avatar
+		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
+		    	@user.avatar_path = @user.avatar.url
+		    end
+		    if @user.save
+		    	status 200
+		    	@user.to_json
+			else
+				error!("Save has failed, please inform the administrator", 500)
+			end
+		end
+
+		desc "complete user profile"
+		params do
+			requires :email, 					type: String
+			optional :date_of_birth, 			type: String
+			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar"
+			optional :address,					type: String
+			optional :username,					type: String
+			optional :contact_number,			type: String
+			optional :gender,					type: String
+			optional :nationality,				type: String
+		end
+
+		post :complete_profile, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "(1)Bad Request - You should be at least 15 years old || 
+				(2)Bad Request - Invalid Gender: only M and F allowed"],
+			[200, "Save successful"],
+			[500, "Internal Server Error - save failed"]
+			] do
+
+			gender = params[:gender].upcase
+			unless gender.blank?
+				error!("Bad Request - Invalid Gender: only M and F allowed", 400) unless gender == "M" || gender == "F"
+			end
+			
+			unless params[:date_of_birth].blank?
+				date_of_birth = Date.parse(params[:date_of_birth])
+				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
+
+			avatar = params[:avatar]
+			attachment = nil
+			if avatar
+				attachment = {
+		            :filename => avatar[:filename],
+		            :type => avatar[:type],
+		            :headers => avatar[:head],
+		            :tempfile => avatar[:tempfile]
+		        }
+		    end
+
+		    @user.address = params[:address] unless params[:address].blank?
+		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
+		    @user.username = params[:username] unless params[:username].blank?
+		    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
+		    @user.gender = gender unless gender.blank?
+		    @user.nationality = params[:nationality] unless params[:nationality].blank?
 		    if avatar
 		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
 		    	@user.avatar_path = @user.avatar.url
