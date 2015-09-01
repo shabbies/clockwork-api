@@ -3,7 +3,6 @@ require 'grape-swagger'
 class API < Grape::API
   	prefix 'api'
   	version 'v1', using: :path
-    format :json
 
   	before do
       headers['Access-Control-Allow-Origin'] = '*'
