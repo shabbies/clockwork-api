@@ -78,8 +78,8 @@ class Account < Grape::API
 			optional :address,					type: String
 			optional :username,					type: String
 			optional :contact_number,			type: String
-			optional :gender,					type: String
-			optional :nationality,				type: String
+			optional :gender,					type: String,	desc: "M or F"
+			optional :nationality,				type: String,	desc: "Singaporean, Singapore PR or Others"
 		end
 
 		post :complete_profile, :http_codes => [
@@ -328,6 +328,8 @@ class Account < Grape::API
 	    		job_hash[:expiry_date] = job.expiry_date
 	    		job_hash[:start_time] = job.start_time
 	    		job_hash[:duration] = job.duration
+	    		job_hash[:rating] = matching.user_rating
+	    		job_hash[:comments] = matching.comments
 	    		job_array << job_hash
 	    	end
 
