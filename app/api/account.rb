@@ -91,7 +91,7 @@ class Account < Grape::API
 			[500, "Internal Server Error - save failed"]
 			] do
 
-			unless gender.blank?
+			unless params[:gender].blank?
 				gender = params[:gender].upcase
 				error!("Bad Request - Invalid Gender: only M and F allowed", 400) unless gender == "M" || gender == "F"
 			end
@@ -435,7 +435,6 @@ class Account < Grape::API
 		desc "get all user ratings"
 		params do
 			requires :email,		type: String
-			requires :post_id,		type: Integer
 		end
 
 		post :accept, :http_codes => [

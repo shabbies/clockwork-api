@@ -270,8 +270,19 @@ class Listing < Grape::API
 				matching.user_rating = rating
 				matching.comments = comment
 				matching.save
+				retrieved_user = Matching.applicant
+				if rating == -1
+					bad_rating = retrieved_user.bad_rating += 1
+					retrieved_user.bad_rating = bad_rating
+				elsif rating === 0
+					neutral_rating = retrieved_user.neutral_rating += 1
+					retrieved_user.neutral_rating = neutral_rating
+				else
+					good_rating = retrieved_user.good_rating += 1
+					retrieved_user.good_rating = good_rating
+				end
+				retrieved_user.save
 			end
-
 			status 201
 		end
 	end 
