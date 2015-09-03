@@ -149,7 +149,7 @@ class Account < Grape::API
 			] do
 			error!("Bad Request - Only employers are allowed to view their published jobs", 400) unless @user.account_type == "employer"
 
-		   	jobs = @user.published_jobs
+		   	jobs = @user.published_jobs.order(:status)
 	    	job_array = Array.new
 	    	jobs.each do |job|
 	    		job_hash = Hash.new
