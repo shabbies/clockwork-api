@@ -91,8 +91,8 @@ class Account < Grape::API
 			[500, "Internal Server Error - save failed"]
 			] do
 
-			gender = params[:gender].upcase
 			unless gender.blank?
+				gender = params[:gender].upcase
 				error!("Bad Request - Invalid Gender: only M and F allowed", 400) unless gender == "M" || gender == "F"
 			end
 			
@@ -411,6 +411,28 @@ class Account < Grape::API
 		end
 
 		desc "accept job offer"
+		params do
+			requires :email,		type: String
+			requires :post_id,		type: Integer
+		end
+
+		post :accept, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - Invalid job applicant / post"],
+			[200, "Accept job offer successfully"] 
+			] do
+	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
+	    	
+	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	    	
+	    	matching.status = "hired"
+	    	matching.save
+
+	    	status 200
+	    	matching.to_json
+		end
+
+		desc "get all user ratings"
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
