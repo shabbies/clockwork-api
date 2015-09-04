@@ -44,7 +44,7 @@ class Listing < Grape::API
 			duration = ((end_time - start_time) / 60 / 60).ceil
 
 			error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
-			error!("Bad Request - The end date should be after the start date", 400) unless end_date > job_date
+			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
 
