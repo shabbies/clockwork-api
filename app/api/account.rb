@@ -291,6 +291,8 @@ class Account < Grape::API
 	    		job_hash[:expiry_date] = job.expiry_date
 	    		job_hash[:start_time] = job.start_time
 	    		job_hash[:duration] = job.duration
+	    		job_hash[:rating] = matching.user_rating
+	    		job_hash[:comment] = matching.comments
 	    		job_array << job_hash
 	    	end
 
