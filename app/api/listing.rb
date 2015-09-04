@@ -16,35 +16,37 @@ class Listing < Grape::API
 		    requires :description, 	type: String
 		    requires :location,	 	type: String
 		    requires :job_date,		type: String
-		    requires :expiry_date,	type: String
+		    requires :end_date,		type: String
 		    requires :start_time,	type: String
-		    requires :duration,		type: Integer
+		    requires :end_time,		type: String
 		end
 
 		## This takes care of creating post
 		post :new, :http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - The job date should be after today | 
-				(2)Bad Request - The expiry date should be before the job date | 
-				(3)Bad Request - The expiry date should be before the job date |
-				(4)Bad Request - The duration should not be negative
+				(2)Bad Request - The end date should be after the start date | 
+				(3)Bad Request - The salary should not be negative |
+				(4)Bad Request - End time should be after start time
 				"],
 			[200, "IGNORE NO SUCH CODE"],
-			[201, "Post successfully created"]
+			[201, "Post successfully created"],
+			[403, "Unauthorised - Only employers can post a new job listing"]
 			] do
 			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
 
 			job_date = Date.parse(params[:job_date])
+			end_date = Date.parse(params[:end_date])
 			posting_date = Date.today
-			expiry_date = Date.parse(params[:expiry_date])
 			salary = params[:salary]
-			duration = params[:duration]
+			start_time = Time.parse(params[:start_time])
+			end_time = Time.parse(params[:end_time])
+			duration = ((end_time - start_time) / 60 / 60).ceil
 
 			error!("Bad Request - The job date should be after today", 400) if job_date < posting_date
-			error!("Bad Request - The expiry date should be before the job date", 400) if job_date < expiry_date
-			error!("Bad Request - The expiry date should be after today", 400) if job_date < posting_date
+			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
-			error!("Bad Request - The duration should not be negative", 400) if duration < 0
+			error!("Bad Request - End time should be after start time", 400) if a > b
 
 		    post = Post.create!({
 			    header: params[:header],
@@ -54,9 +56,11 @@ class Listing < Grape::API
 			    location: params[:location],
 			    posting_date: posting_date,
 			    job_date: job_date,
-			    expiry_date: expiry_date,
+			    end_date: end_date,
+			    expiry_date: Date.parse(params[:job_date]) - 1,
 			    status: "listed",
 			    start_time: params[:start_time],
+			    end_time: params[:end_time],
 			    duration: duration
 		    })
 		    @user.published_jobs << post

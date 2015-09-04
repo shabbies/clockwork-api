@@ -71,7 +71,7 @@ class Account < Grape::API
 		params do
 			requires :email, 					type: String
 			optional :date_of_birth, 			type: String
-			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar"
+			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar, name of file should be {:user_id}_avatar"
 			optional :password,					type: String,	desc: "Only required when updating password"
 			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
 			optional :old_password,				type: String, 	desc: "Only required when updating password"
