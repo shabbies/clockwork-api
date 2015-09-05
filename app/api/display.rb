@@ -56,7 +56,7 @@ class Display < Grape::API
 	    	job_array = Array.new
 
 	    	if user
-		    	matchings = Matching.where(:applicant_id).not(:status => "completed").all
+		    	matchings = Matching.where(:applicant_id).where.not(:status => "completed").all
 
 		    	matchings.each do |match|
 		    		job = Post.find(match.post_id)
