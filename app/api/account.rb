@@ -92,7 +92,7 @@ class Account < Grape::API
 			] do
 
 			unless params[:gender].blank?
-				gender = params[:gender].upcase
+				gender = params[:gender].strip.upcase
 				error!("Bad Request - Invalid Gender: only M and F allowed", 400) unless gender == "M" || gender == "F"
 			end
 			
@@ -119,12 +119,14 @@ class Account < Grape::API
 		    	@user.password = params[:password]
 		    end
 
+		    nationality = params[:nationality].strip.capitalize! unless params[:nationality].blank?
+
 		    @user.address = params[:address] unless params[:address].blank?
 		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
 		    @user.username = params[:username] unless params[:username].blank?
 		    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
 		    @user.gender = gender unless gender.blank?
-		    @user.nationality = params[:nationality] unless params[:nationality].blank?
+		    @user.nationality = nationality unless params[:nationality].blank?
 		    if avatar
 		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
 		    	@user.avatar_path = @user.avatar.url

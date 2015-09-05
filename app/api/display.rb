@@ -47,27 +47,30 @@ class Display < Grape::API
 	end
 
 	resource :users do
+		params do
+			requires :id, 		type: String, desc: "User ID"
+		end
+
 	    get :get_calendar_formatted_dates, :http_codes => [200, "Get successful"] do
+	    	user = User.where(:id => params[:id]).first
 	    	job_array = Array.new
-	    	applied_jobs = user.applied_jobs
 
-	    	applied_jobs.each do |job|
-	    		job_hash = Hash.new
-	    		job_hash[:title] = job.header
-	    		job_hash[:start_date] = job.job_date
-	    		job_hash[:color] = "#4c4c4c"
-	    		job_array << job_hash
-	    	end
+	    	if user
+		    	matchings = Matching.where(:applicant_id).not(:status => "completed").all
 
-	    	hired_jobs = user.hired_jobs
-	    	hired_jobs.each do |job|
-				job_hash = Hash.new
-	    		job_hash[:title] = job.header
-	    		job_hash[:start_date] = job.job_date
-	    		job_hash[:color] = "#777777"
-	    		job_array << job_hash
-	    	end
-
+		    	matchings.each do |match|
+		    		job = Post.find(match.post_id)
+		    		job_hash = Hash.new
+		    		job_hash[:title] = job.header
+		    		job_hash[:start_date] = job.job_date
+		    		if matching.status == "hired"
+		    			job_hash[:color] = "#777777"
+		    		else
+		    			job_hash[:color] = "#4c4c4c"
+		    		end
+		    		job_array << job_hash
+		    	end
+		    end
 	    	job_array.to_json
 		end
 	end
