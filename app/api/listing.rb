@@ -174,6 +174,7 @@ class Listing < Grape::API
 	    		user = User.find(match.applicant_id)
 	    		applicant_array << user
 	    	end
+	    	applicant_array = (applicant_array.sort_by &:good_rating).reverse
 
 	    	status 201
 	    	applicant_array.to_json
