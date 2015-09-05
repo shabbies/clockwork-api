@@ -170,6 +170,7 @@ class Account < Grape::API
 	    		job_hash[:start_time] = job.start_time
 	    		job_hash[:end_time] = job.end_time
 	    		job_hash[:duration] = job.duration
+	    		job_hash[:avatar_path] = job.avatar_path
 	    		job_hash[:applicant_count] = Matching.where(:post_id => job.id).count
 	    		job_array << job_hash
 	    	end
@@ -299,6 +300,7 @@ class Account < Grape::API
 	    		job_hash[:duration] = job.duration
 	    		job_hash[:rating] = matching.user_rating
 	    		job_hash[:comment] = matching.comments
+	    		job_hash[:avatar_path] = job.avatar_path
 	    		job_array << job_hash
 	    	end
 
@@ -338,6 +340,7 @@ class Account < Grape::API
 	    		job_hash[:duration] = job.duration
 	    		job_hash[:rating] = matching.user_rating
 	    		job_hash[:comments] = matching.comments
+	    		job_hash[:avatar_path] = job.avatar_path
 	    		job_array << job_hash
 	    	end
 

@@ -61,7 +61,8 @@ class Listing < Grape::API
 			    status: "listed",
 			    start_time: params[:start_time],
 			    end_time: params[:end_time],
-			    duration: duration
+			    duration: duration,
+			    avatar_path: @user.avatar_path
 		    })
 		    @user.published_jobs << post
 		    @user.save
