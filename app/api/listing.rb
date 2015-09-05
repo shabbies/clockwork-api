@@ -257,6 +257,30 @@ class Listing < Grape::API
 	    	applicant_array.to_json
 		end
 
+		desc "get completed list"
+		params do
+			requires :email,		type: String
+			requires :post_id,		type: Integer
+		end
+
+		post :get_completed, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - Post not found"],
+			[200, "IGNORE NO SUCH CODE"],
+			[403, "Unauthorised - Only owner can view applicants"],
+			[201, "Returns a list of all complete matchings (with ratings)"]
+			] do
+	    	post = Post.where(:id => params[:post_id]).first
+
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
+	    	
+	    	matchings = Matching.where(:post_id => post.id, :status => "completed").all
+
+	    	status 201
+	    	matchings.to_json
+		end
+
 		desc "rate user"
 		params do
 			requires :email,				type: String
