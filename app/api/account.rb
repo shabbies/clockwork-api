@@ -118,7 +118,7 @@ class Account < Grape::API
 			attachment = nil
 			if avatar
 				attachment = {
-		            :filename => avatar[:filename],
+		            :filename => @user.id + "_avatar.jpg",
 		            :type => avatar[:type],
 		            :headers => avatar[:head],
 		            :tempfile => avatar[:tempfile]
