@@ -15,9 +15,9 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[200, "Save successful"]
 			] do
-				status 200
-				@user.json
-			end
+			
+			status 200
+			@user.json
 		end
 		desc "updates a user"
 		params do
