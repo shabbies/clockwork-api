@@ -17,7 +17,7 @@ class Account < Grape::API
 			] do
 			
 			status 200
-			@user.json
+			@user.to_json
 		end
 		desc "updates a user"
 		params do
