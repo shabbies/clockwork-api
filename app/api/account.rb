@@ -132,7 +132,10 @@ class Account < Grape::API
 		    	@user.password = params[:password]
 		    end
 
+		    p "BYE"
+		    p params[:nationality]
 		    nationality = params[:nationality].strip.capitalize! unless params[:nationality].blank?
+		    p nationality
 
 		    @user.address = params[:address] unless params[:address].blank?
 		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
