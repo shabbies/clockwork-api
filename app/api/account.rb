@@ -134,7 +134,7 @@ class Account < Grape::API
 
 		    p "BYE"
 		    p params[:nationality]
-		    nationality = params[:nationality].strip.capitalize! unless params[:nationality].blank?
+		    nationality = params[:nationality].strip.capitalize unless params[:nationality].blank?
 		    p nationality
 
 		    @user.address = params[:address] unless params[:address].blank?
