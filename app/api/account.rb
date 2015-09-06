@@ -6,6 +6,19 @@ class Account < Grape::API
 	end
 
 	resource :users do
+		desc "get updated user"
+		params do
+			requires :email, 					type: String
+		end
+
+		post :get_updated_user, :http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Save successful"]
+			] do
+				status 200
+				@user.json
+			end
+		end
 		desc "updates a user"
 		params do
 			requires :email, 					type: String
