@@ -132,10 +132,7 @@ class Account < Grape::API
 		    	@user.password = params[:password]
 		    end
 
-		    p "BYE"
-		    p params[:nationality]
-		    nationality = params[:nationality].strip.capitalize unless params[:nationality].blank?
-		    p nationality
+		    nationality = params[:nationality].strip.capitalize.gsub("pr", "PR") unless params[:nationality].blank?
 
 		    @user.address = params[:address] unless params[:address].blank?
 		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
@@ -144,8 +141,11 @@ class Account < Grape::API
 		    @user.gender = gender unless gender.blank?
 		    @user.nationality = nationality unless params[:nationality].blank?
 		    if avatar
-		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
-		    	@user.avatar_path = @user.avatar.url
+		    	fork do
+			    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
+			    	@user.avatar_path = @user.avatar.url
+			    	@user.save
+			    end
 		    end
 		    if @user.save
 		    	status 200
