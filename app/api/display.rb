@@ -3,7 +3,7 @@ class Display < Grape::API
 		# GET: /api/v1/posts/all.json
 		desc "List all Posts"
 	    get :all, :http_codes => [200, "Get successful"]  do
-	      	all_post = Post.where.not(:status => "expired").all
+	      	all_post = Post.where.not(:status => ["expired", "completed"]).all
 	      	return_array = Array.new
 	      	all_post.each do |post|
 	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
