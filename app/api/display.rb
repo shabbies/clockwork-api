@@ -63,7 +63,7 @@ class Display < Grape::API
 		    		job_hash = Hash.new
 		    		job_hash[:title] = job.header
 		    		job_hash[:start_date] = job.job_date
-		    		if matching.status == "hired"
+		    		if match.status == "hired"
 		    			job_hash[:color] = "#777777"
 		    		else
 		    			job_hash[:color] = "#4c4c4c"
