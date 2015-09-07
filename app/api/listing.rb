@@ -112,7 +112,8 @@ class Listing < Grape::API
 				(2)Bad Request - The job date should be after today | 
 				(3)Bad Request - The end date should be after the start date | 
 				(4)Bad Request - The salary should not be negative |
-				(5)Bad Request - End time should be after start time"],
+				(5)Bad Request - End time should be after start time
+				(6)Bad Request - Unable to edit post once there are applicants"],
 			[200, "Returns Post Object"],
 			[403, "Unauthorised - Only the post owner is allowed to edit post"]
 			] do
@@ -131,6 +132,7 @@ class Listing < Grape::API
 			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
+			error!("Bad Request - Unable to edit post once there are applicants", 400) if Matching.where(:post_id => post.id).count > 0
 
 		    post.update({
 		    	header: params[:header],
