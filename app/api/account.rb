@@ -11,10 +11,11 @@ class Account < Grape::API
 			requires :email, 					type: String
 		end
 
-		post :get_updated_user, :http_codes => [
+		post :get_updated_user, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[200, "Save successful"]
-			] do
+		] do
 			
 			status 200
 			@user.to_json
@@ -32,14 +33,15 @@ class Account < Grape::API
 			optional :contact_number,			type: String
 		end
 
-		post :update, :http_codes => [
+		post :update, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old | 
 				(2)Bad Request - Passwords do not match"],
 			[200, "Save successful"],
 			[403, "Unauthorised - Old password is invalid"],
 			[500, "Internal Server Error - save failed"]
-			] do
+		] do
 
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
@@ -95,14 +97,15 @@ class Account < Grape::API
 			optional :nationality,				type: String,	desc: "Singaporean, Singapore PR or Others"
 		end
 
-		post :complete_profile, :http_codes => [
+		post :complete_profile, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old || 
 				(2)Bad Request - Invalid Gender: only M and F allowed ||
 				(3)Bad Request - Passwords do not match"],
 			[200, "Save successful"],
 			[500, "Internal Server Error - save failed"]
-			] do
+		] do
 
 			unless params[:gender].blank?
 				gender = params[:gender].strip.upcase
@@ -160,11 +163,12 @@ class Account < Grape::API
 		    requires :email,	type: String
 		end
 
-		post :get_jobs, :http_codes => [
+		post :get_jobs, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only employers are allowed to view their published jobs"],
 			[200, "Returns array of published jobs"]
-			] do
+		] do
 			error!("Bad Request - Only employers are allowed to view their published jobs", 400) unless @user.account_type == "employer"
 
 		   	jobs = @user.published_jobs.order(:status)
@@ -201,13 +205,14 @@ class Account < Grape::API
 		    requires :post_id,	type: Integer
 		end
 
-		post :apply, :http_codes => [
+		post :apply, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - Post not found | 
 				(2)Bad Request - Only job seekers are allowed to apply for a job"],
 			[403, "Bad Request - User has already applied"],
 			[200, "Returns post object"]
-			] do
+		] do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	matching = Matching.where(:post_id => post, :applicant_id => @user.id).first
 
@@ -229,13 +234,14 @@ class Account < Grape::API
 		    requires :post_id,	type: Integer
 		end
 
-		post :withdraw, :http_codes => [
+		post :withdraw, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - Only job seekers are allowed to withdraw from a job | 
 				(2)Bad Request - Post cannot be found | 
 				(3)Bad Request - You can only withdraw a pending application"],
 			[200, "Returns a list of remaining user applications"]
-			] do
+		] do
 	    	post = Post.where(:id => params[:post_id]).first
 	    	account_type = @user.account_type
 
@@ -264,12 +270,13 @@ class Account < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :hire, :http_codes => [
+		post :hire, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Returns the matching between user and job"], 
 			[403, "Bad Request - You have already hired this person"] 
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -287,11 +294,12 @@ class Account < Grape::API
 		    requires :email,	type: String
 		end
 
-		post :get_applied_jobs, :http_codes => [
+		post :get_applied_jobs, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only job seekers are allowed to view their applications"],
 			[200, "Returns array of applied jobs"]
-			] do
+		] do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
 	    	matchings = Matching.where(:applicant_id => @user.id).order(:status).all
@@ -329,11 +337,12 @@ class Account < Grape::API
 		    requires :email,	type: String
 		end
 
-		post :get_completed_jobs, :http_codes => [
+		post :get_completed_jobs, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Only job seekers are allowed to view their applications"],
 			[200, "Returns array of completed jobs"] 
-			] do
+		] do
 			error!("Bad Request - Only job seekers are allowed to view their applications", 400) if @user.account_type == "employer"
 
 	    	matchings = Matching.where(:applicant_id => @user.id, :status => "completed").all
@@ -371,12 +380,13 @@ class Account < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :complete, :http_codes => [
+		post :complete, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Mark as complete successfully"],  
 			[403, "Bad Request - You have already hired this person"]  
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -396,12 +406,13 @@ class Account < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :offer, :http_codes => [
+		post :offer, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Offer job successfully"],  
 			[403, "Bad Request - You have already offered this person"] 
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -412,6 +423,33 @@ class Account < Grape::API
 
 	    	status 200
 	    	matching.to_json
+		end
+
+		desc "offer all job"
+		params do
+			requires :email,			type: String
+			requires :applicant_ids,	type: String
+			requires :post_id,			type: Integer
+		end
+
+		post :offer_all, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Offer job successfully"],  
+			[403, "Bad Request - You have already offered this person"] 
+		] do
+
+			applicant_array = JSON.parse(params[:applicant_ids])
+
+			Matching.transaction do
+				applicant_array.each do |applicant_id|
+					matching = Matching.find_by_applicant_id_and_post_id(applicant_id, params[:post_id])
+					error!("Bad Request - You have already offered this person", 403) unless matching.status == "pending"
+					matching.status = "offered"
+	    			matching.save
+				end
+			end
+	    	status 200
 		end
 
 		desc "withdraw job offer"
