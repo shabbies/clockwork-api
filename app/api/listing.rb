@@ -48,7 +48,7 @@ class Listing < Grape::API
 			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
-			error!("Bad Request - Post has already been created") unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location], :salary => salary, :description => params[:description], :end_date => end_date, :start_time => start_time, :end_time => end_time).count == 0
+			error!("Bad Request - Post has already been created", 400) unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location], :salary => salary, :description => params[:description], :end_date => end_date, :start_time => start_time, :end_time => end_time).count == 0
 
 		    post = Post.create!({
 			    header: params[:header],
