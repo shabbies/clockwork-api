@@ -60,15 +60,21 @@ class Display < Grape::API
 
 		    	matchings.each do |match|
 		    		job = Post.find(match.post_id)
-		    		job_hash = Hash.new
-		    		job_hash[:title] = job.header
-		    		job_hash[:start_date] = job.job_date
-		    		if match.status == "hired"
-		    			job_hash[:color] = "#777777"
-		    		else
-		    			job_hash[:color] = "#4c4c4c"
+		    		start_date = Date.parse(job.job_date)
+		    		end_date = Date.parse(job.end_date)
+
+		    		while start_date <= end_date
+		    			job_hash = Hash.new
+			    		job_hash[:title] = job.header
+			    		job_hash[:job_date] = job.job_date
+			    		if match.status == "hired"
+			    			job_hash[:color] = "#777777"
+			    		else
+			    			job_hash[:color] = "#4c4c4c"
+			    		end
+			    		job_array << job_hash
+			    		start_date += 1
 		    		end
-		    		job_array << job_hash
 		    	end
 		    end
 	    	job_array.to_json
