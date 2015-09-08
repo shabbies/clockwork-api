@@ -66,7 +66,7 @@ class Display < Grape::API
 		    		while start_date <= end_date
 		    			job_hash = Hash.new
 			    		job_hash[:title] = job.header
-			    		job_hash[:job_date] = (job.start_date).to_s
+			    		job_hash[:job_date] = start_date.to_s
 			    		if match.status == "hired"
 			    			job_hash[:color] = "#777777"
 			    		else
