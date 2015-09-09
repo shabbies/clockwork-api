@@ -3,9 +3,9 @@ class Display < Grape::API
 		# GET: /api/v1/posts/all.json
 		desc "List all Posts"
 	    get :all, :http_codes => [200, "Get successful"]  do
-	      	all_post = Post.where.not(:status => ["expired", "completed"]).all
+	      	@post = Post.where.not(:status => ["expired", "completed"]).all
 	      	return_array = Array.new
-	      	all_post.each do |post|
+	      	@post.each do |post|
 	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
 	      		if expiry_date <= Date.today - 1
 	      			if Matching.where(:post_id => post.id, :status => ["hired", "completed"]).count != 0
@@ -24,17 +24,17 @@ class Display < Grape::API
 
 	    desc "List all Posts sorted by salary"
 	    get :all_salary, :http_codes => [200, "Get successful"] do
-	      	Post.where.not(:status => ["expired", "completed"]).order(:salary).reverse_order
+	      	@post.order(:salary).reverse_order
 	    end
 
 	    desc "List all Posts sorted by latest first"
 	    get :all_latest, :http_codes => [200, "Get successful"] do
-	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at).reverse_order
+	      	@post.order(:created_at).reverse_order
 	    end
 
 	    desc "List all Posts sorted by oldest first"
 	    get :all_oldest, :http_codes => [200, "Get successful"] do
-	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
+	      	@post.order(:created_at)
 	    end
 
 	    desc "search API"
@@ -42,7 +42,8 @@ class Display < Grape::API
 			requires :query, 		type: String
 		end
 	    get :search, :http_codes => [200, "Get successful"] do
-	      	Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired"]).all.to_json
+	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired"]).all
+	      	@post.to_json
 	    end
 	end
 
