@@ -43,7 +43,7 @@ class Display < Grape::API
 		end
 	    get :search, :http_codes => [200, "Get successful"] do
 	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired"]).all
-	      	@post.to_json
+	      	@posts.to_json
 	    end
 	end
 
