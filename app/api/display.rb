@@ -42,7 +42,11 @@ class Display < Grape::API
 			requires :query, 		type: String
 		end
 	    get :search, :http_codes => [200, "Get successful"] do
-	      	Post.where.not(:status => ["expired", "completed"]).order(:created_at)
+	      	results = Post.search do
+	      		fulltext '"' + params[:query] + '"'
+
+	      		without(:status, ["expired", "completed"])
+	      	end.results
 	    end
 	end
 
