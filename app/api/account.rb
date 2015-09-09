@@ -459,11 +459,12 @@ class Account < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :withdraw_offer, :http_codes => [
+		post :withdraw_offer, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Withdraw job offer successfully"]
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -481,11 +482,12 @@ class Account < Grape::API
 			requires :post_id,		type: Integer
 		end
 
-		post :accept, :http_codes => [
+		post :accept, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Accept job offer successfully"] 
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
@@ -502,11 +504,12 @@ class Account < Grape::API
 			requires :email,		type: String
 		end
 
-		post :accept, :http_codes => [
+		post :get_all_ratings, 
+		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
 			[200, "Accept job offer successfully"] 
-			] do
+		] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
