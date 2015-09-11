@@ -11,7 +11,7 @@ class Display < Grape::API
 	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed"])
 	      			if matchings.count != 0
 	      				if matchings.where(:user_rating => nil).count != 0
-	      					post.status = "pending review"
+	      					post.status = "reviewing"
 	      				else
 	      					post.status = "completed"
 	      				end
