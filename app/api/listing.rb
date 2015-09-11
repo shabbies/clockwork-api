@@ -334,11 +334,11 @@ class Listing < Grape::API
 			end
 
 			if Matching.where(:post_id => params[:post_id], :status => ["reviewing", "hired"]).count == 0
-				post = Post.where(params[:post_id]).first
+				post = Post.find(params[:post_id])
 				post.status = "completed"
 				post.save
 			end
-			
+
 			status 201
 		end
 	end 
