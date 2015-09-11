@@ -8,8 +8,13 @@ class Display < Grape::API
 	      	@post.each do |post|
 	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
 	      		if expiry_date <= Date.today - 1
-	      			if Matching.where(:post_id => post.id, :status => ["hired", "completed"]).count != 0
-	      				post.status = "completed"
+	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed"])
+	      			if matchings.count != 0
+	      				if matchings.where(:user_rating => nil).count != 0
+	      					post.status = "pending review"
+	      				else
+	      					post.status = "completed"
+	      				end
 	      			else
 	      				post.status = "expired"
 	      			end
