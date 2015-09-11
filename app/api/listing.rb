@@ -332,6 +332,13 @@ class Listing < Grape::API
 				end
 				retrieved_user.save
 			end
+
+			if Matching.where(:post_id => params[:post_id], :status => ["reviewing", "hired"]).count == 0
+				post = Post.where(params[:post_id]).first
+				post.status = "completed"
+				post.save
+			end
+			
 			status 201
 		end
 	end 
