@@ -392,7 +392,7 @@ class Account < Grape::API
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "hired"
 	    	
-	    	matching.status = "completed"
+	    	matching.status = "reviewing"
 	    	matching.save
 
 	    	status 200

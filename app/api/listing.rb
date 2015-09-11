@@ -209,6 +209,7 @@ class Listing < Grape::API
 	    	all_map = Hash.new
 	    	applicant_array = Array.new
 	    	hired_array = Array.new 	# if job expires, then hired list will be pending review
+	    	reviewing_array = Array.new
 	    	offered_array = Array.new
 	    	completed_array = Array.new
 
@@ -221,6 +222,8 @@ class Listing < Grape::API
 	    			offered_array << user
 	    		elsif match.status == "hired"
 	    			hired_array << user
+	    		elsif match.status == "reviewing"
+	    			reviewing_array << user
 	    		else
 	    			completed_array << user
 	    		end
@@ -229,6 +232,7 @@ class Listing < Grape::API
 	    	all_map[:pending] = applicant_array
 	    	all_map[:offered] = offered_array
 	    	all_map[:hired] = hired_array
+	    	all_map[:reviewing] = reviewing_array
 	    	all_map[:completed] = completed_array
 
 	    	status 201
