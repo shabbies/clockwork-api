@@ -208,7 +208,7 @@ class Listing < Grape::API
 	    	
 	    	all_map = Hash.new
 	    	applicant_array = Array.new
-	    	hired_array = Array.new
+	    	hired_array = Array.new 	# if job expires, then hired list will be pending review
 	    	offered_array = Array.new
 	    	completed_array = Array.new
 
@@ -285,7 +285,7 @@ class Listing < Grape::API
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
-	    	matchings = Matching.where(:post_id => post.id, :status => "completed").all
+	    	matchings = Matching.where(:post_id => post.id, :status => ["completed", "hired"]).all
 
 	    	status 201
 	    	matchings.to_json
