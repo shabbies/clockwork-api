@@ -289,7 +289,7 @@ class Listing < Grape::API
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Unauthorised - Only owner can view applicants", 403) unless post.owner_id == @user.id
 	    	
-	    	matchings = Matching.where(:post_id => post.id, :status => ["completed", "hired"]).all
+	    	matchings = Matching.where(:post_id => post.id, :status => ["completed", "hired", "reviewing"]).all
 
 	    	status 201
 	    	matchings.to_json
