@@ -313,8 +313,6 @@ class Listing < Grape::API
 			user_feedback_array.each do |user_feedback|
 				user_id = user_feedback["user_id"]
 				rating = user_feedback["rating"]
-				p rating
-				p "BYEBYE"
 				comment = user_feedback["comment"]
 				matching = Matching.where(:post_id => params[:post_id], :applicant_id => user_id).first
 				matching.user_rating = rating
@@ -322,10 +320,10 @@ class Listing < Grape::API
 				matching.status = "completed"
 				matching.save
 				retrieved_user = matching.applicant
-				if rating == -1
+				if rating == "-1"
 					bad_rating = retrieved_user.bad_rating += 1
 					retrieved_user.bad_rating = bad_rating
-				elsif rating === 0
+				elsif rating === "0"
 					neutral_rating = retrieved_user.neutral_rating += 1
 					retrieved_user.neutral_rating = neutral_rating
 				else
