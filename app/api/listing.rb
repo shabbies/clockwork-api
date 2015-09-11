@@ -313,6 +313,8 @@ class Listing < Grape::API
 			user_feedback_array.each do |user_feedback|
 				user_id = user_feedback["user_id"]
 				rating = user_feedback["rating"]
+				p rating
+				p "BYEBYE"
 				comment = user_feedback["comment"]
 				matching = Matching.where(:post_id => params[:post_id], :applicant_id => user_id).first
 				matching.user_rating = rating
