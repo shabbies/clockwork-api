@@ -8,7 +8,7 @@ class Display < Grape::API
 	      	@post.each do |post|
 	      		expiry_date = Date.strptime(post.expiry_date, '%Y-%m-%d')
 	      		if expiry_date <= Date.today - 1
-	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed"])
+	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
 	      			if matchings.count != 0
 	      				if matchings.where(:user_rating => nil).count != 0
 	      					post.status = "reviewing"
