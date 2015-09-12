@@ -29,7 +29,8 @@ class Listing < Grape::API
 				(2)Bad Request - The end date should be after the start date | 
 				(3)Bad Request - The salary should not be negative |
 				(4)Bad Request - End time should be after start time
-				(5)Bad Request - Post has already been created"],
+				(5)Bad Request - Post has already been created | 
+				(6)Bad Request - The maximum job duration should be 7 days"],
 			[200, "IGNORE NO SUCH CODE"],
 			[201, "Post successfully created"],
 			[403, "Unauthorised - Only employers can post a new job listing"]
@@ -49,6 +50,7 @@ class Listing < Grape::API
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
 			error!("Bad Request - Post has already been created", 400) unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location]).count == 0
+			error!("Bad Request - The maximum job duration should be 7 days", 400) unless duration > 7
 
 		    post = Post.create!({
 			    header: params[:header],
