@@ -29,17 +29,17 @@ class Display < Grape::API
 
 	    desc "List all Posts sorted by salary"
 	    get :all_salary, :http_codes => [200, "Get successful"] do
-	      	@post.order(:salary).reverse_order
+	      	@post.order(:salary).reverse_order.to_json
 	    end
 
 	    desc "List all Posts sorted by latest first"
 	    get :all_latest, :http_codes => [200, "Get successful"] do
-	      	@post.order(:created_at).reverse_order
+	      	@post.order(:created_at).reverse_order.to_json
 	    end
 
 	    desc "List all Posts sorted by oldest first"
 	    get :all_oldest, :http_codes => [200, "Get successful"] do
-	      	@post.order(:created_at)
+	      	@post.order(:created_at).to_json
 	    end
 
 	    desc "search API"
