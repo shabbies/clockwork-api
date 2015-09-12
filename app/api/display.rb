@@ -23,25 +23,8 @@ class Display < Grape::API
 	      			return_array << post
 	      		end
 	      	end
-	      	session[:posts] = posts
 	      	status 200
 	      	return_array
-	    end
-
-	    desc "List all Posts sorted by salary"
-	    get :all_salary, :http_codes => [200, "Get successful"] do
-	      	posts = session[:posts]
-	      	posts.order(:salary).reverse_order
-	    end
-
-	    desc "List all Posts sorted by latest first"
-	    get :all_latest, :http_codes => [200, "Get successful"] do
-	      	@post.order(:created_at).reverse_order
-	    end
-
-	    desc "List all Posts sorted by oldest first"
-	    get :all_oldest, :http_codes => [200, "Get successful"] do
-	      	@post.order(:created_at)
 	    end
 
 	    desc "search API"
