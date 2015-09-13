@@ -508,6 +508,7 @@ class Account < Grape::API
 			requires :email,		type: String
 		end
 
+		#INCOMPLETE
 		post :get_all_ratings, 
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
@@ -523,6 +524,18 @@ class Account < Grape::API
 
 	    	status 200
 	    	matching.to_json
+		end
+
+		post :get_unread_notifications, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - Invalid job applicant / post"],
+			[200, "Accept job offer successfully"] 
+		] do
+	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all
+	    	
+	    	status 200
+	    	notifications.to_json
 		end
 	end
 end

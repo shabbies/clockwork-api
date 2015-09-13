@@ -38,7 +38,7 @@ class Display < Grape::API
 
 	    desc "expire post - for dev only"
 	    params do
-			requires :id, 		type: Integer
+			requires :id, 		type: String
 		end
 	    get :dev_expire_post, :http_codes => [200, "Get successful"] do
 	      	post = Post.find(params[:id])
