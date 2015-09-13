@@ -526,11 +526,14 @@ class Account < Grape::API
 	    	matching.to_json
 		end
 
+		desc "get all user ratings"
+		params do
+			requires :email,		type: String
+		end
+
 		post :get_unread_notifications, 
 		:http_codes => [
-			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "Bad Request - Invalid job applicant / post"],
-			[200, "Accept job offer successfully"] 
+			[200, "Notifications returned successfully"] 
 		] do
 	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all
 	    	
