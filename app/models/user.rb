@@ -7,11 +7,13 @@ class User < ActiveRecord::Base
   	
   	before_save :ensure_authentication_token
 
-  	has_many :published_jobs, 	:class_name => "Post", 	:foreign_key => "owner_id"
-  	has_many :matchings,		:dependent => :destroy, :foreign_key => "applicant_id"
-  	has_many :jobs,				:class_name => "Post", 	through: :matchings,	:source => "applicant"
-  	has_attached_file :avatar, 	:path => ":rails_root/public/avatars/:filename", :bucket  => ENV['media.clockworksmu.herokuapp.com']
-  	validates_attachment_content_type :avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+  	has_many :published_jobs, 			:class_name => "Post", 	:foreign_key => "owner_id"
+  	has_many :sent_notifications, 		:class_name => "Notification", 	:foreign_key => "sender_id"
+  	has_many :received_notifications, 	:class_name => "Notification", 	:foreign_key => "receiver_id"
+  	has_many :matchings,				:dependent => :destroy, :foreign_key => "applicant_id"
+  	has_many :jobs,						:class_name => "Post", 	through: :matchings,	:source => "applicant"
+  	has_attached_file :avatar, 			:path => ":rails_root/public/avatars/:filename", :bucket  => ENV['media.clockworksmu.herokuapp.com']
+  	validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
   	attr_accessor :last_search
 

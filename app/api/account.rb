@@ -216,6 +216,10 @@ class Account < Grape::API
 	    	post = Post.where(:id => params[:post_id]).first
 	    	matching = Matching.where(:post_id => post, :applicant_id => @user.id).first
 
+	    	#preparing notification
+	    	job_title = post.header
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path)
+
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Bad Request - User has already applied", 403) if matching
 	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
