@@ -54,7 +54,9 @@ class Display < Grape::API
   				post.status = "expired"
   			end
   			post.save
-	    end
+
+  			status 200
+	    end  
 	end
 
 	resource :users do
