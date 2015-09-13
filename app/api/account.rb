@@ -503,34 +503,6 @@ class Account < Grape::API
 	    	matching.to_json
 		end
 
-		desc "get all user ratings"
-		params do
-			requires :email,		type: String
-		end
-
-		#INCOMPLETE
-		post :get_all_ratings, 
-		:http_codes => [
-			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "Bad Request - Invalid job applicant / post"],
-			[200, "Accept job offer successfully"] 
-		] do
-	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
-	    	
-	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
-	    	
-	    	matching.status = "hired"
-	    	matching.save
-
-	    	status 200
-	    	matching.to_json
-		end
-
-		desc "get all user ratings"
-		params do
-			requires :email,		type: String
-		end
-
 		post :get_unread_notifications, 
 		:http_codes => [
 			[200, "Notifications returned successfully"] 
