@@ -498,7 +498,8 @@ class Account < Grape::API
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 
-	    	if params[:drop_posts]
+	    	p params[:drop_posts]
+	    	if params[:drop_posts].blank?
 	    		return_array = Array.new
 	    		post_array = params[:drop_posts].split(",")
 
@@ -506,7 +507,7 @@ class Account < Grape::API
 					post = Post.find(post_id)
 					matching = Matching.where(:applicant_id => @user.id, :post_id => post.id, :status => ["pending", "offered"]).first
 			    	matching.destroy!
-			    	
+
 			    	if Matching.where(:post_id => post.id).count == 0
 			    		post.status = "listed"
 			    		post.save
