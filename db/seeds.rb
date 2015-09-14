@@ -1,5 +1,15 @@
 u1 = User.find(45)
+u1.good_ratings = 3
+u1.neutral_ratings = 1
+u1.bad_ratings = 2
+u1.save
+
 joan_shue = User.find(207)
+joan_shue.good_ratings = 1
+joan_shue.neutral_ratings = 0
+joan_shue.bad_ratings = 0
+joan_shue.save
+
 ice_ice_baby = User.find(208)
 i_scream_story = User.find(210)
 the_meat_lovers_club = User.find(211)
@@ -20,6 +30,8 @@ c8 = Post.create!(header: "Banquet Server", company: "TCCHR", salary: 8.0, descr
 c9 = Post.create!(header: "Ice Cream Scooper", company: "IceIceBaby", salary: 10.0, description: "Scooping Ice cream till you're ice baby", location: "Ang Mo Kio Ave 10", posting_date: "2015-09-14", job_date: "2015-09-18", end_date: "2015-09-20", owner_id: 208, status: "listed", expiry_date: "2015-09-17", duration: 3, start_time: "11:00", end_time: "21:00", avatar_path: ice_ice_baby.avatar_path)
 c10 = Post.create!(header: "Ice Cream Sculpter", company: "iScreamStory", salary: 8.5, description: "Sculpting ice cream! need young people", location: "East Coast Parkway", posting_date: "2015-09-14", job_date: "2015-09-19", end_date: "2015-09-21", owner_id: 210, status: "listed", expiry_date: "2015-09-18", duration: 3, start_time: "11:00", end_time: "21:00", avatar_path: i_scream_story.avatar_path)
 c11 = Post.create!(header: "Meat Cutter", company: "The Meat Lover's Club", salary: 10.0, description: "Cut meat, eat meat, love meat", location: "Jurong Mall", posting_date: "2015-08-14", job_date: "2015-09-10", end_date: "2015-09-11", owner_id: 211, status: "completed", expiry_date: "2015-09-09", duration: 2, start_time: "11:00", end_time: "21:00", avatar_path: the_meat_lovers_club.avatar_path)
+c12 = Post.create!(header: "Cooking Master", company: "Flip Flop Cookery", salary: 12.0, description: "Cooking food, being a master at it", location: "Raffles Place", posting_date: "2015-08-01", job_date: "2015-09-25", end_date: "2015-09-26", owner_id: 45, status: "applied", expiry_date: "2015-09-24", duration: 2, start_time: "11:00", end_time: "19:00", avatar_path: u1.avatar_path)
+c13 = Post.create!(header: "Jack of All Trades", company: "Jack's Place", salary: 9.5, description: "jacking people professionally", location: "Raffles Place", posting_date: "2015-08-01", job_date: "2015-09-26", end_date: "2015-09-27", owner_id: 45, status: "applied", expiry_date: "2015-09-25", duration: 2, start_time: "11:00", end_time: "19:00", avatar_path: u1.avatar_path)
 
 Post.create!([
   {header: "Frozen Yogurt Server", company: "Mission Juice", salary: 10.0, description: "If you are looking to join an energetic, fun and vibrant team that offers on the job training and support, then join Mission Juice today! If you value commitment, professionalism and have a keen interest in learning and enhancing your skill set, join the Mission Juice team today! If you want to be among a group of people who want to progress together by working hard and want a place where you can excel and to find your full potential, then join the Mission Juice team today! If you have passion to serve and to make the world a happier place one juice at a time, then we want you! We want to hear from you! Full Time and Part time available!", location: "Tanjong Pagar", posting_date: "2015-08-01", job_date: "2015-09-26", end_date: "2015-09-27", owner_id: 45, status: "listed", expiry_date: "2015-09-25", duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: u1.avatar_path},
@@ -36,6 +48,8 @@ Matching.create!([
   {applicant_id: 75, post_id: c8.id, status: "reviewing", user_rating: nil, comments: nil},
   {applicant_id: 75, post_id: p1.id, status: "pending", user_rating: nil, comments: nil},
   {applicant_id: 75, post_id: p2.id, status: "offered", user_rating: nil, comments: nil},
+  {applicant_id: 75, post_id: c12.id, status: "offered", user_rating: nil, comments: nil},
+  {applicant_id: 75, post_id: c13.id, status: "pending", user_rating: nil, comments: nil},
   {applicant_id: 75, post_id: p3.id, status: "hired", user_rating: nil, comments: nil},
   {applicant_id: 207, post_id: c11.id, status: "completed", user_rating: 1, comments: "Very prompt and responsive"}
 ])

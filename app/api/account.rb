@@ -484,23 +484,49 @@ class Account < Grape::API
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
+			optional :drop_posts,	type: String, desc: 'string of IDs to drop, delimited by ","'
 		end
 
 		post :accept, 
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - Invalid job applicant / post"],
-			[200, "Accept job offer successfully"] 
+			[200, "Accept job offer successfully"],
+			[201, "Accept job offer successfully with posts dropped (returns names of posts dropped in format [name1, name2])"]
 		] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
-	    	
-	    	matching.status = "hired"
-	    	matching.save
 
-	    	status 200
-	    	matching.to_json
+	    	if params[:drop_posts]
+	    		return_array = Array.new
+	    		post_array = params[:drop_posts].split(",")
+
+	    		post_array.each do |post_id|
+					post = Post.find(post_id)
+					matching = Matching.where(:applicant_id => @user.id, :post_id => post.id, :status => ["pending", "offered"]).first
+			    	matching.destroy!
+			    	
+			    	if Matching.where(:post_id => post.id).count == 0
+			    		post.status = "listed"
+			    		post.save
+			    	end
+			    	return_array << post.header
+	    		end
+
+	    		matching.status = "hired"
+	    		matching.save
+
+	    		status 201
+	    		return_array.to_json
+
+	    	else
+		    	matching.status = "hired"
+		    	matching.save
+
+		    	status 200
+		    	matching.to_json
+	    	end
 		end
 
 		post :get_unread_notifications, 
