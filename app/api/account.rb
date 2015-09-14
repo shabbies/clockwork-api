@@ -498,8 +498,7 @@ class Account < Grape::API
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 
-	    	p params[:drop_posts]
-	    	if params[:drop_posts].blank?
+	    	unless params[:drop_posts].blank?
 	    		return_array = Array.new
 	    		post_array = params[:drop_posts].split(",")
 
