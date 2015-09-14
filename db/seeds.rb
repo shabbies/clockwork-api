@@ -1,13 +1,13 @@
 u1 = User.find(45)
-u1.good_ratings = 3
-u1.neutral_ratings = 1
-u1.bad_ratings = 2
+u1.good_rating = 3
+u1.neutral_rating = 1
+u1.bad_rating = 2
 u1.save
 
 joan_shue = User.find(207)
-joan_shue.good_ratings = 1
-joan_shue.neutral_ratings = 0
-joan_shue.bad_ratings = 0
+joan_shue.good_rating = 1
+joan_shue.neutral_rating = 0
+joan_shue.bad_rating = 0
 joan_shue.save
 
 ice_ice_baby = User.find(208)
