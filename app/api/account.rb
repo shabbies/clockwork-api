@@ -504,8 +504,8 @@ class Account < Grape::API
 
 	    		post_array.each do |post_id|
 					post = Post.find(post_id)
-					matching = Matching.where(:applicant_id => @user.id, :post_id => post.id, :status => ["pending", "offered"]).first
-			    	matching.destroy!
+					matching_found = Matching.where(:applicant_id => @user.id, :post_id => post.id, :status => ["pending", "offered"]).first
+			    	matching_found.destroy!
 
 			    	if Matching.where(:post_id => post.id).count == 0
 			    		post.status = "listed"
