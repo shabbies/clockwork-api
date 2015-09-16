@@ -50,7 +50,7 @@ class Listing < Grape::API
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
 			error!("Bad Request - Post has already been created", 400) unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location]).count == 0
-			error!("Bad Request - The maximum job duration should be 7 days", 400) unless duration > 7
+			error!("Bad Request - The maximum job duration should be 7 days", 400) if duration > 7
 
 		    post = Post.create!({
 			    header: params[:header],
@@ -140,7 +140,7 @@ class Listing < Grape::API
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
 			error!("Bad Request - Unable to edit post once there are applicants", 400) if Matching.where(:post_id => post.id).count > 0
-			error!("Bad Request - The maximum job duration should be 7 days", 400) unless duration > 7
+			error!("Bad Request - The maximum job duration should be 7 days", 400) if duration > 7
 
 		    post.update({
 		    	header: params[:header],
