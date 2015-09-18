@@ -144,11 +144,8 @@ class Account < Grape::API
 		    @user.gender = gender unless gender.blank?
 		    @user.nationality = nationality unless params[:nationality].blank?
 		    if avatar
-		    	fork do
-			    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
-			    	@user.avatar_path = @user.avatar.url
-			    	@user.save
-			    end
+			    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
+		    	@user.avatar_path = @user.avatar.url
 		    end
 		    if @user.save
 		    	status 200
