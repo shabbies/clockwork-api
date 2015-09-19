@@ -46,10 +46,8 @@ class Display < Grape::API
 
 		get :get_post, 
 		:http_codes => [
-			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "Bad Request - The post cannot be found"],
-			[200, "Post has been successfully deleted"],
-			[403, "Unauthorised - Only the post owner can delete his post"]
+			[200, "Post successfully retrieved"]
 		] do
 			post = Post.where(:id => params[:post_id]).first
 			error!("Bad Request - The post cannot be found", 400) unless post
