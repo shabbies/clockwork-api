@@ -53,7 +53,7 @@ class Display < Grape::API
 			error!("Bad Request - The post cannot be found", 400) unless post
 
 		   	status 200
-		   	post
+		   	post.to_json
 		end
 
 	    desc "expire post - for dev only"
