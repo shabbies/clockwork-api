@@ -38,6 +38,26 @@ class Display < Grape::API
 	      	@posts.to_json
 	    end
 
+	    # POST: /api/v1/posts/get_post
+		desc "retrieve a post"
+		params do
+			requires :post_id, type: String
+		end
+
+		get :get_post, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - The post cannot be found"],
+			[200, "Post has been successfully deleted"],
+			[403, "Unauthorised - Only the post owner can delete his post"]
+		] do
+			post = Post.where(:id => params[:post_id]).first
+			error!("Bad Request - The post cannot be found", 400) unless post
+
+		   	status 200
+		   	post
+		end
+
 	    desc "expire post - for dev only"
 	    params do
 			requires :id, 		type: String
