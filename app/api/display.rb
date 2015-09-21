@@ -56,27 +56,9 @@ class Display < Grape::API
 		   	post.to_json
 		end
 
-	    desc "expire post - for dev only"
-	    params do
-			requires :id, 		type: String
-		end
-	    get :dev_expire_post, :http_codes => [200, "Get successful"] do
-	      	post = Post.find(params[:id])
-	      	post.expiry_date = "2015-01-01"
-	      	matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
-  			if matchings.count != 0
-  				if matchings.where(:user_rating => nil).count != 0
-  					post.status = "reviewing"
-  				else
-  					post.status = "completed"
-  				end
-  			else
-  				post.status = "expired"
-  			end
-  			post.save
-
-  			status 200
-	    end  
+##########################################################################################################################
+		
+##########################################################################################################################
 	end
 
 	resource :users do
