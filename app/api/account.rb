@@ -508,7 +508,7 @@ class Account < Grape::API
 			    		post.status = "listed"
 			    		post.save
 			    	end
-			    	formatted_return = post.id + "|" + post.header
+			    	formatted_return = post.id.to_s + "|" + post.header
 			    	return_array << formatted_return
 	    		end
 
