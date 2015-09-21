@@ -508,7 +508,8 @@ class Account < Grape::API
 			    		post.status = "listed"
 			    		post.save
 			    	end
-			    	return_array << post.header
+			    	formatted_return = post.id + "|" + post.header
+			    	return_array << formatted_return
 	    		end
 
 	    		matching.status = "hired"
