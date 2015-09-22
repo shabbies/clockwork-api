@@ -154,8 +154,8 @@ class Display < Grape::API
 
 		    	matchings.each do |match|
 		    		job = Post.find(match.post_id)
-		    		start_date = Date.parse(job.job_date)
-		    		end_date = Date.parse(job.end_date)
+		    		start_date = job.job_date
+		    		end_date = job.end_date
 
 		    		while start_date <= end_date
 		    			job_hash = Hash.new

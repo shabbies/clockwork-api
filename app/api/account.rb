@@ -206,7 +206,8 @@ class Account < Grape::API
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - Post not found | 
-				(2)Bad Request - Only job seekers are allowed to apply for a job"],
+				(2)Bad Request - Only job seekers are allowed to apply for a job | 
+				(3)Bad Request - You have already applied for another job that clashes with this"],
 			[403, "Bad Request - User has already applied"],
 			[200, "Returns post object"]
 		] do
@@ -216,6 +217,18 @@ class Account < Grape::API
 	    	#preparing notification
 	    	job_title = post.header
 	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path)
+
+	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => "hired").all
+
+	    	if clashed_matchings
+	    		clashed_matchings.each do |clashed_matching|
+	    			clashed = Post.find(clashed_matching.post_id)
+					if (post.job_date..post.end_date).overlaps?(clashed.job_date..clashed.end_date)
+				    	error!("Bad Request - You have already applied for another job that clashes with this", 400)
+				    	break;
+			    	end	
+	    		end
+	    	end
 
 	    	error!("Bad Request - Post not found", 400) unless post
 	    	error!("Bad Request - User has already applied", 403) if matching
