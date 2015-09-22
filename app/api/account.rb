@@ -481,7 +481,6 @@ class Account < Grape::API
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
-			optional :drop_posts,	type: String, desc: 'string of IDs to drop, delimited by ","'
 		end
 
 		post :accept, 
@@ -492,24 +491,25 @@ class Account < Grape::API
 			[201, "Accept job offer successfully with posts dropped (returns names of posts dropped in format [name1, name2])"]
 		] do
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => params[:post_id], :status => "offered").first
-	    	
+	    	post = Post.find(params[:post_id])
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => ["offered", "pending"]).all
 
-	    	unless params[:drop_posts].blank?
+	    	if clashed_matchings
 	    		return_array = Array.new
-	    		post_array = params[:drop_posts].split(",")
+	    		clashed_matchings.each do |clashed_matching|
+	    			clashed = Post.find(clashed_matching.post_id)
+	    			next if clashed == post
+					if (post.job_date..post.end_date).overlaps?(clashed.job_date..clashed.end_date)
+				    	clashed_matching.destroy!
 
-	    		post_array.each do |post_id|
-					post = Post.find(post_id)
-					matching_found = Matching.where(:applicant_id => @user.id, :post_id => post.id, :status => ["pending", "offered"]).first
-			    	matching_found.destroy!
-
-			    	if Matching.where(:post_id => post.id).count == 0
-			    		post.status = "listed"
-			    		post.save
-			    	end
-			    	formatted_return = post.id.to_s + "|" + post.header
-			    	return_array << formatted_return
+				    	if Matching.where(:post_id => clashed.id).count == 0
+				    		clashed.status = "listed"
+				    		clashed.save
+				    	end
+				    	formatted_return = clashed.id.to_s + "|" + clashed.header
+				    	return_array << formatted_return
+			    	end	
 	    		end
 
 	    		matching.status = "hired"
