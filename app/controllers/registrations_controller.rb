@@ -13,8 +13,8 @@ class RegistrationsController < Devise::RegistrationsController
   				existing_user.avatar_path = sign_up_params[:avatar_path] unless existing_user.avatar
   				existing_user.save
   				session[:user_id] = existing_user.id
-  				respond_with existing_user, location: after_sign_up_path_for(existing_user)
   				p "existing_user"
+  				respond_with existing_user, location: after_sign_up_path_for(existing_user)
   				return
   			else
 	  			password = Devise.friendly_token.first(8)
