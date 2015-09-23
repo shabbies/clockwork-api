@@ -14,12 +14,14 @@ class RegistrationsController < Devise::RegistrationsController
   				existing_user.save
   				session[:user_id] = existing_user.id
   				respond_with existing_user, location: after_sign_up_path_for(existing_user)
+  				p "existing_user"
   				return
   			else
 	  			password = Devise.friendly_token.first(8)
 	  			resource.password = password
 	  			resource.password_confirmation = password
 	  			resource.avatar_path = sign_up_params[:avatar_path]
+	  			p "new_user"
 	  		end
   		end
 
