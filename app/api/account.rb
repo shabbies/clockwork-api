@@ -216,7 +216,7 @@ class Account < Grape::API
 
 	    	#preparing notification
 	    	job_title = post.header
-	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path)
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => "hired").all
 
@@ -272,6 +272,8 @@ class Account < Grape::API
 	    		post.status = "listed"
 	    		post.save
 	    	end
+
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} just withdrew his application for #{post.header}", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	status 200
 	    	@user.jobs.to_json
@@ -435,6 +437,8 @@ class Account < Grape::API
 	    	matching.status = "offered"
 	    	matching.save
 
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => params[:applicant_id], :content => "#{@user.username} has offered you a job for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
+
 	    	status 200
 	    	matching.to_json
 		end
@@ -458,6 +462,7 @@ class Account < Grape::API
 			Matching.transaction do
 				applicant_array.each do |applicant_id|
 					matching = Matching.find_by_applicant_id_and_post_id(applicant_id, params[:post_id])
+					Notification.create!(:sender_id => @user.id, :receiver_id => applicant_id, :content => "#{@user.username} has offered you a job for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
 					error!("Bad Request - You have already offered this person", 403) unless matching.status == "pending"
 					matching.status = "offered"
 	    			matching.save
@@ -483,6 +488,8 @@ class Account < Grape::API
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => params[:applicant_id], :content => "#{@user.username} has withdrew the job offer for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
+					
 	    	matching.status = "pending"
 	    	matching.save
 
@@ -507,6 +514,8 @@ class Account < Grape::API
 	    	post = Post.find(params[:post_id])
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => ["offered", "pending"]).all
+
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} has accepted your a job offer!", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	if clashed_matchings
 	    		return_array = Array.new
@@ -540,12 +549,36 @@ class Account < Grape::API
 	    	end
 		end
 
+		desc "get unread notifications"
+		params do
+			requires :email,		type: String
+		end
+
 		post :get_unread_notifications, 
 		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
 			[200, "Notifications returned successfully"] 
 		] do
-	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all
+	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all;
 	    	
+	    	status 200
+	    	notifications.to_json
+		end
+
+		desc "get all notifications"
+		params do
+			requires :email,		type: String
+		end
+
+		post :get_all_notifications, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications returned successfully"] 
+		] do
+	    	notifications = @user.received_notifications.where(status: "unread").all
+	    	read_notifications = @user.received_notifications.where(status: "read").first(100)
+	    	notifications += read_notifications
+
 	    	status 200
 	    	notifications.to_json
 		end
