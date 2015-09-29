@@ -345,5 +345,20 @@ class Listing < Grape::API
 
 			status 201
 		end
+
+		desc "get job status"
+		params do
+			requires :email,		type: String
+			requires :post_id,		type: Integer
+		end
+
+		get :get_status, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[201, "Returns status"]
+		] do
+	    	status 201
+	    	return Matching.where(post_id: params[:post_id], applicant_id: @user.id).first.status
+		end
 	end 
 end
