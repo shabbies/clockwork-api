@@ -252,8 +252,7 @@ class Account < Grape::API
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - Only job seekers are allowed to withdraw from a job | 
-				(2)Bad Request - Post cannot be found | 
-				(3)Bad Request - You can only withdraw a pending application"],
+				(2)Bad Request - Post cannot be found"],
 			[200, "Returns a list of remaining user applications"]
 		] do
 	    	post = Post.where(:id => params[:post_id]).first
@@ -263,8 +262,6 @@ class Account < Grape::API
 	    	error!("Bad Request - Post cannot be found.", 400) unless post
 
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => post.id).first
-
-	    	error!("Bad Request - You can only withdraw a pending application", 400) unless matching.status == "pending" 
 
 	    	matching.destroy!
 
