@@ -189,6 +189,7 @@ class Account < Grape::API
 	    		job_hash[:duration] = job.duration
 	    		job_hash[:avatar_path] = job.avatar_path
 	    		job_hash[:applicant_count] = Matching.where(:post_id => job.id).count
+	    		job_hash[:pay_type] = job.pay_type
 	    		job_array << job_hash
 	    	end
 
@@ -336,6 +337,7 @@ class Account < Grape::API
 	    		job_hash[:rating] = matching.user_rating
 	    		job_hash[:comment] = matching.comments
 	    		job_hash[:avatar_path] = job.avatar_path
+	    		job_hash[:pay_type] = job.pay_type
 	    		job_array << job_hash
 	    	end
 
@@ -377,6 +379,7 @@ class Account < Grape::API
 	    		job_hash[:rating] = matching.user_rating
 	    		job_hash[:comments] = matching.comments
 	    		job_hash[:avatar_path] = job.avatar_path
+	    		job_hash[:pay_type] = job.pay_type
 	    		job_array << job_hash
 	    	end
 
@@ -384,31 +387,32 @@ class Account < Grape::API
 		    job_array.to_json
 		end
 
-		desc "mark applicant as complete"
-		params do
-			requires :email,		type: String
-			requires :applicant_id,	type: Integer
-			requires :post_id,		type: Integer
-		end
+		# ##### REMOVED DUE TO LACK OF NEED #########
+		# desc "mark applicant as complete"
+		# params do
+		# 	requires :email,		type: String
+		# 	requires :applicant_id,	type: Integer
+		# 	requires :post_id,		type: Integer
+		# end
 
-		post :complete, 
-		:http_codes => [
-			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "Bad Request - Invalid job applicant / post"],
-			[200, "Mark as complete successfully"],  
-			[403, "Bad Request - You have already hired this person"]  
-		] do
-	    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
+		# post :complete, 
+		# :http_codes => [
+		# 	[401, "Unauthorised - Invalid authentication token"], 
+		# 	[400, "Bad Request - Invalid job applicant / post"],
+		# 	[200, "Mark as complete successfully"],  
+		# 	[403, "Bad Request - You have already hired this person"]  
+		# ] do
+	 #    	matching = Matching.where(:applicant_id => params[:applicant_id], :post_id => params[:post_id]).first
 	    	
-	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
-	    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "hired"
+	 #    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
+	 #    	error!("Bad Request - You have already hired this person", 403) unless matching.status == "hired"
 	    	
-	    	matching.status = "reviewing"
-	    	matching.save
+	 #    	matching.status = "reviewing"
+	 #    	matching.save
 
-	    	status 200
-	    	matching.to_json
-		end
+	 #    	status 200
+	 #    	matching.to_json
+		# end
 
 		desc "offer job"
 		params do

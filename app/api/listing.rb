@@ -19,6 +19,7 @@ class Listing < Grape::API
 		    requires :end_date,		type: String
 		    requires :start_time,	type: String
 		    requires :end_time,		type: String
+		    optional :pay_type,		type: String
 		end
 
 		## This takes care of creating post
@@ -44,6 +45,8 @@ class Listing < Grape::API
 			start_time = Time.parse(params[:start_time])
 			end_time = Time.parse(params[:end_time])
 			duration = (end_date - job_date).to_i + 1
+			pay_type = "hour"
+			pay_type = "day" unless params[:pay_type].blank?
 
 			error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
 			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
@@ -66,7 +69,8 @@ class Listing < Grape::API
 			    start_time: params[:start_time],
 			    end_time: params[:end_time],
 			    duration: duration,
-			    avatar_path: @user.avatar_path
+			    avatar_path: @user.avatar_path,
+			    pay_type: pay_type
 		    })
 		    @user.published_jobs << post
 		    @user.save
@@ -110,6 +114,7 @@ class Listing < Grape::API
 		  	requires :end_date,		type: String
 		    requires :start_time,	type: String
 		    requires :end_time,		type: String
+		    optional :pay_type,		type: String
 		end
 		post :update, 
 		:http_codes => [
@@ -132,6 +137,8 @@ class Listing < Grape::API
 			start_time = Time.parse(params[:start_time])
 			end_time = Time.parse(params[:end_time])
 			duration = (end_date - job_date).to_i + 1
+			pay_type = "hour"
+			pay_type = "day" unless params[:pay_type].blank?
 
 			error!("Bad Request - The post cannot be found", 400) unless post
 	    	error!('Unauthorised - Only the post owner is allowed to edit post', 403) unless post.owner_id == @user.id
@@ -152,7 +159,8 @@ class Listing < Grape::API
 			    expiry_date: Date.parse(params[:job_date]) - 1,
 			    start_time: params[:start_time],
 			    end_time: params[:end_time],
-			    duration: duration
+			    duration: duration,
+			    pay_type: pay_type
 		    })
 
 		    status 200

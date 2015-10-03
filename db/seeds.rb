@@ -38,7 +38,7 @@ Matching.create!([
   {applicant_id: u3.id, post_id: c5.id, status: "completed", user_rating: 1, comments: "Friendly person"},
   {applicant_id: u3.id, post_id: c6.id, status: "completed", user_rating: 1, comments: "Fun to work with"},
   {applicant_id: u3.id, post_id: c7.id, status: "hired", user_rating: nil, comments: nil},
-  {applicant_id: u3.id, post_id: c8.id, status: "reviewing", user_rating: nil, comments: nil},
+  {applicant_id: u3.id, post_id: c8.id, status: "hired", user_rating: nil, comments: nil},
   {applicant_id: u3.id, post_id: p1.id, status: "pending", user_rating: nil, comments: nil},
   {applicant_id: u3.id, post_id: p2.id, status: "offered", user_rating: nil, comments: nil},
   {applicant_id: u3.id, post_id: c12.id, status: "offered", user_rating: nil, comments: nil},
