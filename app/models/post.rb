@@ -6,8 +6,8 @@ class Post < ActiveRecord::Base
 	has_many	:matchings, 	:dependent => :destroy, :foreign_key => "post_id"
 	has_many	:applicants,	:class_name => "User", 	through: :matchings
 
-	pg_search_scope :search_by_header_and_desc, :against => [:header, :description, :location], 
+	pg_search_scope :search_by_header_and_desc, :against => [:header, :description, :location, :company], 
 		:using => {
-            :tsearch => {:any_word => true}
+            :tsearch => {:prefix => true, :any_word => true}
       	}
 end
