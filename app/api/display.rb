@@ -32,7 +32,7 @@ class Display < Grape::API
 			requires :query, 		type: String
 		end
 	    get :search, :http_codes => [200, "Get successful"] do
-	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired"]).all
+	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired", "reviewing"]).all
 	      	
 	      	status 200
 	      	@posts.to_json
@@ -57,7 +57,7 @@ class Display < Grape::API
 		end
 
 ##########################################################################################################################
-		
+
 
 ##########################################################################################################################
 	end
