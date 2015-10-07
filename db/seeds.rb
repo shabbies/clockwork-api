@@ -4,6 +4,7 @@ u3 = User.create!(email: "kssc91@hotmail.com", password: "password", password_co
 u4 = User.create!(email: "iceicebaby@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "IceIceBaby", contact_number: 91110312)
 u5 = User.create!(email: "iscreamstory@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "iScreamStory", contact_number: 91110312)
 u6 = User.create!(email: "themeatloversclub@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "TheMeatLoversClub", contact_number: 91110312)
+hoi = User.create!(email: "hoichuen@gmail.com", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Hoi Chuen", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 2, neutral_rating: 1, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "M", nationality: "Singaporean", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/1502c81.jpg")
 
 today = Date.today
 
@@ -42,6 +43,9 @@ Matching.create!([
   {applicant_id: u3.id, post_id: c4.id, status: "completed", user_rating: 1, comments: "Hardworking, first to work everyday"},
   {applicant_id: u3.id, post_id: c5.id, status: "completed", user_rating: 1, comments: "Friendly person"},
   {applicant_id: u3.id, post_id: c6.id, status: "completed", user_rating: 1, comments: "Fun to work with"},
+  {applicant_id: hoi.id, post_id: c6.id, status: "completed", user_rating: 1, comments: "Funny guy"},
+  {applicant_id: hoi.id, post_id: c6.id, status: "completed", user_rating: 1, comments: "Very hardworking!"},
+  {applicant_id: hoi.id, post_id: c3.id, status: "completed", user_rating: 0, comments: "came and did his job"},
   {applicant_id: u3.id, post_id: c7.id, status: "hired", user_rating: nil, comments: nil},
   {applicant_id: u3.id, post_id: c8.id, status: "hired", user_rating: nil, comments: nil},
   {applicant_id: u3.id, post_id: p1.id, status: "pending", user_rating: nil, comments: nil},
