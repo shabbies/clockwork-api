@@ -12,7 +12,13 @@ class User < ActiveRecord::Base
   	has_many :received_notifications, 	:class_name => "Notification", 	:foreign_key => "receiver_id", 	:dependent => :destroy
   	has_many :matchings,				:dependent => :destroy, :foreign_key => "applicant_id"
   	has_many :jobs,						:class_name => "Post", 	through: :matchings,	:source => "applicant"
-  	has_attached_file :avatar, 			:path => ":rails_root/public/avatars/:filename", :bucket  => ENV['media.clockworksmu.herokuapp.com']
+  	has_attached_file :avatar, 			
+  		:path => ":rails_root/public/avatars/:filename", 
+  		:bucket  => ENV['media.clockworksmu.herokuapp.com'],
+  		:source_file_options => { all:     '-auto-orient' },
+  		:styles => {
+  			:thumb => "100x100"
+  		}
   	validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
   	attr_accessor :last_search
