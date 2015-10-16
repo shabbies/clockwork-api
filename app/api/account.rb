@@ -583,5 +583,26 @@ class Account < Grape::API
 	    	status 200
 	    	notifications.to_json
 		end
+
+		desc "read passed notifications"
+		params do
+			requires :email,				type: String
+			requires :notification_ids, 	type: String, desc: "format - 'id1,id2,id3'"
+		end
+
+		post :read_notifications, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications read successfully"] 
+		] do
+	    	notification_ids = params[:notification_ids].split(",")
+	    	notifications = Notification.where(id: notification_ids).all
+	    	notifications.each do |notification|
+	    		notification.status = "read"
+	    		notification.save!
+	    	end
+
+	    	status 200
+		end
 	end
 end

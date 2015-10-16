@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   	has_many :received_notifications, 	:class_name => "Notification", 	:foreign_key => "receiver_id", 	:dependent => :destroy
   	has_many :matchings,				:dependent => :destroy, :foreign_key => "applicant_id"
   	has_many :jobs,						:class_name => "Post", 	through: :matchings,	:source => "applicant"
+  	has_many :devices, 					:class_name => "Device", 	:foreign_key => "owner_id"
   	has_attached_file :avatar, 			
   		:path => ":rails_root/public/avatars/:filename", 
   		:bucket  => ENV['media.clockworksmu.herokuapp.com'],
@@ -21,7 +22,8 @@ class User < ActiveRecord::Base
   		}
   	validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
-  	attr_accessor :last_search
+    geocoded_by :address   # can also be an IP address
+    after_validation :geocode
 
 	def ensure_authentication_token
 	  	if authentication_token.blank?
