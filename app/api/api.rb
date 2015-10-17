@@ -14,6 +14,7 @@ class API < Grape::API
     mount Listing
     mount Account
     mount Display
+    mount Alert
     add_swagger_documentation api_version: 'v1'
 end
 
