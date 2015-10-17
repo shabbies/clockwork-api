@@ -1,8 +1,11 @@
 class CreateBadges < ActiveRecord::Migration
   def change
     create_table :badges do |t|
+    	t.string :name
+      	t.text :criteria
+      	t.attachment	:image,		:default => nil	
 
-      t.timestamps null: false
+      	t.timestamps null: false
     end
   end
 end
