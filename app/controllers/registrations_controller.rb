@@ -6,6 +6,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   	def create
   		build_resource(sign_up_params)
+  		resource.referral_id = User.generate_referral_id
   		if sign_up_params[:facebook_id]
   			existing_user = User.find_by("email" => sign_up_params[:email])
   			if existing_user
@@ -21,6 +22,16 @@ class RegistrationsController < Devise::RegistrationsController
 	  			resource.password_confirmation = password
 	  			resource.avatar_path = sign_up_params[:avatar_path]
 	  		end
+  		end
+
+  		if sign_up_params[:referred_by]
+  			referrer = User.where(referral_id: sign_up_params[:referred_by]).first
+  			if referrer
+  				referrer.referred_users += 1
+  				referrer.save!
+  			else 
+  				resource.referred_by = nil
+  			end
   		end
 
 	    if resource.save
@@ -72,7 +83,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   	private
     def sign_up_params
-    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path)
+    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path, :referred_by, :nric)
   	end
 
   	def account_update_params

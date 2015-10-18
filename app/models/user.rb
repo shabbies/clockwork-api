@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
     	 	:recoverable, :rememberable, :trackable, :validatable
   	
   	before_save :ensure_authentication_token
+    before_save :ensure_referral_id
+    validates_uniqueness_of :nric
 
   	has_many :published_jobs, 			:class_name => "Post", 	:foreign_key => "owner_id"
   	has_many :sent_notifications, 		:class_name => "Notification", 	:foreign_key => "sender_id", 	:dependent => :destroy
@@ -27,9 +29,15 @@ class User < ActiveRecord::Base
 
 	def ensure_authentication_token
 	  	if authentication_token.blank?
-	    	self.authentication_token = generate_authentication_token
+	    	  self.authentication_token = generate_authentication_token
 	  	end
 	end
+
+  def ensure_referral_id
+      if referral_id.blank?
+          self.referral_id = generate_referral_id
+      end
+  end
 
 	private
 
@@ -44,23 +52,10 @@ class User < ActiveRecord::Base
   		true if Float(string) rescue false
   	end
 
-	# def self.authenticate(user_id)
- #    	token = ApiKey.where(user_id: user_id).first
-	#     if token && !token.expired?
-	#       @current_user = User.find(token.user_id)
-	#       return token
-	#     else
-	#       false
-	#     end
- #  	end
-
- #  	def self.authenticate_token(token)
- #    	token = ApiKey.where(access_token: token).first
-	#     if token && !token.expired?
-	#       @current_user = User.find(token.user_id)
-	#       return true
-	#     else
-	#       return false
-	#     end 
- #  	end
+    def self.generate_referral_id
+      loop do
+          token = Devise.friendly_token(8)
+          break token unless User.find_by(referral_id: token)
+      end
+    end
 end
