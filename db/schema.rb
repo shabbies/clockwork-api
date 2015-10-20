@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151017105348) do
+ActiveRecord::Schema.define(version: 20151020071307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,6 +172,22 @@ ActiveRecord::Schema.define(version: 20151017105348) do
 
   add_index "rpush_notifications", ["delivered", "failed"], name: "index_rpush_notifications_multi", where: "((NOT delivered) AND (NOT failed))", using: :btree
 
+  create_table "scores", force: :cascade do |t|
+    t.integer  "service",      default: 0
+    t.integer  "kitchen",      default: 0
+    t.integer  "bartender",    default: 0
+    t.integer  "barista",      default: 0
+    t.integer  "order_taking", default: 0
+    t.integer  "cashier",      default: 0
+    t.integer  "clean_up",     default: 0
+    t.integer  "selling",      default: 0
+    t.integer  "owner_id"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "scores", ["owner_id"], name: "index_scores_on_owner_id", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                            default: "", null: false
     t.string   "encrypted_password",               default: "", null: false
@@ -216,4 +232,5 @@ ActiveRecord::Schema.define(version: 20151017105348) do
   add_foreign_key "notifications", "users", column: "receiver_id"
   add_foreign_key "notifications", "users", column: "sender_id"
   add_foreign_key "posts", "users", column: "owner_id"
+  add_foreign_key "scores", "users", column: "owner_id"
 end

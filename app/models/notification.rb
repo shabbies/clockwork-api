@@ -5,7 +5,7 @@ class Notification < ActiveRecord::Base
 
 	private
 	def send_mobile_notification
-		devices = Device.where(owner_id: receiver_id).all
+		devices = Device.where(owner_id: receiver_id, status: "subscribed").all
 		devices.each do |device|
 			if device.device_type == "ios"
 				n = Rpush::Apns::Notification.new
