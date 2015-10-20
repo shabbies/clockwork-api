@@ -3,7 +3,8 @@ class Notification < ActiveRecord::Base
 	belongs_to 	:sender, 		:class_name => "User", 	:foreign_key => "sender_id"
 	belongs_to 	:receiver, 		:class_name => "User", 	:foreign_key => "receiver_id"
 
-	def self.send_mobile_notification
+	private
+	def send_mobile_notification
 		devices = Device.where(owner_id: receiver_id).all
 		devices.each do |device|
 			if device.device_type == "ios"
