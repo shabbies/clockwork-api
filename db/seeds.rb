@@ -36,6 +36,7 @@ Post.create!([
   {header: "Frozen Yogurt Server", company: "Bricks N Cubes", salary: 10.0, description: "If you are looking to join an energetic, fun and vibrant team that offers on the job training and support, then join Mission Juice today! If you value commitment, professionalism and have a keen interest in learning and enhancing your skill set, join the Mission Juice team today! If you want to be among a group of people who want to progress together by working hard and want a place where you can excel and to find your full potential, then join the Mission Juice team today! If you have passion to serve and to make the world a happier place one juice at a time, then we want you! We want to hear from you! Full Time and Part time available! SEED-DEMO", location: "4 Seah Im Rd", posting_date: "2015-08-01", job_date: today+23, end_date: today+30, owner_id: u1.id, status: "listed", expiry_date: today+35, duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/bricks+and+cubes.jpg", latitude: 1.266948, longitude: 103.819095},
   {header: "Customer Service", company: "Bricks N Cubes", salary: 10.0, description: "We are seeking enthusiastic people to work with on full-time or part-time basis. Some experience in F&B service would be nice although not necessary. If you enjoy communicating with people and you are located in the East, come meet with us! SEED-DEMO", location: "42 Keppel Bay Dr, 098656", posting_date: "2015-08-11", job_date: "2015-11-02", end_date: "2015-11-05", owner_id: u1.id, status: "listed", expiry_date: "2015-01-01", duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/bricks+and+cubes.jpg", latitude: 1.266828, longitude: 103.814525}
 ])
+
 Matching.create!([
   {applicant_id: u3.id, post_id: c1.id, status: "completed", user_rating: -1, comments: "Came late left early"},
   {applicant_id: u3.id, post_id: c2.id, status: "completed", user_rating: -1, comments: "Not very good worker"},
@@ -70,4 +71,10 @@ Notification.create!([
   {sender_id: u3.id, receiver_id: c13.owner_id, content: "You have a new applicant for your job (#{c13.header})", avatar_path: u3.avatar_path, post_id: c13.id},
   {sender_id: u3.id, receiver_id: p3.owner_id, content: "#{u3.username} has accepted your a job offer!", avatar_path: u3.avatar_path, post_id: p3.id},
   {sender_id: c11.owner_id, receiver_id: u2.id, content: "You have received a new rating for your recently completed job!", avatar_path: c11.owner.avatar_path, post_id: c11.id}
+])
+
+Score.create!([
+	{owner_id: u2.id},
+	{owner_id: u3.id},
+	{owner_id: hoi.id}
 ])

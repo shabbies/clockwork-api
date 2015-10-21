@@ -15,6 +15,7 @@ class API < Grape::API
     mount Account
     mount Display
     mount Alert
+    mount Gamify
     add_swagger_documentation api_version: 'v1'
 end
 

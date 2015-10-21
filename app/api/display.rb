@@ -91,6 +91,7 @@ class Display < Grape::API
 	      	Matching.destroy_all
 	      	Post.destroy_all
 	      	User.destroy_all
+	      	Score.destroy_all
 
       		u1 = User.create!(email: "scsoh.2012@sis.smu.edu.sg", password: "password", password_confirmation: "password", account_type: "employer", username: "kennethsohsc", address: "Suntec City", contact_number: 98123123, latitude: 1.2959623, longitude: 103.8579517, referral_id: User.generate_referral_id)
 			u2 = User.create!(email: "js@smu.edu.sg", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Joan Shue", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 1, neutral_rating: 0, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "F", nationality: "Singaporean", latitude: 1.3341389, longitude: 103.8491111, referral_id: User.generate_referral_id, nric: "S1234567A")
@@ -164,6 +165,12 @@ class Display < Grape::API
 			  {sender_id: u3.id, receiver_id: c13.owner_id, content: "You have a new applicant for your job (#{c13.header})", avatar_path: u3.avatar_path, post_id: c13.id},
 			  {sender_id: u3.id, receiver_id: p3.owner_id, content: "#{u3.username} has accepted your a job offer!", avatar_path: u3.avatar_path, post_id: p3.id},
 			  {sender_id: c11.owner_id, receiver_id: u2.id, content: "You have received a new rating for your recently completed job!", avatar_path: c11.owner.avatar_path, post_id: c11.id}
+			])
+
+			Score.create!([
+				{owner_id: u2.id},
+				{owner_id: u3.id},
+				{owner_id: hoi.id}
 			])
 	    end  
 
