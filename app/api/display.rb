@@ -14,14 +14,19 @@ class Display < Grape::API
 	      		if expiry_date <= Date.today - 1
 	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
 	      			if matchings.count != 0
-	      				if matchings.where(:user_rating => nil).count != 0
-	      					post.status = "reviewing"
-	      				else
-	      					post.status = "completed"
-	      				end
-	      			else
-	      				post.status = "expired"
-	      			end
+		  				if matchings.where(:user_rating => nil).count != 0
+		  					post.status = "reviewing"
+		  				else
+		  					post.status = "completed"
+		  				end
+		  			else
+		  				Notification.create!(:sender_id => post.owner_id, :receiver_id => post.owner_id, :content => "Your post #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+		  				remaining_applicants = Matching.where(:post_id => post.id).where.not(:status => ["hired", "completed", "reviewing"])
+		  				remaining_applicants.each do |applicant|
+		  					Notification.create!(:sender_id => post.owner_id, :receiver_id => applicant.applicant_id, :content => "Your application for #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+		  				end
+		  				post.status = "expired"
+		  			end
 	      			post.save
 	      		else
 	      			return_array << post
@@ -77,6 +82,11 @@ class Display < Grape::API
   					post.status = "completed"
   				end
   			else
+  				Notification.create!(:sender_id => post.owner_id, :receiver_id => post.owner_id, :content => "Your post #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+  				remaining_applicants = Matching.where(:post_id => post.id).where.not(:status => ["hired", "completed", "reviewing"])
+  				remaining_applicants.each do |applicant|
+  					Notification.create!(:sender_id => post.owner_id, :receiver_id => applicant.applicant_id, :content => "Your application for #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+  				end
   				post.status = "expired"
   			end
   			post.save
