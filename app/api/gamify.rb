@@ -10,7 +10,7 @@ class Gamify < Grape::API
 		params do
 			requires :email,			type: String
 		end
-	    get :get_score, :http_codes => [
+	    post :get_score, :http_codes => [
 	    	[200, "Get score successful"],
 	    	[401, "Unauthorised - Invalid authentication token"]
 	    ] do
