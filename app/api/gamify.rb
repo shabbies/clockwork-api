@@ -14,14 +14,16 @@ class Gamify < Grape::API
 	    	[200, "Get score successful"],
 	    	[401, "Unauthorised - Invalid authentication token"]
 	    ] do
-	      	return_hash = Hash.new
+	    	return_hash = Hash.new
+	      	inner_hash = Hash.new
 	      	score = Score.where(owner_id: @user.id).first
 	      	score.attributes.each_pair do |name, value|
 	      		next if name == "id" || name == "created_at" || name == "updated_at" || name =="owner_id"
 	      		name = name.gsub("_", " ")
 	      		processed_name = name.split.map(&:capitalize).join(' ')
-	      		return_hash[processed_name] = value
+	      		inner_hash[processed_name] = value
 	      	end
+	      	return_hash["scores"] = inner_hash
 
 	      	status 200
 	      	return_hash.to_json
