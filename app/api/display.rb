@@ -102,14 +102,15 @@ class Display < Grape::API
 	      	Post.destroy_all
 	      	User.destroy_all
 	      	Score.destroy_all
+	      	Badge.destroy_all
 
       		u1 = User.create!(email: "scsoh.2012@sis.smu.edu.sg", password: "password", password_confirmation: "password", account_type: "employer", username: "kennethsohsc", address: "Suntec City", contact_number: 98123123, latitude: 1.2959623, longitude: 103.8579517, referral_id: User.generate_referral_id)
-			u2 = User.create!(email: "js@smu.edu.sg", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Joan Shue", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 1, neutral_rating: 0, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "F", nationality: "Singaporean", latitude: 1.3341389, longitude: 103.8491111, referral_id: User.generate_referral_id)
-			u3 = User.create!(email: "kssc91@hotmail.com", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "shabbies", address: "Singapore", contact_number: 97907685, good_rating: 3, neutral_rating: 1, bad_rating: 2, date_of_birth: Date.parse("1991-05-20"), gender: "M", nationality: "Singaporean", latitude: 1.352083, longitude: 103.819836, referral_id: User.generate_referral_id)
+			u2 = User.create!(email: "js@smu.edu.sg", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Joan Shue", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 1, neutral_rating: 0, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "F", nationality: "Singaporean", latitude: 1.3341389, longitude: 103.8491111, referral_id: User.generate_referral_id, obtained_badges: ["newbie"])
+			u3 = User.create!(email: "kssc91@hotmail.com", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "shabbies", address: "Singapore", contact_number: 97907685, good_rating: 3, neutral_rating: 1, bad_rating: 2, date_of_birth: Date.parse("1991-05-20"), gender: "M", nationality: "Singaporean", latitude: 1.352083, longitude: 103.819836, referral_id: User.generate_referral_id, obtained_badges: ["newbie", "superuser"])
 			u4 = User.create!(email: "iceicebaby@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "IceIceBaby", contact_number: 91110312, referral_id: User.generate_referral_id)
 			u5 = User.create!(email: "iscreamstory@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "iScreamStory", contact_number: 91110312, referral_id: User.generate_referral_id)
 			u6 = User.create!(email: "themeatloversclub@mail.com", password: "password", password_confirmation: "password", account_type: "employer", username: "TheMeatLoversClub", contact_number: 91110312, referral_id: User.generate_referral_id)
-			hoi = User.create!(email: "gerald@gmail.com", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Gerald Lim", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 2, neutral_rating: 1, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "M", nationality: "Singaporean", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Gerald.jpg", latitude: 1.3341389, longitude: 103.8491111, referral_id: User.generate_referral_id)
+			hoi = User.create!(email: "gerald@gmail.com", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Gerald Lim", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 2, neutral_rating: 1, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "M", nationality: "Singaporean", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Gerald.jpg", latitude: 1.3341389, longitude: 103.8491111, referral_id: User.generate_referral_id, obtained_badges: ["newbie"])
 
 			today = Date.today
 
@@ -182,6 +183,22 @@ class Display < Grape::API
 				{owner_id: u2.id},
 				{owner_id: u3.id},
 				{owner_id: hoi.id}
+			])
+
+			Badge.create!([
+				{name: "Newbie", criteria: "Complete your first job", badge_id: "newbie"},
+				{name: "Adventurer", criteria: "Explore 5 different restaurants / roles", badge_id: "adventurer"},
+				{name: "Jack Of All Trades", criteria: "Explore 10 different restaurants / roles", badge_id: "jackofalltrades"},
+				{name: "Master Chef", criteria: "Work as a chef for 10 times", badge_id: "masterchef"},
+				{name: "Master Ice Cream Scooper", criteria: "Work in an Ice Cream parlour for 10 times", badge_id: "mastericecreamscooper"},
+				{name: "Master Waiter", criteria: "Work as a waiter for 10 times", badge_id: "masterwaiter"},
+				{name: "Devoted", criteria: "Worked for the same employer 5 times", badge_id: "devoted"},
+				{name: "Superman", criteria: "Worked for 4 days in a role", badge_id: "superman"},
+				{name: "Bookworm", criteria: "Complete 3 quizzes", badge_id: "bookworm"},
+				{name: "Scholar", criteria: "Score at least 70% for 5 quizzes", badge_id: "scholar"},
+				{name: "Super User", criteria: "Applied jobs for 5 days in a row", badge_id: "superuser"},
+				{name: "Lovable", criteria: "Received 5 positive feedback", badge_id: "lovable"},
+				{name: "Social Butterfly", criteria: "Refer 5 friends to join Clockwork!", badge_id: "socialbutterfly"},
 			])
 	    end  
 

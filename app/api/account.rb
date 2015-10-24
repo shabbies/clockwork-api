@@ -604,5 +604,34 @@ class Account < Grape::API
 
 	    	status 200
 		end
+
+		desc "get obtained badges"
+		params do
+			requires :email,		type: String
+		end
+
+		post :get_badges, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications returned successfully"] 
+		] do
+	    	user_badges = @user.obtained_badges
+	    	badges = Array.new
+
+	    	user_badges.each do |badge_id|
+	    		badge = Badge.where(badge_id: badge_id).first
+	    		if badge
+	    			inner_hash = Hash.new
+	    			inner_hash["name"] = badge.name
+	    			inner_hash["criteria"] = badge.criteria
+	    			inner_hash["badge_id"] = badge_id
+	    			inner_hash["badge_image_link"] = "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/badges/#{badge_id}_done.png"
+	    			badges << inner_hash
+	    		end
+	    	end
+
+	    	status 200
+	    	badges.to_json
+		end
 	end
 end

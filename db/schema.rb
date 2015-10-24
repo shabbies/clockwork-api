@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022045434) do
+ActiveRecord::Schema.define(version: 20151024134200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20151022045434) do
     t.datetime "image_updated_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.string   "badge_id"
   end
 
   create_table "contests", force: :cascade do |t|
@@ -229,8 +230,8 @@ ActiveRecord::Schema.define(version: 20151022045434) do
     t.float    "longitude"
     t.string   "referral_id"
     t.integer  "referred_users",                   default: 0
-    t.string   "nric"
     t.string   "referred_by"
+    t.text     "obtained_badges",                  default: [],              array: true
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
