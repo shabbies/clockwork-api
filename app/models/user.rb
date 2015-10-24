@@ -7,7 +7,6 @@ class User < ActiveRecord::Base
   	
   	before_save :ensure_authentication_token
     before_save :ensure_referral_id
-    validates_uniqueness_of :nric, conditions: -> { where(account_type: 'job_seeker') }
 
   	has_many :published_jobs, 			:class_name => "Post", 	:foreign_key => "owner_id"
   	has_many :sent_notifications, 		:class_name => "Notification", 	:foreign_key => "sender_id", 	:dependent => :destroy
