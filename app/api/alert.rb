@@ -22,11 +22,14 @@ class Alert < Grape::API
 	    	device_type = params[:device_type].downcase
 	    	error!("Invalid device type - should be iOS or android", 400) unless device_type == "ios" || device_type == "android"
 	      	
-	      	Device.create!({
-			    device_id: params[:device_id],
-			    owner_id: @user.id,
-			    device_type: device_type
-		    })
+	      	existing_device = Device.where(device_id: params[:device_id], owner_id: @user.id).first
+	      	unless existing_device
+	      		Device.create!({
+				    device_id: params[:device_id],
+				    owner_id: @user.id,
+				    device_type: device_type
+			    })
+	      	end
 	      	status 200
 	    end
 
