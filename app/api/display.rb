@@ -250,7 +250,7 @@ class Display < Grape::API
     	] do
 	      	user = User.where(email: params[:email])
 	      	if user
-	      		device = Device.where(owner_id: user.id).device_id
+	      		device = Device.where(owner_id: user.id).first.device_id
 	      		device.to_json
 	      		status 200
 	      	end
