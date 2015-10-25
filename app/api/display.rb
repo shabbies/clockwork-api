@@ -201,10 +201,9 @@ class Display < Grape::API
 				{name: "Social Butterfly", criteria: "Refer 5 friends to join Clockwork!", badge_id: "socialbutterfly"},
 			])
 	    end  
-
-##########################################################################################################################
 	end
 
+##########################################################################################################################
 	resource :users do
 		params do
 			requires :id, 		type: String, desc: "User ID"
@@ -248,7 +247,7 @@ class Display < Grape::API
 	    :http_codes => [
 	    	[200, "Get successful"],
 	    	[400, "Device not found"] 
-    	do
+    	] do
 	      	user = User.where(email: params[:email])
 	      	if user
 	      		device = Device.where(owner_id: user.id).device_id
