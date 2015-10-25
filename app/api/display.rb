@@ -94,23 +94,6 @@ class Display < Grape::API
   			status 200
 	    end  
 
-	    desc "get device token - for dev only"
-	    params do
-			requires :email, 		type: String
-		end
-	    post :get_device_token, 
-	    :http_codes => [
-	    	[200, "Get successful"],
-	    	[400, "Device not found"] 
-    	do
-	      	user = User.where(email: params[:email])
-	      	if user
-	      		device = Device.where(owner_id: user.id).device_id
-	      		status 200
-	      	end
-  			error!("No device registered under this user", 400)
-	    end  
-
      	desc "re-seed data - for dev only"
 	    
 	    get :re_seed, :http_codes => [200, "successful"] do
@@ -255,5 +238,24 @@ class Display < Grape::API
 		    end
 	    	job_array.to_json
 		end
+##########################################################################################################################
+		# API FOR DEVELOPERS
+		desc "get device token - for dev only"
+	    params do
+			requires :email, 		type: String
+		end
+	    post :get_device_token, 
+	    :http_codes => [
+	    	[200, "Get successful"],
+	    	[400, "Device not found"] 
+    	do
+	      	user = User.where(email: params[:email])
+	      	if user
+	      		device = Device.where(owner_id: user.id).device_id
+	      		status 200
+	      	end
+  			error!("No device registered under this user", 400)
+	    end  
+##########################################################################################################################
 	end
 end
