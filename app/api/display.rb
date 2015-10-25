@@ -253,8 +253,9 @@ class Display < Grape::API
 	      		device = Device.where(owner_id: user.id).first.device_id
 	      		device.to_json
 	      		status 200
-	      	end
-  			error!("No device registered under this user", 400)
+	      	else 
+	  			error!("No device registered under this user", 400)
+	  		end
 	    end  
 ##########################################################################################################################
 	end
