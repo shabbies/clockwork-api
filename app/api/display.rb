@@ -248,7 +248,7 @@ class Display < Grape::API
 	    	[200, "Get successful"],
 	    	[400, "Device not found"] 
     	] do
-	      	user = User.where(email: params[:email])
+	      	user = User.where(email: params[:email]).first
 	      	if user
 	      		device = Device.where(owner_id: user.id).first.device_id
 	      		device.to_json
