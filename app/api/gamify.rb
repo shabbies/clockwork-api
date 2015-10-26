@@ -62,5 +62,28 @@ class Gamify < Grape::API
 	    	status 200
 	    	return_array.to_json
 	    end
+
+	    desc "Get Quiz Questions"
+		params do
+			requires :email,	type: String
+			requires :genre,	type: String
+		end
+	    post :get_quiz, :http_codes => [
+	    	[200, "Get questions successful"],
+	    	[400, "Invalid Question Genre"],
+	    	[401, "Unauthorised - Invalid authentication token"]
+	    ] do
+	    	question_history = QuestionHistory.where(owner_id: @user.id).first
+	    	answered_questions = question_history[params[:genre]]
+
+	    	if answered_questions != nil
+		    	questions = Question.where(genre: params[:genre]).where.not(id: answered_questions).order("RANDOM()").limit(5).all
+
+		    	status 200
+		    	questions.to_json
+		    else 
+		    	error!('Invalid Question Genre', 400)
+		    end
+	    end
 	end
 end

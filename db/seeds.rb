@@ -95,3 +95,16 @@ Badge.create!([
 	{name: "Social Butterfly", criteria: "Refer 5 friends to join Clockwork!", badge_id: "socialbutterfly"},
 ])
 
+Question.create!([
+	{question: "What is the purpose of sanitising?", choice_a: "To get rid of invisible germs", choice_b: "To remove visible stains", choice_c: "To impress your boss", choice_d: "Because there isn't any other way of cleaning", answer: "a", genre: "clean_up"},
+	{question: "Which one should come first? Sanitising or Cleaning", choice_a: "Cleaning", choice_b: "Sanitising", choice_c: "It doesn't matter", choice_d: "This is a trick question, neither are useful", answer: "b", genre: "clean_up"},
+	{question: "What is the most common type of water to wash with?", choice_a: "Boiling water", choice_b: "Cold water", choice_c: "Room temperature water", choice_d: "All are the same.", answer: "c", genre: "clean_up"},
+	{question: "What should be the order of work?", choice_a: "Pre-clean > Wash and Rinse > Sanitise > Dry", choice_b: "Pre-clean > Sanitise > Wash and Rinse > Dry", choice_c: "Wash and Rinse > Sanitise > Pre-clean > Dry", choice_d: "None of the above", answer: "a", genre: "clean_up"},
+	{question: "Why should items be dry completely before storing", choice_a: "It makes it cleaner", choice_b: "It does not attract pests", choice_c: "It prevents micro-organism growth", choice_d: "It doesn't matter, it will drip dry during storage", answer: "c", genre: "clean_up"},
+])
+
+QuestionHistory.create!([
+	{owner_id: u2.id},
+	{owner_id: u3.id},
+	{owner_id: hoi.id}
+])

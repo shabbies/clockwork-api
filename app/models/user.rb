@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   	has_many :jobs,						:class_name => "Post", 	through: :matchings,	:source => "applicant"
   	has_many :devices, 					:class_name => "Device", 	:foreign_key => "owner_id"
     has_one  :score,            :dependent => :destroy, :foreign_key => "owner_id"
+    has_one  :answered_questions, class_name: "QuestionHistory", :foreign_key => "owner_id", :dependent => :destroy
   	has_attached_file :avatar, 			
   		:path => ":rails_root/public/avatars/:filename", 
   		:bucket  => ENV['media.clockworksmu.herokuapp.com'],

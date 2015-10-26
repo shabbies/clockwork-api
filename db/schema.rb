@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151024134200) do
+ActiveRecord::Schema.define(version: 20151026044710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,6 +119,34 @@ ActiveRecord::Schema.define(version: 20151024134200) do
     t.string   "pay_type",     default: "hour"
     t.float    "latitude"
     t.float    "longitude"
+  end
+
+  create_table "question_histories", force: :cascade do |t|
+    t.integer  "owner_id"
+    t.text     "clean_up",     default: [],              array: true
+    t.text     "order_taking", default: [],              array: true
+    t.text     "barista",      default: [],              array: true
+    t.text     "selling",      default: [],              array: true
+    t.text     "kitchen",      default: [],              array: true
+    t.text     "bartender",    default: [],              array: true
+    t.text     "service",      default: [],              array: true
+    t.text     "cashier",      default: [],              array: true
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "question_histories", ["owner_id"], name: "index_question_histories_on_owner_id", using: :btree
+
+  create_table "questions", force: :cascade do |t|
+    t.string   "question"
+    t.string   "choice_a"
+    t.string   "choice_b"
+    t.string   "choice_c"
+    t.string   "choice_d"
+    t.string   "answer"
+    t.string   "genre"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "rpush_apps", force: :cascade do |t|
@@ -240,5 +268,6 @@ ActiveRecord::Schema.define(version: 20151024134200) do
   add_foreign_key "notifications", "users", column: "receiver_id"
   add_foreign_key "notifications", "users", column: "sender_id"
   add_foreign_key "posts", "users", column: "owner_id"
+  add_foreign_key "question_histories", "users", column: "owner_id"
   add_foreign_key "scores", "users", column: "owner_id"
 end

@@ -17,7 +17,11 @@ class Notification < ActiveRecord::Base
 				n = Rpush::Gcm::Notification.new
 				n.app = Rpush::Gcm::App.find_by_name("android_app")
 				n.registration_ids = "#{device.device_id}"
-				n.data = { message: content }
+				type = "post"
+				if content.include?("rated")
+					type = "rate"
+				end
+				n.data = { message: content, type: type }
 				n.save!
 			end
 		end

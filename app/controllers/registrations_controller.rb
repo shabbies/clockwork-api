@@ -35,7 +35,8 @@ class RegistrationsController < Devise::RegistrationsController
   		end
 
 	    if resource.save
-        Score.create(owner_id: resource.id) if resource.account_type == "job_seeker"
+        Score.create!(owner_id: resource.id) if resource.account_type == "job_seeker"
+        QuestionHistory.create!(owner_id: resource.id) if resource.account_type == "job_seeker"
 	      yield resource if block_given?
 	      if resource.active_for_authentication?
 	        set_flash_message :notice, :signed_up if is_flashing_format?
