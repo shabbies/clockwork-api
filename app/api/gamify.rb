@@ -71,6 +71,7 @@ class Gamify < Grape::API
 	    post :get_quiz, :http_codes => [
 	    	[200, "Get questions successful"],
 	    	[400, "Invalid Question Genre"],
+	    	[403, "No more quizzes available!"],
 	    	[401, "Unauthorised - Invalid authentication token"]
 	    ] do
 	    	question_history = QuestionHistory.where(owner_id: @user.id).first
@@ -79,6 +80,7 @@ class Gamify < Grape::API
 	    	if answered_questions != nil
 		    	questions = Question.where(genre: params[:genre]).where.not(id: answered_questions).order("RANDOM()").limit(5).all
 
+		    	error!('No more quizzes available', 403) if questions.size != 5
 		    	status 200
 		    	questions.to_json
 		    else 
