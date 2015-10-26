@@ -85,5 +85,30 @@ class Gamify < Grape::API
 		    	error!('Invalid Question Genre', 400)
 		    end
 	    end
+
+	    desc "Record quiz results"
+		params do
+			requires :email,		type: String
+			requires :genre,		type: String
+			requires :questions,	type: String, desc: "1,2 [delimited by ,]"
+		end
+	    post :record_quiz, :http_codes => [
+	    	[200, "Record results successful"],
+	    	[400, "Invalid Question Genre"],
+	    	[401, "Unauthorised - Invalid authentication token"]
+	    ] do
+	    	right_questions = params[:questions].split(",")
+	    	verified_questions = Array.new
+	    	right_questions.each do |question_id|
+	    		question = Question.where(genre: params[:genre], id: question_id).first
+	    		verified_questions << question_id if question
+	    	end
+	    	(@user.answered_questions[params[:genre]] << verified_questions).flatten!
+
+	    	@user.score[params[:genre]] += (verified_questions.size * 10)
+	    	@user.save
+
+	    	status 200
+	    end
 	end
 end
