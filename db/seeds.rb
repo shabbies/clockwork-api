@@ -95,6 +95,7 @@ Badge.create!([
 	{name: "Social Butterfly", criteria: "Refer 5 friends to join Clockwork!", badge_id: "socialbutterfly"},
 ])
 
+# genres: [service, kitchen, bartender, barista, order_taking, cashier, clean_up, selling]
 Question.create!([
 	{question: "What is the purpose of sanitising?", choice_a: "To get rid of invisible germs", choice_b: "To remove visible stains", choice_c: "To impress your boss", choice_d: "Because there isn't any other way of cleaning", answer: "a", genre: "clean_up"},
 	{question: "Which one should come first? Sanitising or Cleaning", choice_a: "Cleaning", choice_b: "Sanitising", choice_c: "It doesn't matter", choice_d: "This is a trick question, neither are useful", answer: "b", genre: "clean_up"},
