@@ -40,6 +40,11 @@ class User < ActiveRecord::Base
       end
   end
 
+  def reward_badge(badge_name)
+    badge = Badge.where(badge_id: badge_name).first
+    obtained_badges << badge.badge_id if badge
+  end
+
 	private
 
     def generate_authentication_token
