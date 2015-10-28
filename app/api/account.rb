@@ -265,14 +265,14 @@ class Account < Grape::API
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => post.id).first
 
 	    	matching.destroy!
-
 	    	if Matching.where(:post_id => post.id).count == 0
+	    		p "hihi"
 	    		post.status = "listed"
-	    		post.save
+	    		post.save!
 	    	end
 
 	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} just withdrew his application for #{post.header}", :avatar_path => @user.avatar_path, :post_id => post.id)
-
+	    	
 	    	status 200
 	    	@user.jobs.to_json
 		end
@@ -579,6 +579,7 @@ class Account < Grape::API
 	    	notifications = @user.received_notifications.where(status: "unread").all
 	    	read_notifications = @user.received_notifications.where(status: "read").first(100)
 	    	notifications += read_notifications
+	    	notifications.reverse!
 
 	    	status 200
 	    	notifications.to_json

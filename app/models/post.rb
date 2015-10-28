@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
 	geocoded_by :location   # can also be an IP address
 	after_validation :geocode, unless: :is_seed
 
-	pg_search_scope :search_by_header_and_desc, :against => [:header, :description, :location, :company], 
+	pg_search_scope :search_by_header_and_desc, :against => [:header, :description, :location, :company, :salary], 
 		:using => {
             :tsearch => {:prefix => true, :any_word => true}
       	}
