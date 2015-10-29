@@ -2,22 +2,31 @@ class Display < Grape::API
 	resource :posts do	
 		# GET: /api/v1/posts/all.json
 		desc "List all Posts"
+		params do
+			optional :user_id,	type: Integer
+		end
 	    get :all, :http_codes => [200, "Get successful"]  do
-	      	posts = Post.where.not(:status => ["expired", "completed"]).all
+	    	user = User.where(:id => params[:user_id]).first
+	      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed"]).all : Post.where.not(:status => ["expired", "completed"]).all
 	      	return_array = Array.new
 	      	posts.each do |post|
 	      		expiry_date = post.expiry_date
 	      		if expiry_date <= Date.today - 1
 	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
 	      			if matchings.count != 0
-	      				if matchings.where(:user_rating => nil).count != 0
-	      					post.status = "reviewing"
-	      				else
-	      					post.status = "completed"
-	      				end
-	      			else
-	      				post.status = "expired"
-	      			end
+		  				if matchings.where(:user_rating => nil).count != 0
+		  					post.status = "reviewing"
+		  				else
+		  					post.status = "completed"
+		  				end
+		  			else
+		  				Notification.create!(:sender_id => post.owner_id, :receiver_id => post.owner_id, :content => "Your post #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+		  				remaining_applicants = Matching.where(:post_id => post.id).where.not(:status => ["hired", "completed", "reviewing"])
+		  				remaining_applicants.each do |applicant|
+		  					Notification.create!(:sender_id => post.owner_id, :receiver_id => applicant.applicant_id, :content => "Your application for #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
+		  				end
+		  				post.status = "expired"
+		  			end
 	      			post.save
 	      		else
 	      			return_array << post
@@ -55,13 +64,9 @@ class Display < Grape::API
 		   	status 200
 		   	post.to_json
 		end
-
-##########################################################################################################################
-
-
-##########################################################################################################################
 	end
 
+##########################################################################################################################
 	resource :users do
 		params do
 			requires :id, 		type: String, desc: "User ID"

@@ -6,6 +6,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   	def create
   		build_resource(sign_up_params)
+  		resource.referral_id = User.generate_referral_id
   		if sign_up_params[:facebook_id]
   			existing_user = User.find_by("email" => sign_up_params[:email])
   			if existing_user
@@ -23,7 +24,19 @@ class RegistrationsController < Devise::RegistrationsController
 	  		end
   		end
 
+  		if sign_up_params[:referred_by]
+  			referrer = User.where(referral_id: sign_up_params[:referred_by]).first
+  			if referrer
+  				referrer.referred_users += 1
+  				referrer.save!
+  			else 
+  				resource.referred_by = nil
+  			end
+  		end
+
 	    if resource.save
+        Score.create!(owner_id: resource.id) if resource.account_type == "job_seeker"
+        QuestionHistory.create!(owner_id: resource.id) if resource.account_type == "job_seeker"
 	      yield resource if block_given?
 	      if resource.active_for_authentication?
 	        set_flash_message :notice, :signed_up if is_flashing_format?
@@ -72,7 +85,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   	private
     def sign_up_params
-    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path)
+    	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path, :referred_by)
   	end
 
   	def account_update_params

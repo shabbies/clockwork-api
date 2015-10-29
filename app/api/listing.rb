@@ -342,6 +342,7 @@ class Listing < Grape::API
 					good_rating = retrieved_user.good_rating += 1
 					retrieved_user.good_rating = good_rating
 				end
+				Notification.create!(:sender_id => @user.id, :receiver_id => user_id, :content => "#{@user.username} has just rated you for your work at #{Post.find(params[:post_id]).header}!", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
 				retrieved_user.save
 			end
 

@@ -37,7 +37,8 @@ class Account < Grape::API
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old | 
-				(2)Bad Request - Passwords do not match"],
+					(2)Bad Request - Passwords do not match |
+					(3)Bad Request - Contact Number already in use"],
 			[200, "Save successful"],
 			[403, "Unauthorised - Old password is invalid"],
 			[500, "Internal Server Error - save failed"]
@@ -46,6 +47,10 @@ class Account < Grape::API
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
+
+			if params[:contact_number]
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
 			end
 
 			avatar = params[:avatar]
@@ -102,7 +107,8 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old || 
 				(2)Bad Request - Invalid Gender: only M and F allowed ||
-				(3)Bad Request - Passwords do not match"],
+				(3)Bad Request - Passwords do not match | 
+				(4)Bad Request - Contact Number already in use"],
 			[200, "Save successful"],
 			[500, "Internal Server Error - save failed"]
 		] do
@@ -115,6 +121,10 @@ class Account < Grape::API
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
+
+			unless params[:contact_number].blank?
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
 			end
 
 			avatar = params[:avatar]
@@ -217,9 +227,13 @@ class Account < Grape::API
 
 	    	#preparing notification
 	    	job_title = post.header
-	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path)
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "You have a new applicant for your job (#{job_title})", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => "hired").all
+
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Bad Request - User has already applied", 403) if matching
+	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
 
 	    	if clashed_matchings
 	    		clashed_matchings.each do |clashed_matching|
@@ -230,10 +244,6 @@ class Account < Grape::API
 			    	end	
 	    		end
 	    	end
-
-	    	error!("Bad Request - Post not found", 400) unless post
-	    	error!("Bad Request - User has already applied", 403) if matching
-	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
 
 	    	post.applicants << @user
 	    	post.status = "applied"
@@ -265,11 +275,13 @@ class Account < Grape::API
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => post.id).first
 
 	    	matching.destroy!
-
 	    	if Matching.where(:post_id => post.id).count == 0
+	    		p "hihi"
 	    		post.status = "listed"
-	    		post.save
+	    		post.save!
 	    	end
+
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} just withdrew the application for #{post.header}", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	status 200
 	    	@user.jobs.to_json
@@ -436,6 +448,8 @@ class Account < Grape::API
 	    	matching.status = "offered"
 	    	matching.save
 
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => params[:applicant_id], :content => "#{@user.username} has offered you a job for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
+
 	    	status 200
 	    	matching.to_json
 		end
@@ -459,6 +473,7 @@ class Account < Grape::API
 			Matching.transaction do
 				applicant_array.each do |applicant_id|
 					matching = Matching.find_by_applicant_id_and_post_id(applicant_id, params[:post_id])
+					Notification.create!(:sender_id => @user.id, :receiver_id => applicant_id, :content => "#{@user.username} has offered you a job for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
 					error!("Bad Request - You have already offered this person", 403) unless matching.status == "pending"
 					matching.status = "offered"
 	    			matching.save
@@ -484,6 +499,8 @@ class Account < Grape::API
 	    	
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => params[:applicant_id], :content => "#{@user.username} has withdrew the job offer for #{Post.find(params[:post_id]).header}", :avatar_path => @user.avatar_path, :post_id => params[:post_id])
+					
 	    	matching.status = "pending"
 	    	matching.save
 
@@ -508,6 +525,8 @@ class Account < Grape::API
 	    	post = Post.find(params[:post_id])
 	    	error!("Bad Request - Invalid job applicant / post", 400) unless matching
 	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => ["offered", "pending"]).all
+
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} has accepted your a job offer!", :avatar_path => @user.avatar_path, :post_id => post.id)
 
 	    	if clashed_matchings
 	    		return_array = Array.new
@@ -541,14 +560,89 @@ class Account < Grape::API
 	    	end
 		end
 
+		desc "get unread notifications"
+		params do
+			requires :email,		type: String
+		end
+
 		post :get_unread_notifications, 
 		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
 			[200, "Notifications returned successfully"] 
 		] do
-	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all
+	    	notifications = Notification.where(:receiver_id => @user.id, :status => "unread").all;
 	    	
 	    	status 200
 	    	notifications.to_json
+		end
+
+		desc "get all notifications"
+		params do
+			requires :email,		type: String
+		end
+
+		post :get_all_notifications, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications returned successfully"] 
+		] do
+	    	notifications = @user.received_notifications.where(status: "unread").all
+	    	read_notifications = @user.received_notifications.where(status: "read").first(100)
+	    	notifications += read_notifications
+	    	notifications.reverse!
+
+	    	status 200
+	    	notifications.to_json
+		end
+
+		desc "read passed notifications"
+		params do
+			requires :email,				type: String
+			requires :notification_ids, 	type: String, desc: "format - 'id1,id2,id3'"
+		end
+
+		post :read_notifications, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications read successfully"] 
+		] do
+	    	notification_ids = params[:notification_ids].split(",")
+	    	notifications = Notification.where(id: notification_ids).all
+	    	notifications.each do |notification|
+	    		notification.status = "read"
+	    		notification.save!
+	    	end
+
+	    	status 200
+		end
+
+		desc "get obtained badges"
+		params do
+			requires :email,		type: String
+		end
+
+		post :get_badges, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Notifications returned successfully"] 
+		] do
+	    	user_badges = @user.obtained_badges
+	    	badges = Array.new
+
+	    	user_badges.each do |badge_id|
+	    		badge = Badge.where(badge_id: badge_id).first
+	    		if badge
+	    			inner_hash = Hash.new
+	    			inner_hash["name"] = badge.name
+	    			inner_hash["criteria"] = badge.criteria
+	    			inner_hash["badge_id"] = badge_id
+	    			inner_hash["badge_image_link"] = "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/badges/#{badge_id}_done.png"
+	    			badges << inner_hash
+	    		end
+	    	end
+
+	    	status 200
+	    	badges.to_json
 		end
 	end
 end
