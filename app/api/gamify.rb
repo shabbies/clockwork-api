@@ -18,7 +18,7 @@ class Gamify < Grape::API
 	      	inner_array = Array.new
 	      	score = Score.where(owner_id: @user.id).first
 	      	score.attributes.each_pair do |name, value|
-	      		next if name == "id" || name == "created_at" || name == "updated_at" || name =="owner_id"
+	      		next if name == "id" || name == "created_at" || name == "updated_at" || name == "owner_id" || name == "quiz_score" || name == "quiz_count"
 	      		inner_hash = Hash.new
 	      		name = name.gsub("_", " ")
 	      		processed_name = name.split.map(&:capitalize).join(' ')
@@ -108,6 +108,8 @@ class Gamify < Grape::API
 	    	(@user.answered_questions[params[:genre]] << verified_questions).flatten!
 
 	    	@user.score[params[:genre]] += (verified_questions.size * 10)
+	    	@user.score.quiz_count += 1
+	    	@user.score.quiz_score += (verified_questions.size * 10)
 	    	@user.save
 
 	    	status 200

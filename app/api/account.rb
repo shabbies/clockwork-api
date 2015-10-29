@@ -37,7 +37,8 @@ class Account < Grape::API
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old | 
-				(2)Bad Request - Passwords do not match"],
+					(2)Bad Request - Passwords do not match |
+					(3)Bad Request - Contact Number already in use"],
 			[200, "Save successful"],
 			[403, "Unauthorised - Old password is invalid"],
 			[500, "Internal Server Error - save failed"]
@@ -46,6 +47,10 @@ class Account < Grape::API
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
+
+			if params[:contact_number]
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
 			end
 
 			avatar = params[:avatar]
@@ -102,7 +107,8 @@ class Account < Grape::API
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old || 
 				(2)Bad Request - Invalid Gender: only M and F allowed ||
-				(3)Bad Request - Passwords do not match"],
+				(3)Bad Request - Passwords do not match | 
+				(4)Bad Request - Contact Number already in use"],
 			[200, "Save successful"],
 			[500, "Internal Server Error - save failed"]
 		] do
@@ -115,6 +121,10 @@ class Account < Grape::API
 			unless params[:date_of_birth].blank?
 				date_of_birth = Date.parse(params[:date_of_birth])
 				error!("Bad Request - You should be at least 15 years old", 400) if date_of_birth > Date.today - (15 * 365)
+			end
+
+			unless params[:contact_number].blank?
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
 			end
 
 			avatar = params[:avatar]
@@ -221,6 +231,10 @@ class Account < Grape::API
 
 	    	clashed_matchings = Matching.where(:applicant_id => @user.id, :status => "hired").all
 
+	    	error!("Bad Request - Post not found", 400) unless post
+	    	error!("Bad Request - User has already applied", 403) if matching
+	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
+
 	    	if clashed_matchings
 	    		clashed_matchings.each do |clashed_matching|
 	    			clashed = Post.find(clashed_matching.post_id)
@@ -230,10 +244,6 @@ class Account < Grape::API
 			    	end	
 	    		end
 	    	end
-
-	    	error!("Bad Request - Post not found", 400) unless post
-	    	error!("Bad Request - User has already applied", 403) if matching
-	    	error!("Bad Request - Only job seekers are allowed to apply for a job", 400) if @user.account_type == "employer"
 
 	    	post.applicants << @user
 	    	post.status = "applied"
@@ -271,8 +281,8 @@ class Account < Grape::API
 	    		post.save!
 	    	end
 
-	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} just withdrew his application for #{post.header}", :avatar_path => @user.avatar_path, :post_id => post.id)
-	    	
+	    	Notification.create!(:sender_id => @user.id, :receiver_id => post.owner_id, :content => "#{@user.username} just withdrew the application for #{post.header}", :avatar_path => @user.avatar_path, :post_id => post.id)
+
 	    	status 200
 	    	@user.jobs.to_json
 		end
