@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
     geocoded_by :address   # can also be an IP address
     after_validation :geocode
 
-    validates_uniqueness_of :contact_number
+    validates_uniqueness_of :contact_number, allow_nil: true
 
     def ensure_authentication_token
         if authentication_token.blank?
