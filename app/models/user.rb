@@ -2,8 +2,7 @@ class User < ActiveRecord::Base
 	nilify_blanks
       # Include default devise modules. Others available are:
       # :confirmable, :lockable, :timeoutable and :omniauthable
-    devise 	:database_authenticatable, :registerable,
-    :recoverable, :rememberable, :trackable, :validatable
+    devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :confirmable
 
     before_save :ensure_authentication_token
     before_save :ensure_referral_id
@@ -29,7 +28,15 @@ class User < ActiveRecord::Base
     geocoded_by :address   # can also be an IP address
     after_validation :geocode
 
-    validates_uniqueness_of :contact_number
+    validates_uniqueness_of :contact_number, allow_nil: true
+
+    def confirmation_required?
+        if username.include? "(seed)"
+            false
+        else
+            !confirmed?
+        end
+    end
 
     def ensure_authentication_token
         if authentication_token.blank?

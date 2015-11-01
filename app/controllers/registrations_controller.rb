@@ -6,7 +6,9 @@ class RegistrationsController < Devise::RegistrationsController
 
   	def create
   		build_resource(sign_up_params)
+
   		resource.referral_id = User.generate_referral_id
+
   		if sign_up_params[:facebook_id]
   			existing_user = User.find_by("email" => sign_up_params[:email])
   			if existing_user
@@ -24,15 +26,15 @@ class RegistrationsController < Devise::RegistrationsController
 	  		end
   		end
 
-  		if sign_up_params[:referred_by]
-  			referrer = User.where(referral_id: sign_up_params[:referred_by]).first
-  			if referrer
-  				referrer.referred_users += 1
-  				referrer.save!
-  			else 
-  				resource.referred_by = nil
-  			end
-  		end
+      if sign_up_params[:referred_by]
+        referrer = User.where(referral_id: sign_up_params[:referred_by]).first
+        if referrer
+          referrer.referred_users += 1
+          referrer.save!
+        else 
+          resource.referred_by = nil
+        end
+      end
 
 	    if resource.save
         Score.create!(owner_id: resource.id) if resource.account_type == "job_seeker"
@@ -53,43 +55,9 @@ class RegistrationsController < Devise::RegistrationsController
 	    end
 	end
 
-	def update
-		token = request.headers["Authentication-Token"]
-    	user = User.find_by_email_and_authentication_token(account_update_params[:email],token)
-    	unless user
-    		render json: "Token is unauthorised", status: 401
-    		return
-    	end
-
-	    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
-	    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
-
-	    if update_resource(resource, account_update_params)
-	      	yield resource if block_given?
-	      	if is_flashing_format?
-	        	flash_key = update_needs_confirmation?(resource, prev_unconfirmed_email) ?
-		          :update_needs_confirmation : :updated
-		        set_flash_message :notice, flash_key
-	      	end
-	      	sign_in resource_name, resource, bypass: true
-	      	render json: resource, status: 200 
-	    else
-      		clean_up_passwords resource
-      		render json: resource.errors, status: :unprocessable_entity 
-	    end
-  	end
-
-	def update_resource(resource, account_update_params)
-    	resource.update_without_password(account_update_params)
-  	end
-
-  	private
+	private
     def sign_up_params
     	params.require(:user).permit(:id, :email, :password, :password_confirmation, :username, :company_name, :account_type, :facebook_id, :address, :contact_number, :date_of_birth, :avatar_path, :referred_by)
   	end
-
-  	def account_update_params
-		params.require(:user).permit(:email, :username, :address, :password, :password_confirmation, :address, :contact_number, :date_of_birth)
-	end
 
 end  
