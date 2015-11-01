@@ -11,9 +11,9 @@ class ConfirmationsController < Devise::ConfirmationsController
 			if request_url.include? "localhost"
 				redirect_to "http://localhost:8080/registration_failure.jsp"
 			elsif request_url.include? "staging"
-				redirect_to "http://www.staging-clockworksmu.herokuapp.com/registration_failure.jsp"
+				redirect_to "https://staging-clockworksmu.herokuapp.com/registration_failure.jsp"
 			else
-				redirect_to "http://www.clockworksmu.herokuapp.com/registration_failure.jsp"
+				redirect_to "https://clockworksmu.herokuapp.com/registration_failure.jsp"
 			end
 	    end
   	end
@@ -25,9 +25,9 @@ class ConfirmationsController < Devise::ConfirmationsController
 		if request_url.include? "localhost"
 			"http://localhost:8080/registration_success.jsp?t=#{resource.confirmation_token}"
 		elsif request_url.include? "staging"
-			"http://www.staging-clockworksmu.herokuapp.com/registration_success.jsp?t=#{resource.confirmation_token}"
+			"https://staging-clockworksmu.herokuapp.com/registration_success.jsp?t=#{resource.confirmation_token}"
 		else
-			"http://www.clockworksmu.herokuapp.com/registration_success.jsp?t=#{resource.confirmation_token}"
+			"https://clockworksmu.herokuapp.com/registration_success.jsp?t=#{resource.confirmation_token}"
 		end
 	end
 end
