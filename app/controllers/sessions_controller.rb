@@ -9,7 +9,7 @@ class SessionsController < Devise::SessionsController
 	    yield resource if block_given?
 	    respond_with resource, :location => after_sign_in_path_for(resource) do |format|
 	    	resource.save
-	      	format.json {render :json => resource } # this code will get executed for json request
+	      	format.json { render :json => resource } # this code will get executed for json request
 	    end
     end
 
