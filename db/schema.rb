@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151030094010) do
+ActiveRecord::Schema.define(version: 20151101200454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,15 +64,6 @@ ActiveRecord::Schema.define(version: 20151030094010) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
-
-  create_table "matched", id: false, force: :cascade do |t|
-    t.integer "post_id"
-    t.integer "user_id"
-    t.string  "status",      default: "applied"
-    t.float   "user_rating", default: 0.0
-  end
-
-  add_index "matched", ["post_id", "user_id"], name: "by_user_and_post", unique: true, using: :btree
 
   create_table "matchings", force: :cascade do |t|
     t.integer  "applicant_id"
@@ -262,8 +253,13 @@ ActiveRecord::Schema.define(version: 20151030094010) do
     t.integer  "referred_users",                   default: 0
     t.text     "obtained_badges",                  default: [],                       array: true
     t.string   "referred_by"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.boolean  "verified",                         default: false
   end
 
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["contact_number"], name: "index_users_on_contact_number", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
