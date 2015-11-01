@@ -616,6 +616,21 @@ class Account < Grape::API
 	    	status 200
 		end
 
+		desc "send confirmation email"
+		params do
+			requires :email,				type: String
+		end
+
+		post :send_confirmation_email, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "email sent successfully"] 
+		] do
+	    	@user.send_confirmation_instructions
+
+	    	status 200
+		end
+
 		desc "get obtained badges"
 		params do
 			requires :email,		type: String
