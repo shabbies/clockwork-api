@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
         true if Float(string) rescue false
     end
 
-    def self.generate_referral_id
+    def generate_referral_id
         loop do
             token = Devise.friendly_token(8)
             break token unless User.find_by(referral_id: token)
