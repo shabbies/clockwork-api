@@ -7,7 +7,7 @@ class RegistrationsController < Devise::RegistrationsController
   	def create
   		build_resource(sign_up_params)
 
-  		resource.referral_id = User.generate_referral_id
+  		resource.referral_id = resource.generate_referral_id
 
   		if sign_up_params[:facebook_id]
   			existing_user = User.find_by("email" => sign_up_params[:email])
