@@ -50,7 +50,7 @@ class Account < Grape::API
 			end
 
 			if params[:contact_number]
-				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
 			end
 
 			avatar = params[:avatar]
@@ -124,7 +124,7 @@ class Account < Grape::API
 			end
 
 			unless params[:contact_number].blank?
-				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).first
+				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
 			end
 
 			avatar = params[:avatar]
