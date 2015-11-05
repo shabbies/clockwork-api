@@ -50,7 +50,7 @@ class Account < Grape::API
 			end
 
 			if params[:contact_number]
-				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
+				error!("Bad Request - This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
 			end
 
 			avatar = params[:avatar]
@@ -83,7 +83,7 @@ class Account < Grape::API
 		    	status 200
 		    	@user.to_json
 			else
-				error!("Save has failed, please inform the administrator", 500)
+				error!("Server Error - Save has failed, please inform the administrator", 500)
 			end
 		end
 
@@ -124,7 +124,7 @@ class Account < Grape::API
 			end
 
 			unless params[:contact_number].blank?
-				error!("This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
+				error!("Bad Request - This contact number is already in use!", 400) if User.where(contact_number: params[:contact_number]).where.not(id: @user.id).first
 			end
 
 			avatar = params[:avatar]
@@ -161,7 +161,7 @@ class Account < Grape::API
 		    	status 200
 		    	@user.to_json
 			else
-				error!("Save has failed, please inform the administrator", 500)
+				error!("Server Error - Save has failed, please inform the administrator", 500)
 			end
 		end
 
@@ -276,7 +276,6 @@ class Account < Grape::API
 
 	    	matching.destroy!
 	    	if Matching.where(:post_id => post.id).count == 0
-	    		p "hihi"
 	    		post.status = "listed"
 	    		post.save!
 	    	end

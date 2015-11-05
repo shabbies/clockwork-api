@@ -2,7 +2,7 @@ class Post < ActiveRecord::Base
 	include PgSearch
 	nilify_blanks
  	after_save :issue_badges
-
+ 	after_save :send_notifications
 
 	belongs_to 	:owner, 		:class_name => "User", 	:foreign_key => "owner_id"
 	has_many	:matchings, 	:dependent => :destroy, :foreign_key => "post_id"
@@ -19,6 +19,21 @@ class Post < ActiveRecord::Base
   	private 
   	def is_seed
   		description.include? "SEED-DEMO"
+  	end
+
+  	def send_notifications
+  		if status_changed? 
+  			case status
+  			when "reviewing"
+  				Notification.create!(:sender_id => owner_id, :receiver_id => owner_id, :content => "Your post #{header} has been completed! Please review your employees", :avatar_path => avatar_path, :post_id => id)
+			when "expired"
+				Notification.create!(:sender_id => owner_id, :receiver_id => owner_id, :content => "Your post #{header} has expired!", :avatar_path => avatar_path, :post_id => id)
+  				remaining_applicants = Matching.where(:post_id => id).where.not(:status => ["hired", "completed", "reviewing"])
+  				remaining_applicants.each do |applicant|
+  					Notification.create!(:sender_id => owner_id, :receiver_id => applicant.applicant_id, :content => "Your application for #{header} has expired!", :avatar_path => avatar_path, :post_id => id)
+  				end
+  			end
+  		end
   	end
 
   	def issue_badges
