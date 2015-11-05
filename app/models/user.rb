@@ -19,10 +19,7 @@ class User < ActiveRecord::Base
     has_attached_file :avatar, 			
     :path => ":rails_root/public/avatars/:filename", 
     :bucket  => ENV['media.clockworksmu.herokuapp.com'],
-    :source_file_options => { all:     '-auto-orient' },
-    :styles => {
-         :thumb => "100x100"
-     }
+    :source_file_options => { all:     '-auto-orient' }
      validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
     geocoded_by :address   # can also be an IP address
