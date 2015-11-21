@@ -274,7 +274,7 @@ class Account < Grape::API
 
 	    	matching = Matching.where(:applicant_id => @user.id, :post_id => post.id).first
 
-	    	matching.destroy!
+	    	matching.update_attribute(:status, "withdrawn")
 	    	if Matching.where(:post_id => post.id).count == 0
 	    		post.status = "listed"
 	    		post.save!
@@ -533,7 +533,7 @@ class Account < Grape::API
 	    			clashed = Post.find(clashed_matching.post_id)
 	    			next if clashed == post
 					if (post.job_date..post.end_date).overlaps?(clashed.job_date..clashed.end_date)
-				    	clashed_matching.destroy!
+				    	clashed_matching.update_attribute(:status, "withdrawn")
 
 				    	if Matching.where(:post_id => clashed.id).count == 0
 				    		clashed.status = "listed"
@@ -658,5 +658,96 @@ class Account < Grape::API
 	    	status 200
 	    	badges.to_json
 		end
+
+		desc "get all applicants"
+		params do
+			requires :email,		type: String
+		end
+
+		post :get_applicants, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "Applicants returned successfully"] 
+		] do
+	    	published_jobs = @user.published_jobs.where.not(status: "expired")
+	    	return_array = Array.new
+	    	check_hash = Hash.new #id -> status
+	    	user_hash = Hash.new #id -> userobj
+
+	    	published_jobs.each do |job|
+	    		matchings = Matching.where(post_id: job.id)
+	    		matchings.each do |match|
+	    			user = match.applicant
+		    		merge_hash = user.score.as_json
+		    		merge_hash.merge!(user.as_json)
+		    		merge_hash["is_favourite"] = @user.favourite_users.include? user
+		    		user_hash[user.id] = merge_hash
+		    		current_status = check_hash[user.id]
+		    		unless current_status
+		    			check_hash[user.id] = match.status
+		    		else
+		    			case current_status
+		    			when "withdrawn"
+		    				check_hash[user.id] = match.status
+		    			when "completed"
+		    				check_hash[user.id] = match.status unless match.status == "withdrawn"
+		    			when "hired"
+		    				check_hash[user.id] = match.status unless match.status == "withdrawn" || match.status == "completed"
+		    			end
+		    		end
+	    		end
+	    	end
+
+	    	user_hash.each do |key, user_obj|
+			  	user_obj["status"] = check_hash[key]
+			  	return_array << user_obj
+			end
+
+	    	status 200
+	    	return_array.to_json
+		end
+
+		desc "favourite user"
+		params do
+			requires :email,		type: String
+			requires :user_id,		type: Integer
+		end
+
+		post :favourite, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - User not found"],
+			[200, "Favourite successful"] 
+		] do
+	    	user = User.where(id: params[:user_id]).first
+	    	error!("Bad Request - User not found", 400) unless user
+
+	    	unless @user.favourite_users.include? user
+	    		@user.favourite_users << user
+	    	end
+	    	status 200
+		end
+
+		desc "unfavourite user"
+		params do
+			requires :email,		type: String
+			requires :user_id,		type: Integer
+		end
+
+		post :unfavourite, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[400, "Bad Request - User not found"],
+			[200, "Unfavourite successful"] 
+		] do
+	    	user = User.where(id: params[:user_id]).first
+	    	error!("Bad Request - User not found", 400) unless user
+
+	    	if @user.favourite_users.include? user
+	    		@user.favourite_users.delete(user)
+	    	end
+	    	status 200
+		end
+
 	end
 end
