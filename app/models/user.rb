@@ -14,15 +14,18 @@ class User < ActiveRecord::Base
     has_many :matchings,				:dependent => :destroy, :foreign_key => "applicant_id"
     has_many :jobs,						:class_name => "Post", 	through: :matchings,	:source => "applicant"
     has_many :devices, 					:class_name => "Device", 	:foreign_key => "owner_id"
-    has_one  :score,            :dependent => :destroy, :foreign_key => "owner_id", autosave: true
-    has_one  :answered_questions, class_name: "QuestionHistory", :foreign_key => "owner_id", :dependent => :destroy, autosave: true
+    has_one  :score,                    :dependent => :destroy, :foreign_key => "owner_id", autosave: true
+    has_one  :answered_questions,       class_name: "QuestionHistory", :foreign_key => "owner_id", :dependent => :destroy, autosave: true
+
+    has_many :favourites,               class_name: "Favourite", :foreign_key => "owner_id", :dependent => :destroy
+    has_many :favourite_users,          :through => :favourites, :source => :user
+    has_many :inverse_favourites,       class_name: "Favourite", :foreign_key => "user_id", :dependent => :destroy
+    has_many :inverse_favourite_users,  :through => :inverse_favourites, :source => :owner
+
     has_attached_file :avatar, 			
     :path => ":rails_root/public/avatars/:filename", 
     :bucket  => ENV['media.clockworksmu.herokuapp.com'],
-    :source_file_options => { all:     '-auto-orient' },
-    :styles => {
-         :thumb => "100x100"
-     }
+    :source_file_options => { all:     '-auto-orient' }
      validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
     geocoded_by :address   # can also be an IP address

@@ -7,27 +7,21 @@ class Display < Grape::API
 		end
 	    get :all, :http_codes => [200, "Get successful"]  do
 	    	user = User.where(:id => params[:user_id]).first
-	      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed"]).all : Post.where.not(:status => ["expired", "completed"]).all
+	      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing"]).all : Post.where.not(:status => ["expired", "completed"]).all
 	      	return_array = Array.new
 	      	posts.each do |post|
 	      		expiry_date = post.expiry_date
 	      		if expiry_date <= Date.today - 1
 	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
-	      			if matchings.count != 0
+		  			if matchings.count != 0
 		  				if matchings.where(:user_rating => nil).count != 0
-		  					post.status = "reviewing"
-		  				else
-		  					post.status = "completed"
+		  					post.update_attributes(status: "reviewing", expiry_date: "2015-01-01")
+						else
+		  					post.update_attributes(status: "completed", expiry_date: "2015-01-01")
 		  				end
 		  			else
-		  				Notification.create!(:sender_id => post.owner_id, :receiver_id => post.owner_id, :content => "Your post #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
-		  				remaining_applicants = Matching.where(:post_id => post.id).where.not(:status => ["hired", "completed", "reviewing"])
-		  				remaining_applicants.each do |applicant|
-		  					Notification.create!(:sender_id => post.owner_id, :receiver_id => applicant.applicant_id, :content => "Your application for #{post.header} has expired!", :avatar_path => post.avatar_path, :post_id => post.id)
-		  				end
-		  				post.status = "expired"
+		  				post.update_attributes(status: "expired", expiry_date: "2015-01-01")
 		  			end
-	      			post.save
 	      		else
 	      			return_array << post
 	      		end
@@ -82,20 +76,18 @@ class Display < Grape::API
 		    	matchings.each do |match|
 		    		job = Post.find(match.post_id)
 		    		start_date = job.job_date
-		    		end_date = job.end_date
+		    		end_date = (job.end_date + 1)
 
-		    		while start_date <= end_date
-		    			job_hash = Hash.new
-			    		job_hash[:title] = job.header
-			    		job_hash[:job_date] = start_date.to_s
-			    		if match.status == "hired"
-			    			job_hash[:color] = "#028482"
-			    		else
-			    			job_hash[:color] = "#FF6600"
-			    		end
-			    		job_array << job_hash
-			    		start_date += 1
+	    			job_hash = Hash.new
+		    		job_hash[:title] = job.header
+		    		job_hash[:job_date] = start_date.to_s
+		    		job_hash[:end_date] = end_date.to_s
+		    		if match.status == "hired"
+		    			job_hash[:color] = "#028482"
+		    		else
+		    			job_hash[:color] = "#FF6600"
 		    		end
+		    		job_array << job_hash
 		    	end
 		    end
 	    	job_array.to_json

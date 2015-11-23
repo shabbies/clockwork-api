@@ -60,7 +60,7 @@ class Alert < Grape::API
 			requires :email,			type: String
 			requires :device_type,		type: String
 		end
-	    post :unsub, :http_codes => [
+	    post :update, :http_codes => [
 	    	[200, "Update successful"],
 	    	[401, "Unauthorised - Invalid authentication token"],
 	    	[400, "Device not found"]
@@ -93,6 +93,30 @@ class Alert < Grape::API
 	      	device.status = "subscribed"
 	      	device.save!
 	      	
+	      	status 200
+	    end
+
+	    desc "Send Notification"
+		params do
+			requires :email,			type: String
+			requires :type,				type: String
+			requires :recipient_id,		type: Integer
+			requires :post_id,			type: Integer
+		end
+	    post :send_notification, :http_codes => [
+	    	[200, "Notification sent successful"],
+	    	[401, "Unauthorised - Invalid authentication token"],
+	    	[400, "(1) Receipient not found | 
+	    		   (2) Post not found | 
+	    		   (3) Notification type not found"]
+	    ] do
+	    	user = User.where(id: params[:recipient_id]).first
+	    	post = Post.where(id: params[:post_id]).first
+	      	
+	      	error!("Bad Request - User not found", 400) unless user
+	      	error!("Bad Request - Post not found", 400) unless post
+
+	      	Notification.send_notification(params[:type], @user, user, post)
 	      	status 200
 	    end
 	end

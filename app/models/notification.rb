@@ -3,6 +3,15 @@ class Notification < ActiveRecord::Base
 	belongs_to 	:sender, 		:class_name => "User", 	:foreign_key => "sender_id"
 	belongs_to 	:receiver, 		:class_name => "User", 	:foreign_key => "receiver_id"
 
+	def self.send_notification(type, sender, recipient, post)
+		message = ""
+		case type
+		when "job_invitation"
+			message = "You have been invited to apply for the #{post.header} job!"
+		end
+		Notification.create!(:sender_id => sender.id, :receiver_id => recipient.id, :content => message, :avatar_path => sender.avatar_path, :post_id => post.id)
+	end
+
 	private
 	def send_mobile_notification
 		devices = Device.where(owner_id: receiver_id, status: "subscribed").all

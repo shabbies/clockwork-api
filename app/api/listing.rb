@@ -191,7 +191,9 @@ class Listing < Grape::API
 
 	    	matchings.each do |match|
 	    		user = User.find(match.applicant_id)
-	    		applicant_array << user
+	    		merge_hash = user.score.as_json
+	    		merge_hash.merge!(user.as_json)
+	    		applicant_array << merge_hash
 	    	end
 	    	applicant_array = (applicant_array.sort_by &:good_rating).reverse
 
@@ -228,16 +230,19 @@ class Listing < Grape::API
 	    	matchings = Matching.where(:post_id => post.id).all
 	    	matchings.each do |match|
 	    		user = User.find(match.applicant_id)
+	    		user = User.find(match.applicant_id)
+	    		merge_hash = user.score.as_json
+	    		merge_hash.merge!(user.as_json)
 	    		if match.status == "pending"
-	    			applicant_array << user
+	    			applicant_array << merge_hash
 	    		elsif match.status == "offered"
-	    			offered_array << user
+	    			offered_array << merge_hash
 	    		elsif match.status == "hired"
-	    			hired_array << user
+	    			hired_array << merge_hash
 	    		elsif match.status == "reviewing"
-	    			reviewing_array << user
+	    			reviewing_array << merge_hash
 	    		else
-	    			completed_array << user
+	    			completed_array << merge_hash
 	    		end
 	    	end
 
@@ -275,7 +280,9 @@ class Listing < Grape::API
 
 	    	matchings.each do |match|
 	    		user = User.find(match.applicant_id)
-	    		applicant_array << user
+	    		merge_hash = user.score.as_json
+	    		merge_hash.merge!(user.as_json)
+	    		applicant_array << merge_hash
 	    	end
 
 	    	status 201
