@@ -1,18 +1,7 @@
 class Display < Grape::API
 	resource :posts do	
 		# GET: /api/v1/posts/all.json
-		desc "List all Posts", {
-			headers: {
-			    "XAuthToken" => {
-			      description: "Valdates your identity",
-			      required: true
-			    },
-			    "XOptionalHeader" => {
-			      description: "Not really needed",
-			      required: false
-			    }
- 			}
-		}
+		desc "List all Posts"
 		params do
 			optional :user_id,	type: Integer
 		end

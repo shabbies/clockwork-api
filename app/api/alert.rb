@@ -7,7 +7,14 @@ class Alert < Grape::API
 
 	resource :notifications do	
 		
-		desc "Register / authorise device for notifications"
+		desc "Register / authorise device for notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :device_id, 		type: String
 			requires :email,			type: String
@@ -33,7 +40,14 @@ class Alert < Grape::API
 	      	status 200
 	    end
 
-	    desc "Unsubscribe device for notifications"
+	    desc "Unsubscribe device for notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :device_id, 		type: String
 			requires :email,			type: String
@@ -53,7 +67,14 @@ class Alert < Grape::API
 	      	status 200
 	    end
 
-	    desc "Update device id"
+	    desc "Update device id", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :device_id, 		type: String
 			requires :new_device_id,	type: String
@@ -76,7 +97,14 @@ class Alert < Grape::API
 	      	status 200
 	    end
 
-	    desc "Re-subscribe device for notifications"
+	    desc "Re-subscribe device for notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :device_id, 		type: String
 			requires :email,			type: String
@@ -96,7 +124,14 @@ class Alert < Grape::API
 	      	status 200
 	    end
 
-	    desc "Send Notification"
+	    desc "Send Notification", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,			type: String
 			requires :type,				type: String
