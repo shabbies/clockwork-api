@@ -6,7 +6,14 @@ class Account < Grape::API
 	end
 
 	resource :users do
-		desc "get updated user"
+		desc "get updated user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email, 					type: String
 		end
@@ -20,7 +27,14 @@ class Account < Grape::API
 			status 200
 			@user.to_json
 		end
-		desc "updates a user"
+		desc "updates a user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email, 					type: String
 			optional :date_of_birth, 			type: String
@@ -87,7 +101,14 @@ class Account < Grape::API
 			end
 		end
 
-		desc "complete user profile"
+		desc "complete user profile", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email, 					type: String
 			optional :date_of_birth, 			type: String
@@ -165,7 +186,14 @@ class Account < Grape::API
 			end
 		end
 
-		desc "get all published jobs from employer"
+		desc "get all published jobs from employer", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 		    requires :email,	type: String
 		end
@@ -207,7 +235,14 @@ class Account < Grape::API
 		    job_array.to_json
 		end
 
-		desc "apply for job"
+		desc "apply for job", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 		    requires :email,	type: String
 		    requires :post_id,	type: Integer
@@ -253,7 +288,14 @@ class Account < Grape::API
 	    	post.to_json
 		end
 
-		desc "withdraw job application"
+		desc "withdraw job application", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 		    requires :email,	type: String
 		    requires :post_id,	type: Integer
@@ -286,7 +328,14 @@ class Account < Grape::API
 	    	@user.jobs.to_json
 		end
 
-		desc "hire applicant"
+		desc "hire applicant", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :applicant_id,	type: Integer
@@ -312,7 +361,14 @@ class Account < Grape::API
 	    	matching.to_json
 		end
 
-		desc "get all applied jobs from user"
+		desc "get all applied jobs from user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 		    requires :email,	type: String
 		end
@@ -356,7 +412,14 @@ class Account < Grape::API
 		    job_array.to_json
 		end
 
-		desc "get all completed jobs from user"
+		desc "get all completed jobs from user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 		    requires :email,	type: String
 		end
@@ -425,7 +488,14 @@ class Account < Grape::API
 	 #    	matching.to_json
 		# end
 
-		desc "offer job"
+		desc "offer job", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :applicant_id,	type: Integer
@@ -453,7 +523,14 @@ class Account < Grape::API
 	    	matching.to_json
 		end
 
-		desc "offer all job"
+		desc "offer all job", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,			type: String
 			requires :applicant_ids,	type: String
@@ -481,7 +558,14 @@ class Account < Grape::API
 	    	status 200
 		end
 
-		desc "withdraw job offer"
+		desc "withdraw job offer", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :applicant_id,	type: Integer
@@ -507,7 +591,14 @@ class Account < Grape::API
 	    	matching.to_json
 		end
 
-		desc "accept job offer"
+		desc "accept job offer", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
@@ -559,7 +650,14 @@ class Account < Grape::API
 	    	end
 		end
 
-		desc "get unread notifications"
+		desc "get unread notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 		end
@@ -575,7 +673,14 @@ class Account < Grape::API
 	    	notifications.to_json
 		end
 
-		desc "get all notifications"
+		desc "get all notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 		end
@@ -594,7 +699,14 @@ class Account < Grape::API
 	    	notifications.to_json
 		end
 
-		desc "read passed notifications"
+		desc "read passed notifications", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,				type: String
 			requires :notification_ids, 	type: String, desc: "format - 'id1,id2,id3'"
@@ -615,7 +727,14 @@ class Account < Grape::API
 	    	status 200
 		end
 
-		desc "send confirmation email"
+		desc "send confirmation email", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,				type: String
 		end
@@ -630,7 +749,14 @@ class Account < Grape::API
 	    	status 200
 		end
 
-		desc "get obtained badges"
+		desc "get obtained badges", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 		end
@@ -659,7 +785,14 @@ class Account < Grape::API
 	    	badges.to_json
 		end
 
-		desc "get all applicants"
+		desc "get all applicants", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 		end
@@ -707,7 +840,14 @@ class Account < Grape::API
 	    	return_array.to_json
 		end
 
-		desc "favourite user"
+		desc "favourite user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :user_id,		type: Integer
@@ -728,7 +868,14 @@ class Account < Grape::API
 	    	status 200
 		end
 
-		desc "unfavourite user"
+		desc "unfavourite user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :user_id,		type: Integer

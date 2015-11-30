@@ -7,7 +7,14 @@ class Listing < Grape::API
 
 	resource :posts do	
 	    # POST: /api/v1/posts/new
-	    desc "create a new post"
+	    desc "create a new post", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		## This takes care of parameter validation
 		params do
 			requires :email, 		type: String
@@ -79,7 +86,14 @@ class Listing < Grape::API
 		end
 
 		# POST: /api/v1/posts/delete
-		desc "deletes a post"
+		desc "deletes a post", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :post_id, type: String
 		end
@@ -101,7 +115,14 @@ class Listing < Grape::API
 		   	"Post has been successfully deleted".to_json
 		end
 
-		desc "updates a post"
+		desc "updates a post", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :header, 		type: String
@@ -165,7 +186,14 @@ class Listing < Grape::API
 		    post.to_json
 		end
 
-		desc "get applicants"
+		desc "get applicants", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
@@ -199,7 +227,14 @@ class Listing < Grape::API
 	    	applicant_array.to_json
 		end
 
-		desc "get all applicants"
+		desc "get all applicants", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
@@ -254,7 +289,14 @@ class Listing < Grape::API
 	    	all_map.to_json
 		end
 
-		desc "get hired list"
+		desc "get hired list", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
@@ -287,7 +329,14 @@ class Listing < Grape::API
 	    	applicant_array.to_json
 		end
 
-		desc "get completed list"
+		desc "get completed list", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer
@@ -312,7 +361,14 @@ class Listing < Grape::API
 	    	matchings.to_json
 		end
 
-		desc "rate user"
+		desc "rate user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,				type: String
 			requires :user_feedback,		type: String
@@ -360,7 +416,14 @@ class Listing < Grape::API
 			status 201
 		end
 
-		desc "get job status"
+		desc "get job status", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :post_id,		type: Integer

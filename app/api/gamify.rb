@@ -6,7 +6,14 @@ class Gamify < Grape::API
 	end
 
 	resource :gamify do	
-		desc "Get Score"
+		desc "Get Score", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,			type: String
 		end
@@ -32,7 +39,14 @@ class Gamify < Grape::API
 	      	return_hash.to_json
 	    end
 
-	    desc "Get All Badges"
+	    desc "Get All Badges", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,			type: String
 		end
@@ -63,7 +77,14 @@ class Gamify < Grape::API
 	    	return_array.to_json
 	    end
 
-	    desc "Get Quiz Questions"
+	    desc "Get Quiz Questions", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,	type: String
 			requires :genre,	type: String
@@ -88,7 +109,14 @@ class Gamify < Grape::API
 		    end
 	    end
 
-	    desc "Record quiz results"
+	    desc "Record quiz results", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
 		params do
 			requires :email,		type: String
 			requires :genre,		type: String
