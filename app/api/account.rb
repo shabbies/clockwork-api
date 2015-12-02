@@ -47,7 +47,7 @@ class Account < Grape::API
 			optional :contact_number,			type: String
 		end
 
-		post :update, 
+		post :update,  
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
 			[400, "(1)Bad Request - You should be at least 15 years old | 
@@ -814,6 +814,12 @@ class Account < Grape::API
 		    		merge_hash = user.score.as_json
 		    		merge_hash.merge!(user.as_json)
 		    		merge_hash["is_favourite"] = @user.favourite_users.include? user
+		    		merge_hash["ongoing_jobs"] = []
+		    		if user_hash[user.id] && (match.status == "pending" || match.status == "hired")
+		    			ongoing_jobs = user_hash[user.id]["ongoing_jobs"]
+		    			ongoing_jobs << match.post.id
+		    			merge_hash["ongoing_jobs"] = ongoing_jobs
+		    		end
 		    		user_hash[user.id] = merge_hash
 		    		current_status = check_hash[user.id]
 		    		unless current_status
