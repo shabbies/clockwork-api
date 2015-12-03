@@ -8,6 +8,9 @@ class Display < Grape::API
 	    get :all, :http_codes => [200, "Get successful"]  do
 	    	user = User.where(:id => params[:user_id]).first
 	      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing"]).all : Post.where.not(:status => ["expired", "completed"]).all
+	      	if posts.count == 0
+	      		posts = Post.where.not(:status => ["expired", "completed"]).all
+	      	end
 	      	return_array = Array.new
 	      	posts.each do |post|
 	      		expiry_date = post.expiry_date
