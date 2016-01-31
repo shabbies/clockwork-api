@@ -57,3 +57,4 @@ gem 'pg_search'
 gem 'rmagick'
 gem 'rpush'
 gem 'geocoder'
+gem "font-awesome-rails"

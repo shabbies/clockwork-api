@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<!--
+	Twenty by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Workiki</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<%= stylesheet_link_tag "main" %>
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	</head>
+	<body class="index">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header" class="alt">
+					<h1 id="logo"><a href="/">Workiki</a></h1>
+				</header>
+
+			<!-- Banner -->
+				<section id="banner">
+
+					<!--
+						".inner" is set up as an inline-block so it automatically expands
+						in both directions to fit whatever's inside it. This means it won't
+						automatically wrap lines, so be sure to use line breaks where
+						appropriate (<br />).
+					-->
+					<div class="inner">
+
+						<%=image_tag("logo_white.png", :id => "logo_image")%>
+						<br /><br />
+						<strong>Workiki</strong> is a ad-hoc job 
+						<br />matching platform 
+						<br />for events based jobs
+						<footer>
+							<ul class="buttons vertical">
+								<li>
+									<%= form_for User.new do |f| %>
+									  <%= f.label :email, :id => 'signup_email_label' %>
+									  <%= f.text_field :email %><br />
+
+									  <%= f.submit "Sign Up Now!", :id => 'signup_email_button'  %>
+									<% end %>
+								</li>
+							</ul>
+						</footer>
+
+					</div>
+
+				</section>
+
+			<!-- Main -->
+				<article id="main">
+
+					<header class="special container">
+						<span class="icon"><%=image_tag("logo.png", :id => "logo_image_small")%></span>
+						<h2>An <strong>events</strong> based job matching platform <br />to find <strong> fun </strong> event jobs</h2>
+						<p>We personally curate all the jobs to find you the best paying, most interesting jobs <br />that we could find so that you can have fun working!</p>
+					</header>
+
+					<!-- One -->
+						<section class="wrapper style2 container special-alt">
+							<div class="row 50%">
+								<div class="12u">
+
+									<header>
+										<h2>Simple hiring process <br />
+											no interviews, no resumes
+										</h2>
+									</header>
+									<p>All you have to do is to sign up, apply and wait for your job offer!</p>
+
+								</div>
+								<div class="12u">
+
+									<ul class="featured-icons">
+										<li>
+											<div class="featured-icon-box">
+												<span class="icon fa-pencil"></span>
+												<h3> SIGN UP </h3>
+											</div>
+										</li>
+										<li>
+											<div class="featured-icon-box">
+												<span class="icon fa-send"></span>
+												<h3> Apply </h3>
+											</div>
+										</li>
+										<li>
+											<div class="featured-icon-box">
+												<span class="icon fa-hourglass-half"></span>
+												<h3> Wait for offer</h3>
+											</div>
+										</li>
+									</ul>
+
+								</div>
+							</div>
+						</section>
+
+					<!-- Two -->
+						<section class="wrapper style1 container special">
+							<div class="row">
+								<div class="4u 12u(narrower)">
+
+									<section>
+										<span class="icon featured fa-money money-icon"></span>
+										<header>
+											<h3>Guaranteed Payments</h3>
+										</header>
+										<p>We ensure that you will receive your pay within 3 days</p>
+									</section>
+
+								</div>
+								<div class="4u 12u(narrower)">
+
+									<section>
+										<span class="icon featured fa-gamepad gamepad-icon"></span>
+										<header>
+											<h3>Fun and Interesting Jobs</h3>
+										</header>
+										<p>Personally curated jobs so that work never feels like work</p>
+									</section>
+
+								</div>
+								<div class="4u 12u(narrower)">
+
+									<section>
+										<span class="icon featured fa-users users-icon"></span>
+										<header>
+											<h3>Working with friends</h3>
+										</header>
+										<p>Find your good friend to work with you and you will never feel bored at work again!</p>
+									</section>
+
+								</div>
+							</div>
+						</section>
+
+					<!-- Three -->
+						<section class="wrapper style3 container special">
+
+							<header class="major">
+								<h2>How it's done!</h2>
+							</header>
+
+							<!--<div class="row">
+								<div class="6u 12u(narrower)">
+
+									<section>
+										<a href="#" class="image featured"><%=image_tag("pic01.jpg")%></a>
+										<header>
+											<h3>A Really Fast Train</h3>
+										</header>
+										<p>Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.</p>
+									</section>
+
+								</div>
+								<div class="6u 12u(narrower)">
+
+									<section>
+										<a href="#" class="image featured"><%=image_tag("pic02.jpg")%></a>
+										<header>
+											<h3>An Airport Terminal</h3>
+										</header>
+										<p>Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.</p>
+									</section>
+
+								</div>
+							</div>
+							<div class="row">
+								<div class="6u 12u(narrower)">
+
+									<section>
+										<a href="#" class="image featured"><%=image_tag("pic03.jpg")%></a>
+										<header>
+											<h3>Hyperspace Travel</h3>
+										</header>
+										<p>Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.</p>
+									</section>
+
+								</div>
+								<div class="6u 12u(narrower)">
+
+									<section>
+										<a href="#" class="image featured"><%=image_tag("pic04.jpg")%></a>
+										<header>
+											<h3>And Another Train</h3>
+										</header>
+										<p>Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.</p>
+									</section>
+
+								</div>
+							</div>
+
+							<footer class="major">
+								<ul class="buttons">
+									<li><a href="#" class="button">See More</a></li>
+								</ul>
+							</footer>-->
+
+							<iframe width="900" height="500" src="http://www.youtube.com/embed/CI1XVm1Jk04"></iframe>
+
+						</section>
+
+				</article>
+
+			<!-- CTA -->
+				<section id="cta">
+
+					<header>
+						<h2>Ready to join in the fun?</h2>
+					</header>
+					<footer>
+						<ul class="buttons">
+							<li><a href="#banner" class="button special">Join Workiki now!</a></li>
+						</ul>
+					</footer>
+
+				</section>
+
+			<!-- Footer -->
+				<footer id="footer">
+
+					<ul class="icons">
+						<li><a href="#" class="icon circle fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon circle fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon circle fa-google-plus"><span class="label">Google+</span></a></li>
+						<li><a href="#" class="icon circle fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon circle fa-dribbble"><span class="label">Dribbble</span></a></li>
+					</ul>
+
+					<ul class="copyright">
+						<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+				</footer>
+
+		</div>
+
+		<!-- Scripts -->
+		<%= javascript_include_tag "jquery.min" %>
+		<%= javascript_include_tag "jquery.dropotron.min" %>
+		<%= javascript_include_tag "jquery.scrolly.min" %>
+		<%= javascript_include_tag "jquery.scrollgress.min" %>
+		<%= javascript_include_tag "util" %>
+
+	</body>
+</html>

@@ -1,0 +1,39 @@
+// Place all the styles related to the Users controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#new_user {
+	#user_email {
+		border-color: white;
+		background-color: white;
+		color: black;
+		border-radius: 5px;
+	}
+}
+
+#signup_email_label{
+	display: inline-block;
+	float: left;
+	font-size: smaller;
+}
+
+.featured-icon-box{
+	border: 1px solid cornsilk;
+	border-radius: 5px;
+	background-color: red;
+	padding: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.money-icon{
+	color: #338A27;
+}
+
+.gamepad-icon{
+	color: #CE4850;
+}
+
+.users-icon{
+	color: #5355FF
+}
