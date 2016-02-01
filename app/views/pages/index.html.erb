@@ -6,7 +6,6 @@
 -->
 <html>
 	<head>
-		<title>Workiki</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -35,15 +34,17 @@
 
 						<%=image_tag("logo_white.png", :id => "logo_image")%>
 						<br /><br />
-						<strong>Workiki</strong> is a ad-hoc job 
-						<br />matching platform 
+						<strong>Workiki</strong> is a ad-hoc job matching platform 
 						<br />for events based jobs
 						<footer>
 							<ul class="buttons vertical">
 								<li>
 									<%= form_for User.new do |f| %>
 									  <%= f.label :email, :id => 'signup_email_label' %>
-									  <%= f.text_field :email %><br />
+									  <%= f.text_field :email %>
+
+									  <%= f.label :contact_number, "Contact Number (Optional)", :id => 'signup_email_label' %> <br />
+									  <%= f.number_field :contact_number %><br />
 
 									  <%= f.submit "Sign Up Now!", :id => 'signup_email_button'  %>
 									<% end %>
@@ -213,15 +214,16 @@
 
 			<!-- CTA -->
 				<section id="cta">
-
-					<header>
-						<h2>Ready to join in the fun?</h2>
-					</header>
-					<footer>
-						<ul class="buttons">
-							<li><a href="#banner" class="button special">Join Workiki now!</a></li>
-						</ul>
-					</footer>
+					<div class="inner">
+						<header>
+							<h2>Ready to join in the fun?</h2>
+						</header>
+						<footer>
+							<ul class="buttons">
+								<li><a href="#banner" class="button special">Join Workiki now!</a></li>
+							</ul>
+						</footer>
+					</div>
 
 				</section>
 
@@ -229,15 +231,11 @@
 				<footer id="footer">
 
 					<ul class="icons">
-						<li><a href="#" class="icon circle fa-twitter"><span class="label">Twitter</span></a></li>
 						<li><a href="#" class="icon circle fa-facebook"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon circle fa-google-plus"><span class="label">Google+</span></a></li>
-						<li><a href="#" class="icon circle fa-github"><span class="label">Github</span></a></li>
-						<li><a href="#" class="icon circle fa-dribbble"><span class="label">Dribbble</span></a></li>
 					</ul>
 
 					<ul class="copyright">
-						<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>&copy; Workiki</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
 					</ul>
 
 				</footer>
@@ -250,6 +248,17 @@
 		<%= javascript_include_tag "jquery.scrolly.min" %>
 		<%= javascript_include_tag "jquery.scrollgress.min" %>
 		<%= javascript_include_tag "util" %>
+
+		<script>
+			$('.new_user').on('focus', 'input[type=number]', function (e) {
+			  $(this).on('mousewheel.disableScroll', function (e) {
+			    e.preventDefault();
+			  });
+			});
+			$('.new_user').on('blur', 'input[type=number]', function (e) {
+			  $(this).off('mousewheel.disableScroll');
+			});
+		</script>
 
 	</body>
 </html>

@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
-  def new
+  def create
+  	redirect_to "/"
   end
 end
