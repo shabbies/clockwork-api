@@ -15,6 +15,11 @@
 	</head>
 	<body class="index">
 		<div id="page-wrapper">
+			<% if flash[:alert] %>
+		    <div class="alert"><%= flash[:alert] %></div>
+		  <% elsif flash[:notice] %>
+		  	<div class="notice"><%= flash[:notice] %></div>
+	  	<% end %>
 
 			<!-- Header -->
 				<header id="header" class="alt">
@@ -34,7 +39,7 @@
 
 						<%=image_tag("logo_white.png", :id => "logo_image")%>
 						<br /><br />
-						<strong>Workiki</strong> is a ad-hoc job matching platform 
+						<strong>Workiki</strong> is an ad-hoc job matching platform 
 						<br />for events based jobs
 						<footer>
 							<ul class="buttons vertical">
@@ -238,7 +243,7 @@
 				</footer>
 
 		</div>
-		
+
 		<!-- Scripts -->
 		<%= javascript_include_tag "jquery.min" %>
 		<%= javascript_include_tag "jquery.dropotron.min" %>
