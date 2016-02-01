@@ -34,6 +34,11 @@ class User < ActiveRecord::Base
     validates_uniqueness_of :contact_number, allow_nil: true
 
     def confirmation_required?
+        unless username
+            false
+            return
+        end
+
         if username.include? "(seed)"
             false
         else
