@@ -46,11 +46,15 @@
         margin-left: 20px;
         margin-right: 20px;
     }
-    @media (max-width: 840px){
+    @media (max-width: 840px) and (min-width: 436px){
         min-width: 190px;
         padding: 10px;
         margin-left: 100px;
         margin-right: 100px;
+    }
+    @media (max-width: 435px){
+        min-width: 190px;
+        padding: 10px;
     }
 }
 
