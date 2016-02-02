@@ -66,6 +66,10 @@
 		}
 	}
 
+	.top-padding2x{
+		padding-top: 20px;
+	}
+
 	#logo_image {
 		height: 100px;
 		width: 132px;
@@ -919,9 +923,8 @@
 
 		.inner {
 			background-image: image-url('images/overlay.png');
-			padding: 2em;
-			margin-left: 15em;
-			margin-right: 15em;
+			padding-top: 2em;
+			padding-bottom: 2em;
 		}
 	}
 
@@ -1609,6 +1612,5 @@
 						height: 34px;
 					}
 				}
-			}
-
+			}		
 	}

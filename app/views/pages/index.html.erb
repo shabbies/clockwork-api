@@ -39,20 +39,23 @@
 
 						<%=image_tag("logo_white.png", :id => "logo_image")%>
 						<br /><br />
-						<strong>Workiki</strong> is an ad-hoc job matching platform 
-						<br />for events based jobs
-						<footer>
-							<ul class="buttons vertical">
-								<li>
-									<%= form_for User.new do |f| %>
-									  <%= f.text_field :email, placeholder: "Email..." %>
-									  <%= f.number_field :contact_number, placeholder: "Contact Number..." %><br />
-
-									  <%= f.submit "Sign Up Now!", :id => 'signup_email_button'  %>
-									<% end %>
-								</li>
-							</ul>
-						</footer>
+						<div>
+							<strong>Workiki</strong> is an ad-hoc job matching platform 
+							<br />for events based jobs
+							<footer>
+								<ul class="buttons vertical">
+									<li>
+										<%= form_for User.new do |f| %>
+										  <%= f.text_field :email, placeholder: "Email..." %>
+										  <%= f.number_field :contact_number, placeholder: "Contact Number..." %>
+										  <div class="top-padding2x">
+										  	<%= f.submit "Sign Up Now!", :id => 'signup_email_button'  %>
+											</div>
+										<% end %>
+									</li>
+								</ul>
+							</footer>
+						</div>
 
 					</div>
 
@@ -208,7 +211,9 @@
 								</ul>
 							</footer>-->
 
-							<iframe width="900" height="500" src="http://www.youtube.com/embed/CI1XVm1Jk04"></iframe>
+							<div class="videoWrapper">
+								<iframe width="900" height="500" src="http://www.youtube.com/embed/CI1XVm1Jk04"></iframe>
+							</div>
 
 						</section>
 
@@ -216,7 +221,7 @@
 
 			<!-- CTA -->
 				<section id="cta">
-					<div class="inner">
+					<center class="inner">
 						<header>
 							<h2>Ready to join in the fun?</h2>
 						</header>
@@ -225,7 +230,7 @@
 								<li><a href="#banner" class="button special">Join Workiki now!</a></li>
 							</ul>
 						</footer>
-					</div>
+					</center>
 
 				</section>
 
