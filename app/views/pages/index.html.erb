@@ -47,7 +47,7 @@
 									<li>
 										<%= form_for User.new do |f| %>
 										  <%= f.text_field :email, placeholder: "Email..." %>
-										  <%= f.number_field :contact_number, placeholder: "Contact Number..." %>
+										  <%= f.telephone_field :contact_number, placeholder: "Contact Number..." %>
 										  <div class="top-padding2x">
 										  	<%= f.submit "Sign Up Now!", :id => 'signup_email_button'  %>
 											</div>
