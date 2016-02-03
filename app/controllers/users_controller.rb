@@ -2,9 +2,14 @@ class UsersController < ApplicationController
   def create
   	password = Devise.friendly_token.first(8)
 
-    unless user_params[:contact_number].is_a? Integer
-      unless user_params[:contact_number] > 60000000 && user_params[:contact_number] < 99999999
-        flash[:alert] = "Oops! Please enter a valid phone number"
+    if !user_params[:contact_number].blank?
+      unless user_params[:contact_number].is_a? Integer
+        num = user_params[:contact_number].to_i
+        unless num > 60000000 && num < 99999999
+          flash[:alert] = "Oops! Please enter a valid phone number"
+          redirect_to "/"
+          return
+        end
       end
     end
 

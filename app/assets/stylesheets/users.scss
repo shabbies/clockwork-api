@@ -28,6 +28,16 @@
 	    -webkit-appearance: none;
 	    margin: 0;
 	}
+
+    .error {
+        border: 1px solid red !important;
+        box-shadow: 2px 2px 1px #888888;
+    }
+
+    #error-message{
+        font-size: smaller;
+        color: salmon;
+    }
 }
 
 #signup_email_label{
