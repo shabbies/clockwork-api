@@ -18,10 +18,15 @@ class UsersController < ApplicationController
 		elsif User.exists?(contact_number: user_params[:contact_number])
 			flash[:alert] = "Oops! The contact number is already in use"
 		else
-			User.create!(email: user_params[:email], contact_number: user_params[:contact_number], password: password, password_confirmation: password)
+			User.create!(email: user_params[:email], contact_number: user_params[:contact_number], password: password, password_confirmation: password, account_type: "job_seeker")
   		flash[:notice] = "You have successfully created your account!"
 		end
   	redirect_to "/"
+  end
+
+  def index
+    @users = User.where(account_type: "job_seeker").sort_by &:created_at
+    @users.reverse!
   end
 
   private
