@@ -41,7 +41,7 @@
 							<tr>
 								<td><%= user.email %></td>
 								<td><%= user.contact_number %></td>
-								<td><%= user.created_at.localtime %></td>
+								<td><%= user.created_at.in_time_zone("Asia/Singapore") %></td>
 							</tr>
 						<% end %>
 					</table>
