@@ -61,7 +61,7 @@ class Display < Grape::API
 		end
 	end
 
-	resource :post do 
+	resource :posts do 
 		desc "Re seed"
 	    get :re_seed, :http_codes => [200, "Get successful"]  do
 	    	today = Date.today
