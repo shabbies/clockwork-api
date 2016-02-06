@@ -66,14 +66,14 @@ class Display < Grape::API
 	    get :re_seed, :http_codes => [200, "Get successful"]  do
 	    	today = Date.today
 
-	    	QuestionHistory.destroy!
-	    	Question.destroy!
-	    	Badge.destroy!
-	    	Score.destroy!
-	    	Notification.destroy!
-	    	Matching.destroy!
-	    	Post.destroy!
-	    	User.destroy!
+	    	QuestionHistory.delete_all
+	    	Question.delete_all
+	    	Badge.delete_all
+	    	Score.delete_all
+	    	Notification.delete_all
+	    	Matching.delete_all
+	    	Post.delete_all
+	    	User.delete_all
 
 				u1 = User.create!(email: "scsoh.2012@sis.smu.edu.sg", password: "password", password_confirmation: "password", account_type: "employer", username: "kennethsohsc (seed)", address: "Suntec City", contact_number: 98123123, latitude: 1.2959623, longitude: 103.8579517, verified: true)
 				u2 = User.create!(email: "js@smu.edu.sg", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Joan Shue (seed)", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 1, neutral_rating: 0, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "F", nationality: "Singaporean", latitude: 1.3341389, longitude: 103.8491111, obtained_badges: ["newbie"], verified: true)
