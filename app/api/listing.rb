@@ -437,5 +437,73 @@ class Listing < Grape::API
 	    	status 201
 	    	return Matching.where(post_id: params[:post_id], applicant_id: @user.id).first.status
 		end
+
+		desc "check in user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
+		params do
+			requires :email,		type: String
+			requires :post_id,	type: Integer
+			requires :user_id,	type: Integer
+		end
+
+		post :check_in, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "IGNORE NO SUCH CODE"],
+			[201, "check in successfully"],
+			[400, "(1) No matching found | 
+						 (2) Only the employer can check in"]
+		] do
+			matching = Matching.where(post_id: params[:post_id], status: "hired", applicant_id: params[:user_id]).first
+			error!("Bad Request - Matching not found", 400) unless matching
+
+    	error!("Unauthorised - Only the employer can check in", 400) unless matching.post.owner_id == @user.id
+
+    	time = Time.now
+    	matching.job_start_time = time.strftime("%I:%M %p")
+    	matching.save
+
+			status 201
+		end
+
+		desc "check out user", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
+		params do
+			requires :email,		type: String
+			requires :post_id,	type: Integer
+			requires :user_id,	type: Integer
+		end
+
+		post :check_out, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "IGNORE NO SUCH CODE"],
+			[201, "check in successfully"],
+			[400, "(1) No matching found | 
+						 (2) Only the employer can check out"]
+		] do
+			matching = Matching.where(post_id: params[:post_id], status: "hired", applicant_id: params[:user_id]).first
+			error!("Bad Request - Matching not found", 400) unless matching
+
+    	error!("Unauthorised - Only the employer can check out", 400) unless matching.post.owner_id == @user.id
+
+    	time = Time.now
+    	matching.job_end_time = time.strftime("%I:%M %p")
+    	matching.save
+
+			status 201
+		end
 	end 
 end

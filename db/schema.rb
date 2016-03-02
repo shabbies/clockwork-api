@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151121085103) do
+ActiveRecord::Schema.define(version: 20160301103432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,11 +78,13 @@ ActiveRecord::Schema.define(version: 20151121085103) do
   create_table "matchings", force: :cascade do |t|
     t.integer  "applicant_id"
     t.integer  "post_id"
-    t.string   "status",       default: "pending"
+    t.string   "status",         default: "pending"
     t.integer  "user_rating"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.string   "comments"
+    t.string   "job_start_time"
+    t.string   "job_end_time"
   end
 
   create_table "notifications", force: :cascade do |t|
