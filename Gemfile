@@ -60,5 +60,5 @@ gem 'geocoder'
 gem "font-awesome-rails"
 gem 'thin'
 gem 'devise-async'
-gem 'resque'
+gem 'resque', "~> 1.22.0"
 gem 'redis'
