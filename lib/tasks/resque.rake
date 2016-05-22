@@ -9,6 +9,6 @@ task "resque:setup" => :environment do
 	ENV['QUEUE'] ||= '*'
 	root_path = "#{File.dirname(__FILE__)}/../.."
   require "#{root_path}/app/api/account.rb"
-	db_config = YAML::load(File.open(File.join(root_path,'config','database.yml')))["development"]
+	db_config = YAML::load(File.open(File.join(root_path,'config','database.yml')))[Rails.env]
 	Resque.before_fork = Proc.new { ActiveRecord::Base.establish_connection(db_config) }
 end
