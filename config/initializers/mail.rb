@@ -1,9 +1,9 @@
 ActionMailer::Base.smtp_settings = {
-    :address              	=> "smtp.zoho.com",
-      :port                 => 465,
-      :domain               => "zoho.com",
-      :user_name            => "admin@workiki.com",
-      :password             => "adminWorkiki",
-      :authentication       => :login,
-      :enable_starttls_auto => true
+    :address              => "smtp.gmail.com",
+    :port                 => 587,
+    :domain               => "mail.google.com",
+    :user_name            => "kssc91@gmail.com",
+    :password             => "ulejgnzeryohokjz",
+    :authentication       => :login,
+    :enable_starttls_auto => true
 }
