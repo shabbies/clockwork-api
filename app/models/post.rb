@@ -11,6 +11,13 @@ class Post < ActiveRecord::Base
 	geocoded_by :location   # can also be an IP address
 	after_validation :geocode, unless: :is_seed
 
+	has_attached_file :post_image, 			
+    :path => ":rails_root/public/post_images/:filename", 
+    :bucket  => ENV['media.clockworksmu.herokuapp.com'],
+    :source_file_options => { all:     '-auto-orient' }
+ 
+ 	validates_attachment_content_type 	:post_image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+
 	pg_search_scope :search_by_header_and_desc, :against => [:header, :description, :location, :company, :salary], 
 		:using => {
             :tsearch => {:prefix => true, :any_word => true}

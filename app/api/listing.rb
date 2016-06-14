@@ -27,6 +27,7 @@ class Listing < Grape::API
 		    requires :start_time,	type: String
 		    requires :end_time,		type: String
 		    requires :pay_type,		type: String
+		    optional :image, type: Rack::Multipart::UploadedFile
 		end
 
 		## This takes care of creating post
@@ -43,25 +44,37 @@ class Listing < Grape::API
 			[201, "Post successfully created"],
 			[403, "Unauthorised - Only employers can post a new job listing"]
 		] do
-			error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
+				error!("Unauthorised - Only employers can post a new job listing", 403) unless @user.account_type == "employer"
 
-			job_date = Date.parse(params[:job_date])
-			end_date = Date.parse(params[:end_date])
-			posting_date = Date.today
-			salary = params[:salary]
-			start_time = Time.parse(params[:start_time])
-			end_time = Time.parse(params[:end_time])
-			duration = (end_date - job_date).to_i + 1
-			pay_type = params[:pay_type]
+				job_date = Date.parse(params[:job_date])
+				end_date = Date.parse(params[:end_date])
+				posting_date = Date.today
+				salary = params[:salary]
+				start_time = Time.parse(params[:start_time])
+				end_time = Time.parse(params[:end_time])
+				duration = (end_date - job_date).to_i + 1
+				pay_type = params[:pay_type]
 
-			error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
-			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
-			error!("Bad Request - The salary should not be negative", 400) if salary < 0
-			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
-			error!("Bad Request - Post has already been created", 400) unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location]).count == 0
-			error!("Bad Request - The maximum job duration should be 7 days", 400) if duration > 7
+				error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
+				error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
+				error!("Bad Request - The salary should not be negative", 400) if salary < 0
+				error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
+				error!("Bad Request - Post has already been created", 400) unless @user.published_jobs.where(:header => params[:header], :job_date => job_date, :location => params[:location]).count == 0
+				error!("Bad Request - The maximum job duration should be 7 days", 400) if duration > 7
 
-		    post = Post.create!({
+				post_image = params[:image]
+				attachment = nil
+				post_image_path = @user.avatar_path
+				if post_image
+					attachment = {
+		        :filename => post_image[:filename],
+		        :type => post_image[:type],
+		        :headers => post_image[:head],
+		        :tempfile => post_image[:tempfile]
+		      }
+		    end
+
+		    post = Post.new({
 			    header: params[:header],
 			    company: @user.username,
 			    salary: salary,
@@ -75,9 +88,21 @@ class Listing < Grape::API
 			    start_time: params[:start_time],
 			    end_time: params[:end_time],
 			    duration: duration,
-			    avatar_path: @user.avatar_path,
+			    avatar_path: post_image_path,
 			    pay_type: pay_type
 		    })
+
+		    post.save
+
+		    if post_image
+		    	attachment[:filename] = post.id.to_s + " image"
+		    	post.post_image = ActionDispatch::Http::UploadedFile.new(attachment) if post_image
+		    	post.avatar_path = post.post_image.url
+		    	post.save
+		    end
+		    
+
+
 		    @user.published_jobs << post
 		    @user.save
 

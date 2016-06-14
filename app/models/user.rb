@@ -22,11 +22,12 @@ class User < ActiveRecord::Base
     has_many :inverse_favourites,       class_name: "Favourite", :foreign_key => "user_id", :dependent => :destroy
     has_many :inverse_favourite_users,  :through => :inverse_favourites, :source => :owner
 
-    has_attached_file :avatar, 			
-    :path => ":rails_root/public/avatars/:filename", 
-    :bucket  => ENV['media.clockworksmu.herokuapp.com'],
-    :source_file_options => { all:     '-auto-orient' }
-     validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+    has_attached_file :avatar,
+        :path => ":rails_root/public/avatars/:filename", 
+        :bucket  => ENV['media.clockworksmu.herokuapp.com'],
+        :source_file_options => { all:     '-auto-orient' }
+     
+    validates_attachment_content_type 	:avatar, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
     geocoded_by :address   # can also be an IP address
     after_validation :geocode

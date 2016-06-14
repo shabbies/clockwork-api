@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160422103258) do
+ActiveRecord::Schema.define(version: 20160614172132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,19 +109,23 @@ ActiveRecord::Schema.define(version: 20160422103258) do
     t.string   "location"
     t.date     "posting_date"
     t.date     "job_date"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
     t.integer  "owner_id"
-    t.string   "status",       default: "listed"
+    t.string   "status",                  default: "listed"
     t.date     "expiry_date"
     t.integer  "duration"
     t.string   "start_time"
     t.date     "end_date"
     t.string   "end_time"
     t.string   "avatar_path"
-    t.string   "pay_type",     default: "hour"
+    t.string   "pay_type",                default: "hour"
     t.float    "latitude"
     t.float    "longitude"
+    t.string   "post_image_file_name"
+    t.string   "post_image_content_type"
+    t.integer  "post_image_file_size"
+    t.datetime "post_image_updated_at"
   end
 
   create_table "question_histories", force: :cascade do |t|
