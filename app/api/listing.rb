@@ -18,16 +18,16 @@ class Listing < Grape::API
 		## This takes care of parameter validation
 		params do
 			requires :email, 		type: String
-		    requires :header, 		type: String
-		    requires :salary, 		type: Float
-		    requires :description, 	type: String
-		    requires :location,	 	type: String
-		    requires :job_date,		type: String
-		    requires :end_date,		type: String
-		    requires :start_time,	type: String
-		    requires :end_time,		type: String
-		    requires :pay_type,		type: String
-		    optional :image, type: Rack::Multipart::UploadedFile
+	    requires :header, 		type: String
+	    requires :salary, 		type: Float
+	    requires :description, 	type: String
+	    requires :location,	 	type: String
+	    requires :job_date,		type: String
+	    requires :end_date,		type: String
+	    requires :start_time,	type: String
+	    requires :end_time,		type: String
+	    requires :pay_type,		type: String
+	    optional :image, type: Rack::Multipart::UploadedFile
 		end
 
 		## This takes care of creating post
