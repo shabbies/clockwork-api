@@ -17,17 +17,17 @@ class Listing < Grape::API
 		}
 		## This takes care of parameter validation
 		params do
-			requires :email, 		type: String
-	    requires :header, 		type: String
-	    requires :salary, 		type: Float
+			requires :email, 				type: String
+	    requires :header, 			type: String
+	    requires :salary, 			type: Float
 	    requires :description, 	type: String
-	    requires :location,	 	type: String
-	    requires :job_date,		type: String
-	    requires :end_date,		type: String
-	    requires :start_time,	type: String
-	    requires :end_time,		type: String
-	    requires :pay_type,		type: String
-	    optional :image, type: Rack::Multipart::UploadedFile
+	    requires :location,	 		type: String
+	    requires :job_date,			type: String
+	    requires :end_date,			type: String
+	    requires :start_time,		type: String
+	    requires :end_time,			type: String
+	    requires :pay_type,			type: String
+	    optional :image, 				type: Rack::Multipart::UploadedFile
 		end
 
 		## This takes care of creating post
@@ -149,18 +149,20 @@ class Listing < Grape::API
  			}
 		}
 		params do
-			requires :email,		type: String
-			requires :header, 		type: String
-		    requires :salary, 		type: Float
-		    requires :description, 	type: String
-		    requires :location,	 	type: String
-		    requires :post_id,		type: String
-		    requires :job_date,		type: String
-		  	requires :end_date,		type: String
-		    requires :start_time,	type: String
-		    requires :end_time,		type: String
-		    requires :pay_type,		type: String
+			requires :email,				type: String
+			requires :header, 			type: String
+	    requires :salary, 			type: Float
+	    requires :description, 	type: String
+	    requires :location,	 		type: String
+	    requires :post_id,			type: String
+	    requires :job_date,			type: String
+	  	requires :end_date,			type: String
+	    requires :start_time,		type: String
+	    requires :end_time,			type: String
+	    requires :pay_type,			type: String
+	    optional :image, 				type: Rack::Multipart::UploadedFile
 		end
+
 		post :update, 
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
@@ -174,8 +176,8 @@ class Listing < Grape::API
 			[200, "Returns Post Object"],
 			[403, "Unauthorised - Only the post owner is allowed to edit post"]
 		] do
-	    	post = Post.where(:id => params[:post_id]).first
-	    	job_date = Date.parse(params[:job_date])
+    	post = Post.where(:id => params[:post_id]).first
+    	job_date = Date.parse(params[:job_date])
 			end_date = Date.parse(params[:end_date])
 			posting_date = Date.today
 			salary = params[:salary]
@@ -185,30 +187,46 @@ class Listing < Grape::API
 			pay_type = params[:pay_type]
 
 			error!("Bad Request - The post cannot be found", 400) unless post
-	    	error!('Unauthorised - Only the post owner is allowed to edit post', 403) unless post.owner_id == @user.id
-	    	error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
+    	error!('Unauthorised - Only the post owner is allowed to edit post', 403) unless post.owner_id == @user.id
+    	error!("Bad Request - The job date should be after today", 400) unless job_date > posting_date
 			error!("Bad Request - The end date should be after the start date", 400) if end_date < job_date
 			error!("Bad Request - The salary should not be negative", 400) if salary < 0
 			error!("Bad Request - End time should be after start time", 400) unless start_time < end_time
 			error!("Bad Request - Unable to edit post once there are applicants", 400) if Matching.where(:post_id => post.id).count > 0
 			error!("Bad Request - The maximum job duration should be 7 days", 400) if duration > 7
 
-		    post.update({
-		    	header: params[:header],
-			    salary: salary,
-			    description: params[:description],
-			    location: params[:location],
-			    job_date: job_date,
-			    end_date: end_date,
-			    expiry_date: Date.parse(params[:job_date]) - 1,
-			    start_time: params[:start_time],
-			    end_time: params[:end_time],
-			    duration: duration,
-			    pay_type: pay_type
-		    })
+			post_image = params[:image]
+			attachment = nil
+			post_image_path = post.avatar_path
+			if post_image
+				attachment = {
+	        :filename => post.id.to_s + " image",
+	        :type => post_image[:type],
+	        :headers => post_image[:head],
+	        :tempfile => post_image[:tempfile]
+	      }
+	      post.post_image = ActionDispatch::Http::UploadedFile.new(attachment)
+	      post.save
+	    	post_image_path = post.post_image.url
+	    end
 
-		    status 200
-		    post.to_json
+	    post.update({
+	    	header: params[:header],
+		    salary: salary,
+		    description: params[:description],
+		    location: params[:location],
+		    job_date: job_date,
+		    end_date: end_date,
+		    expiry_date: Date.parse(params[:job_date]) - 1,
+		    start_time: params[:start_time],
+		    end_time: params[:end_time],
+		    duration: duration,
+		    pay_type: pay_type,
+		    avatar_path: post_image_path
+	    })
+
+	    status 200
+	    post.to_json
 		end
 
 		desc "get applicants", {
