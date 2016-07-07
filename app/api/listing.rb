@@ -83,7 +83,7 @@ class Listing < Grape::API
 			    posting_date: posting_date,
 			    job_date: job_date,
 			    end_date: end_date,
-			    expiry_date: Date.parse(params[:job_date]) - 1,
+			    expiry_date: Date.parse(params[:job_date]),
 			    status: "listed",
 			    start_time: params[:start_time],
 			    end_time: params[:end_time],

@@ -110,26 +110,29 @@ class Account < Grape::API
  			}
 		}
 		params do
-			requires :email, 					type: String
-			optional :date_of_birth, 			type: String
-			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar, name of file should be {:user_id}_avatar"
-			optional :password,					type: String,	desc: "Only required when updating password"
-			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
-			optional :old_password,				type: String, 	desc: "Only required when updating password"
-			optional :address,					type: String
-			optional :username,					type: String
-			optional :contact_number,			type: String
-			optional :gender,					type: String,	desc: "M or F"
-			optional :nationality,				type: String,	desc: "Singaporean, Singapore PR or Others"
+			requires :email, 									type: String
+			optional :date_of_birth, 					type: String
+			optional :avatar, 								type: Rack::Multipart::UploadedFile, 	desc: "param name: avatar, name of file should be {:user_id}_avatar"
+			optional :password,								type: String,													desc: "Only required when updating password"
+			optional :password_confirmation, 	type: String,													desc: "Has to be the same as password"
+			optional :old_password,						type: String, 												desc: "Only required when updating password"
+			optional :address,								type: String
+			optional :username,								type: String
+			optional :contact_number,					type: String
+			optional :gender,									type: String,													desc: "M or F"
+			optional :nationality,						type: String,													desc: "Singaporean, Singapore PR or Others"
+			optional :nric,										type: String, 												desc: "NRIC or FIN num"
+			optional :qualification,					type: String
+			optional :description,						type: String
 		end
 
 		post :complete_profile, 
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "(1)Bad Request - You should be at least 15 years old || 
-				(2)Bad Request - Invalid Gender: only M and F allowed ||
-				(3)Bad Request - Passwords do not match | 
-				(4)Bad Request - Contact Number already in use"],
+			[400, "	(1)Bad Request - You should be at least 15 years old || 
+							(2)Bad Request - Invalid Gender: only M and F allowed ||
+							(3)Bad Request - Passwords do not match | 
+							(4)Bad Request - Contact Number already in use"],
 			[200, "Save successful"],
 			[500, "Internal Server Error - save failed"]
 		] do
@@ -167,6 +170,7 @@ class Account < Grape::API
 	    end
 
 	    nationality = params[:nationality].strip.capitalize.gsub("pr", "PR") unless params[:nationality].blank?
+	    nric = params[:nric].upcase unless params[:nric].blank?
 
 	    @user.address = params[:address] unless params[:address].blank?
 	    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
@@ -174,6 +178,9 @@ class Account < Grape::API
 	    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
 	    @user.gender = gender unless gender.blank?
 	    @user.nationality = nationality unless params[:nationality].blank?
+	    @user.nric = nric unless params[:nric].blank?
+	    @user.qualification = params[:qualification] unless params[:qualification].blank?
+	    @user.description = params[:description] unless params[:description].blank?
 	    if avatar
 		    @user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
 	    	@user.avatar_path = @user.avatar.url

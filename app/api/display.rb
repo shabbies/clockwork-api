@@ -7,28 +7,29 @@ class Display < Grape::API
 		end
 	    get :all, :http_codes => [200, "Get successful"]  do
 	    	user = User.where(:id => params[:user_id]).first
-	    	posts = Post.where.not(:status => ["expired", "completed"]).all
-	      	#posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing"]).all : Post.where.not(:status => ["expired", "completed"]).all
-	      	return_array = Array.new
-	      	posts.each do |post|
-	      		expiry_date = post.expiry_date
-	      		if expiry_date <= Date.today - 1
-	      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
+      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
+      	return_array = Array.new
+      	posts.each do |post|
+      		expiry_date = post.expiry_date
+      		if expiry_date < Time.now.to_date || (expiry_date == Time.now.to_date && post.start_time.to_time > Time.now)
+      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
 		  			if matchings.count != 0
-		  				if matchings.where(:user_rating => nil).count != 0
-		  					post.update_attributes(status: "reviewing", expiry_date: "2015-01-01")
-						else
-		  					post.update_attributes(status: "completed", expiry_date: "2015-01-01")
+		  				if post.end_date >= Time.now.to_date
+		  					post.update_attributes(status: "ongoing")
+		  				elsif matchings.where(:user_rating => nil).count != 0
+		  					post.update_attributes(status: "reviewing")
+							else
+		  					post.update_attributes(status: "completed")
 		  				end
 		  			else
-		  				post.update_attributes(status: "expired", expiry_date: "2015-01-01")
+		  				post.update_attributes(status: "expired")
 		  			end
-	      		else
-	      			return_array << post
-	      		end
-	      	end
-	      	status 200
-	      	return_array
+      		else
+      			return_array << post
+      		end
+      	end
+      	status 200
+      	return_array
 	    end
 
 	    desc "search API"
@@ -36,7 +37,7 @@ class Display < Grape::API
 			requires :query, 		type: String
 		end
 	    get :search, :http_codes => [200, "Get successful"] do
-	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired", "reviewing"]).all
+	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired", "reviewing", "ongoing"]).all
 	      	
 	      	status 200
 	      	@posts.to_json
@@ -64,7 +65,7 @@ class Display < Grape::API
 	resource :posts do 
 		desc "Re seed"
 	    get :re_seed, :http_codes => [200, "Get successful"]  do
-	    	today = Date.today
+	    	today = Time.now.to_date
 
 	    	QuestionHistory.delete_all
 	    	Question.delete_all
@@ -93,7 +94,7 @@ class Display < Grape::API
 				c5 = Post.create!(header: "Restaurant Service Crew", company: "Plain Vanilla", salary: 8.0, description: "Taking Orders, Serving Food & Drinks & Clearing Tables SEED-DEMO", location: "37 Emerald Hill Rd, 229313", posting_date: "2015-08-01", job_date: "2015-09-29", end_date: "2015-10-02", owner_id: u1.id, status: "completed", expiry_date: "2015-08-28", duration: 3, start_time: "11:00", end_time: "14:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Plain+Vanilla.jpeg", latitude: 1.302847, longitude: 103.838528)
 				c6 = Post.create!(header: "Waiter", company: "The Assembly Ground", salary: 9.0, description: "Taking Orders, Serving Food & Drinks & Clearing Tables SEED-DEMO", location: "181 Orchard Rd, 238896", posting_date: "2015-08-01", job_date: "2015-08-30", end_date: "2015-09-05", owner_id: u1.id, status: "completed", expiry_date: "2015-08-29", duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/The+Assembly+Ground.jpg", latitude: 1.3006313, longitude: 103.8397382)
 				Post.create!(header: "Hotel Cafe", company: "The Assembly Ground", salary: 12.0, description: "Responsibilities: - Greet and welcome guests, assist in taking F&B orders and ensure prompt serving SEED-DEMO", location: "113 Somerset Rd, 238165", posting_date: "2015-08-21", job_date: "2015-09-21", end_date: "2015-09-25", owner_id: u1.id, status: "expired", expiry_date: "2015-08-20", duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/The+Assembly+Ground.jpg", latitude: 1.3005397, longitude: 103.8367624)
-				p3 = Post.create!(header: "Restaurant Crew", company: "Tiong Bahru Bakery", salary: 9.0, description: "Job Scope - Serving food and drinks, Clearing or just restaurant food runner duties, Basic Housekeeping duties SEED-DEMO", location: "11 Canning Walk, 178881", posting_date: "2015-08-21", job_date: today+30, end_date: today+35, owner_id: u1.id, status: "applied", expiry_date: today+5, duration: 6, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Tiong+Bahru+Bakery+2.jpg", latitude: 1.295913, longitude: 103.845489)
+				p3 = Post.create!(header: "Restaurant Crew", company: "Tiong Bahru Bakery", salary: 9.0, description: "Job Scope - Serving food and drinks, Clearing or just restaurant food runner duties, Basic Housekeeping duties SEED-DEMO", location: "11 Canning Walk, 178881", posting_date: "2015-08-21", job_date: today-1, end_date: today+4, owner_id: u1.id, status: "applied", expiry_date: today-1, duration: 6, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Tiong+Bahru+Bakery+2.jpg", latitude: 1.295913, longitude: 103.845489)
 				c7 = Post.create!(header: "Cooking Crew", company: "Tiong Bahru Bakery", salary: 9.0, description: "Cooking food SEED-DEMO", location: "50 Nanyang Ave, 639798", posting_date: "2015-08-01", job_date: "2015-10-26", end_date: "2015-10-27", owner_id: u1.id, status: "reviewing", expiry_date: "2015-09-25", duration: 8, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/Tiong+Bahru+Bakery+2.jpg", latitude: 1.347681, longitude: 103.6827797)
 				c8 = Post.create!(header: "Banquet Server", company: "Assembly Cafe", salary: 8.0, description: "WE ARE HIRING !!! PT & FT Server @5* Hotel SEED-DEMO", location: "31 Jurong West Street 63, 648310", posting_date: "2015-08-21", job_date: "2015-09-20", end_date: "2015-09-22", owner_id: u1.id, status: "reviewing", expiry_date: "2015-08-19", duration: 3, start_time: "11:00", end_time: "19:00", avatar_path: "https://s3-ap-southeast-1.amazonaws.com/media.clockworksmu.herokuapp.com/app/public/assets/logos/assembly_img.png", latitude: 1.3374734, longitude: 103.6969333)
 				c9 = Post.create!(header: "Ice Cutter", company: "IceIceBaby", salary: 10.0, description: "Scooping Ice cream till you're ice baby SEED-DEMO", location: "50 Jurong Gateway Road, 608549", posting_date: "2015-09-14", job_date: today+41, end_date: today+43, owner_id: u4.id, status: "listed", expiry_date: today+40, duration: 3, start_time: "11:00", end_time: "21:00", avatar_path: u4.avatar_path, latitude: 1.3343388, longitude: 103.740543)
