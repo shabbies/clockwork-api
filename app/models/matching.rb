@@ -1,5 +1,6 @@
 class Matching < ActiveRecord::Base
 	after_save :format_check_in, if: :status_changed?
+  after_create :add_to_chatroom
 	serialize :job_timings
 
 	belongs_to :applicant, :class_name => "User", :foreign_key => "applicant_id"
@@ -20,6 +21,13 @@ class Matching < ActiveRecord::Base
     	end 
     	self.job_timings = check_in_date_hash
     	save!
+    end
+  end
+
+  def add_to_chatroom
+    chatroom = Chatroom.where(post_id: post_id).first
+    if chatroom
+      ChatroomParticipant.create!(chatroom_id: chatroom.id, user_id: applicant_id, post_id: chatroom.post_id)
     end
   end
 end

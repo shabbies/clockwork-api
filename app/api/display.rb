@@ -5,45 +5,26 @@ class Display < Grape::API
 		params do
 			optional :user_id,	type: Integer
 		end
-	    get :all, :http_codes => [200, "Get successful"]  do
-	    	user = User.where(:id => params[:user_id]).first
-      	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
-      	return_array = Array.new
-      	posts.each do |post|
-      		expiry_date = post.expiry_date
-      		if expiry_date < Time.now.to_date || (expiry_date == Time.now.to_date && post.start_time.to_time > Time.now)
-      			matchings = Matching.where(:post_id => post.id, :status => ["hired", "completed", "reviewing"])
-		  			if matchings.count != 0
-		  				if post.end_date >= Time.now.to_date
-		  					post.update_attributes(status: "ongoing")
-		  				elsif matchings.where(:user_rating => nil).count != 0
-		  					post.update_attributes(status: "reviewing")
-							else
-		  					post.update_attributes(status: "completed")
-		  				end
-		  			else
-		  				post.update_attributes(status: "expired")
-		  			end
-      		else
-      			return_array << post
-      		end
-      	end
-      	status 200
-      	return_array
-	    end
+    get :all, :http_codes => [200, "Get successful"]  do
+    	Post.update_listings
+    	user = User.where(:id => params[:user_id]).first
+    	status 200
+    	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
+    end
 
-	    desc "search API"
-	    params do
+    desc "search API"
+    params do
 			requires :query, 		type: String
 		end
-	    get :search, :http_codes => [200, "Get successful"] do
-	      	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired", "reviewing", "ongoing"]).all
-	      	
-	      	status 200
-	      	@posts.to_json
-	    end
+    get :search, :http_codes => [200, "Get successful"] do
+    	Post.update_listings
+    	@posts = Post.search_by_header_and_desc(params[:query]).where.not(:status => ["completed", "expired", "reviewing", "ongoing"]).all
+    	
+    	status 200
+    	@posts.to_json
+    end
 
-	    # POST: /api/v1/posts/get_post
+    # POST: /api/v1/posts/get_post
 		desc "retrieve a post"
 		params do
 			requires :post_id, type: String
@@ -67,14 +48,17 @@ class Display < Grape::API
 	#     get :re_seed, :http_codes => [200, "Get successful"]  do
 	#     	today = Time.now.to_date
 
-	#     	QuestionHistory.delete_all
-	#     	Question.delete_all
-	#     	Badge.delete_all
-	#     	Score.delete_all
-	#     	Notification.delete_all
-	#     	Matching.delete_all
-	#     	Post.delete_all
-	#     	User.delete_all
+	# 			QuestionHistory.delete_all
+	# 			Question.delete_all
+	# 			Badge.delete_all
+	# 			Score.delete_all
+	# 			Notification.delete_all
+	# 			Matching.delete_all
+	# 			Post.delete_all
+	# 			User.delete_all
+	# 			Chatroom.delete_all
+	# 			ChatroomParticipant.delete_all
+	# 			ChatMessage.delete_all
 
 	# 			u1 = User.create!(email: "scsoh.2012@sis.smu.edu.sg", password: "password", password_confirmation: "password", account_type: "employer", username: "kennethsohsc (seed)", address: "Suntec City", contact_number: 98123123, latitude: 1.2959623, longitude: 103.8579517, verified: true)
 	# 			u2 = User.create!(email: "js@smu.edu.sg", password: "password", password_confirmation: "password", account_type: "job_seeker", username: "Joan Shue (seed)", address: "Toa Payoh Central Singapore", contact_number: 91110312, good_rating: 1, neutral_rating: 0, bad_rating: 0, date_of_birth: Date.parse("1980-05-11"), gender: "F", nationality: "Singaporean", latitude: 1.3341389, longitude: 103.8491111, obtained_badges: ["newbie"], verified: true)

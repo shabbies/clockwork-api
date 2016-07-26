@@ -17,6 +17,7 @@ class API < Grape::API
     mount Alert
     mount Gamify
     mount Competition
+    mount Chat
     add_swagger_documentation api_version: 'v1'
 end
 

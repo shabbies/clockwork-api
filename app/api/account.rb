@@ -36,15 +36,17 @@ class Account < Grape::API
  			}
 		}
 		params do
-			requires :email, 					type: String
-			optional :date_of_birth, 			type: String
-			optional :avatar, 					type: Rack::Multipart::UploadedFile, desc: "param name: avatar"
-			optional :password,					type: String,	desc: "Only required when updating password"
-			optional :password_confirmation, 	type: String,	desc: "Has to be the same as password"
-			optional :old_password,				type: String, 	desc: "Only required when updating password"
-			optional :address,					type: String
-			optional :username,					type: String
-			optional :contact_number,			type: String
+			requires :email, 									type: String
+			optional :date_of_birth, 					type: String
+			optional :avatar, 								type: Rack::Multipart::UploadedFile, 	desc: "param name: avatar"
+			optional :password,								type: String,													desc: "Only required when updating password"
+			optional :password_confirmation, 	type: String,													desc: "Has to be the same as password"
+			optional :old_password,						type: String, 												desc: "Only required when updating password"
+			optional :address,								type: String
+			optional :username,								type: String
+			optional :contact_number,					type: String
+			optional :qualification,					type: String
+			optional :description,						type: String
 		end
 
 		post :update,  
@@ -71,31 +73,33 @@ class Account < Grape::API
 			attachment = nil
 			if avatar
 				attachment = {
-		            :filename => avatar[:filename],
-		            :type => avatar[:type],
-		            :headers => avatar[:head],
-		            :tempfile => avatar[:tempfile]
-		        }
-		    end
+            :filename => avatar[:filename],
+            :type => avatar[:type],
+            :headers => avatar[:head],
+            :tempfile => avatar[:tempfile]
+        }
+	    end
 
-		    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
-		    	error!("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
-		    	error!("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
+	    if !params[:password].blank? && !params[:password_confirmation].blank? && !params[:old_password].blank?
+	    	error!("Unauthorised - Old password is invalid", 403) unless @user.valid_password?(params[:old_password])
+	    	error!("Bad Request - Passwords do not match", 400) unless params[:password] == params[:password_confirmation]
 
-		    	@user.password = params[:password]
-		    end
+	    	@user.password = params[:password]
+	    end
 
-		    @user.address = params[:address] unless params[:address].blank?
-		    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
-		    @user.username = params[:username] unless params[:username].blank?
-		    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
-		    if avatar
-		    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
-		    	@user.avatar_path = @user.avatar.url
-		    end
-		    if @user.save
-		    	status 200
-		    	@user.to_json
+	    @user.address = params[:address] unless params[:address].blank?
+	    @user.date_of_birth = date_of_birth unless params[:date_of_birth].blank?
+	    @user.username = params[:username] unless params[:username].blank?
+	    @user.contact_number = params[:contact_number] unless params[:contact_number].blank?
+	    @user.qualification = params[:qualification] unless params[:qualification].blank?
+	    @user.description = params[:description] unless params[:description].blank?
+	    if avatar
+	    	@user.avatar = ActionDispatch::Http::UploadedFile.new(attachment) if avatar
+	    	@user.avatar_path = @user.avatar.url
+	    end
+	    if @user.save
+	    	status 200
+	    	@user.to_json
 			else
 				error!("Server Error - Save has failed, please inform the administrator", 500)
 			end
@@ -258,9 +262,9 @@ class Account < Grape::API
 		post :apply, 
 		:http_codes => [
 			[401, "Unauthorised - Invalid authentication token"], 
-			[400, "(1)Bad Request - Post not found | 
-				(2)Bad Request - Only job seekers are allowed to apply for a job | 
-				(3)Bad Request - You have already applied for another job that clashes with this"],
+			[400, " (1)Bad Request - Post not found | 
+							(2)Bad Request - Only job seekers are allowed to apply for a job | 
+							(3)Bad Request - You have already applied for another job that clashes with this"],
 			[403, "Bad Request - User has already applied"],
 			[200, "Returns post object"]
 		] do
@@ -279,8 +283,8 @@ class Account < Grape::API
 
 	    	if clashed_matchings
 	    		clashed_matchings.each do |clashed_matching|
-	    			clashed = Post.find(clashed_matching.post_id)
-					if (post.job_date..post.end_date).overlaps?(clashed.job_date..clashed.end_date)
+    				clashed = Post.find(clashed_matching.post_id)
+						if (post.job_date..post.end_date).overlaps?(clashed.job_date..clashed.end_date)
 				    	error!("Bad Request - You have already applied for another job that clashes with this", 400)
 				    	break;
 			    	end	

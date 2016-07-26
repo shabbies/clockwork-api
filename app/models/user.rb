@@ -22,6 +22,9 @@ class User < ActiveRecord::Base
     has_many :inverse_favourites,       class_name: "Favourite", :foreign_key => "user_id", :dependent => :destroy
     has_many :inverse_favourite_users,  :through => :inverse_favourites, :source => :owner
 
+    has_many :chatroom_participants
+    has_many :chatrooms, through: :chatroom_participants
+
     has_attached_file :avatar,
         :path => ":rails_root/public/avatars/:filename", 
         :bucket  => ENV['media.clockworksmu.herokuapp.com'],

@@ -508,8 +508,8 @@ class Listing < Grape::API
 
     	error!("Unauthorised - Only the employer can check in", 400) unless matching.post.owner_id == @user.id
 
-    	time = Time.now.in_time_zone('Singapore').to_time.strftime("%I:%M %p")
-    	date = Time.now.in_time_zone('Singapore').to_date.strftime("%d-%m-%Y")
+    	time = Time.now.in_time_zone('Singapore').strftime("%I:%M %p")
+    	date = Time.now.in_time_zone('Singapore').strftime("%d-%m-%Y")
 
     	matching.job_timings[date]["check_in"] = time
     	matching.save
@@ -544,8 +544,8 @@ class Listing < Grape::API
 
     	error!("Unauthorised - Only the employer can check out", 400) unless matching.post.owner_id == @user.id
 
-    	time = Time.now.in_time_zone('Singapore').to_time.strftime("%I:%M %p")
-    	date = Time.now.in_time_zone('Singapore').to_date.strftime("%d-%m-%Y")
+    	time = Time.now.in_time_zone('Singapore').strftime("%I:%M %p")
+    	date = Time.now.in_time_zone('Singapore').strftime("%d-%m-%Y")
 
     	matching.job_timings[date]["check_out"] = time
 
@@ -578,11 +578,11 @@ class Listing < Grape::API
  			}
 		}
 		params do
-			requires :email,			type: String
-			requires :post_id,		type: Integer
+			requires :email,					type: String
+			requires :post_id,				type: Integer
 			requires :applicant_id,		type: Integer
-			requires :date,				type: String
-			requires :salary,			type: Float
+			requires :date,						type: String
+			requires :salary,					type: Float
 		end
 
 		post :update_salary, 
@@ -593,6 +593,7 @@ class Listing < Grape::API
 			[400, "(1) No matching found | 
 						 (2) Only the employer can update wages"]
 		] do
+			
 			matching = Matching.where(post_id: params[:post_id], status: "hired", applicant_id: params[:applicant_id]).first
 			error!("Bad Request - Matching not found", 400) unless matching
 
