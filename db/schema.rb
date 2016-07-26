@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160625173131) do
+ActiveRecord::Schema.define(version: 20160720165639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,36 @@ ActiveRecord::Schema.define(version: 20160625173131) do
     t.datetime "updated_at",         null: false
     t.string   "badge_id"
   end
+
+  create_table "chat_messages", force: :cascade do |t|
+    t.integer  "sender_id"
+    t.integer  "chatroom_id"
+    t.string   "content",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "chat_messages", ["chatroom_id"], name: "index_chat_messages_on_chatroom_id", using: :btree
+  add_index "chat_messages", ["sender_id"], name: "index_chat_messages_on_sender_id", using: :btree
+
+  create_table "chatroom_participants", force: :cascade do |t|
+    t.integer  "chatroom_id", null: false
+    t.integer  "user_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "post_id"
+  end
+
+  add_index "chatroom_participants", ["chatroom_id", "user_id"], name: "index_chatroom_participants_on_chatroom_id_and_user_id", unique: true, using: :btree
+
+  create_table "chatrooms", force: :cascade do |t|
+    t.integer  "post_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "chatrooms", ["id", "post_id"], name: "index_chatrooms_on_id_and_post_id", unique: true, using: :btree
+  add_index "chatrooms", ["post_id"], name: "index_chatrooms_on_post_id", unique: true, using: :btree
 
   create_table "contests", force: :cascade do |t|
     t.string   "email"
