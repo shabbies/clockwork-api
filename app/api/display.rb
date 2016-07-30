@@ -9,7 +9,8 @@ class Display < Grape::API
     	Post.update_listings
     	user = User.where(:id => params[:user_id]).first
     	status 200
-    	posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
+    	posts = Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
+    	#posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
     end
 
     desc "search API"
