@@ -10,11 +10,7 @@ class Display < Grape::API
     	user = User.where(:id => params[:user_id]).first
     	status 200
     	posts = Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
-<<<<<<< HEAD
-    	#posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
-=======
     	# posts = (user) ? Post.near(user.address, 99999999999).where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all : Post.where.not(:status => ["expired", "completed", "reviewing", "ongoing"]).all
->>>>>>> staging
     end
 
     desc "search API"
