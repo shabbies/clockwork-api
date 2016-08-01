@@ -26,8 +26,13 @@ class Matching < ActiveRecord::Base
 
   def add_to_chatroom
     chatroom = Chatroom.where(post_id: post_id).first
-    if chatroom
+    unless chatroom
+      chatroom = Chatroom.new(post_id: post_id)
+    end
+    begin
+      chatroom.save
       ChatroomParticipant.create!(chatroom_id: chatroom.id, user_id: applicant_id, post_id: chatroom.post_id)
+    rescue ActiveRecord::RecordNotUnique
     end
   end
 end

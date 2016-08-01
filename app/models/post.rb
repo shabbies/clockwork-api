@@ -46,7 +46,10 @@ class Post < ActiveRecord::Base
 	def create_chat_room
 		case status
 		when "applied"
-			chatroom = Chatroom.create!(post_id: id)
+			chatroom = Chatroom.where(post_id: id).first
+			unless chatroom
+				chatroom = Chatroom.create!(post_id: id)
+			end
 			ChatroomParticipant.create!(chatroom_id: chatroom.id, user_id: owner_id, post_id: id)
 		end
 	end
@@ -59,16 +62,16 @@ class Post < ActiveRecord::Base
 			case status
 				when "listed"
 					matchings = Matching.where(post_id: post.id, status: "hired")
-					if matchings.count == 0 && (expiry_date < Time.now.to_date || (expiry_date == Time.now.to_date && post.start_time.to_time < Time.now))
+					if matchings.count == 0 && (expiry_date < Time.zone.now.to_date || (expiry_date == Time.zone.now.to_date && post.start_time.to_time < Time.zone.now))
 						post.update_attributes(status: "expired")
 					end
 				when "applied"
-					if expiry_date < Time.now.to_date || (expiry_date == Time.now.to_date && post.start_time.to_time < Time.now)
+					if expiry_date < Time.zone.now.to_date || (expiry_date == Time.zone.now.to_date && post.start_time.to_time < Time.zone.now)
 						post.update_attributes(status: "ongoing")
 					end
 				when "ongoing"
 					end_date = post.end_date
-					if end_date < Time.now.to_date
+					if end_date < Time.zone.now.to_date
 						post.update_attributes(status: "reviewing")
 					end
 				when "reviewing"
