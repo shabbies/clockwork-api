@@ -465,8 +465,10 @@ class Listing < Grape::API
 
     	error!("Unauthorised - Only the employer can check in", 400) unless matching.post.owner_id == @user.id
 
-    	time = Time.now
-    	matching.job_start_time = time.strftime("%I:%M %p")
+    	time = Time.now.in_time_zone('Singapore').to_time.strftime("%I:%M %p")
+    	date = Time.now.in_time_zone('Singapore').to_date.strftime("%d-%m-%Y")
+
+    	matching.job_timings[date]["check_in"] = time
     	matching.save
 
 			status 201
@@ -499,8 +501,63 @@ class Listing < Grape::API
 
     	error!("Unauthorised - Only the employer can check out", 400) unless matching.post.owner_id == @user.id
 
-    	time = Time.now
-    	matching.job_end_time = time.strftime("%I:%M %p")
+    	time = Time.now.in_time_zone('Singapore').to_time.strftime("%I:%M %p")
+    	date = Time.now.in_time_zone('Singapore').to_date.strftime("%d-%m-%Y")
+
+    	matching.job_timings[date]["check_out"] = time
+
+    	start_time = matching.job_timings[date]["check_in"]
+
+    	time_diff = Time.now.in_time_zone('Singapore') - (Time.parse(start_time))
+    	time_diff_hour = (time_diff / 3600).floor
+    	time_diff_min = ((time_diff - (time_diff_hour * 3600)) / 900).floor
+
+    	basic_salary = matching.post.salary
+    	salary_type = matching.post.pay_type
+    	total_salary = basic_salary
+    	if salary_type == "hour"
+    		total_salary = basic_salary * time_diff_hour
+    		total_salary += (time_diff_min / 4) * basic_salary
+    	end
+
+    	matching.job_timings[date]["day_wage"] = total_salary
+    	matching.save
+
+			status 201
+		end
+
+		desc "update wage", {
+			headers: {
+			    "Authentication-Token" => {
+			      description: "Authentication Token issued upon sign in",
+			      required: true
+			    }
+ 			}
+		}
+		params do
+			requires :email,			type: String
+			requires :post_id,		type: Integer
+			requires :applicant_id,		type: Integer
+			requires :date,				type: String
+			requires :salary,			type: Float
+		end
+
+		post :update_salary, 
+		:http_codes => [
+			[401, "Unauthorised - Invalid authentication token"], 
+			[200, "IGNORE NO SUCH CODE"],
+			[201, "update successfully"],
+			[400, "(1) No matching found | 
+						 (2) Only the employer can update wages"]
+		] do
+			matching = Matching.where(post_id: params[:post_id], status: "hired", applicant_id: params[:applicant_id]).first
+			error!("Bad Request - Matching not found", 400) unless matching
+
+    	error!("Unauthorised - Only the employer can check in", 400) unless matching.post.owner_id == @user.id
+
+    	matching.job_timings[params[:date]]["day_wage"] = params[:salary]
+
+
     	matching.save
 
 			status 201

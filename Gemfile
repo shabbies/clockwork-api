@@ -58,3 +58,4 @@ gem 'rmagick'
 gem 'rpush'
 gem 'geocoder'
 gem "font-awesome-rails"
+gem 'thin'
